@@ -13,15 +13,33 @@ import {
 } from "date-fns";
 
 import Nav from "./components/Nav";
-import { defaultRanges, getValidatedMonths, parseOptionalDate } from "./utils";
-import { MARKERS } from "./consts";
-import { theme } from "./components/styles";
-import { ThemeProvider } from "@emotion/react";
+import { defaultRanges } from "./defaults";
+import { parseOptionalDate } from "./utils";
 
-const DateRangePickerMain = (props) => {
+export const MARKERS = {
+    FIRST_MONTH: Symbol("firstMonth"),
+    SECOND_MONTH: Symbol("secondMonth"),
+};
+
+const getValidatedMonths = (range, minDate, maxDate) => {
+    let { dateStart, dateEnd } = range;
+    if (dateStart && dateEnd) {
+        const newStart = max([dateStart, minDate]);
+        const newEnd = min([dateEnd, maxDate]);
+
+        return [
+            newStart,
+            isSameMonth(newStart, newEnd) ? addMonths(newStart, 1) : newEnd,
+        ];
+    } else {
+        return [dateStart, dateEnd];
+    }
+};
+
+const DateRangePickerImpl = (props) => {
     const today = new Date();
     const {
-        open,
+		open,
         onChange,
         initialDateRange,
         minDate,
@@ -44,11 +62,11 @@ const DateRangePickerMain = (props) => {
         initialSecondMonth || addMonths(firstMonth, 1)
     );
 
-    const [dateOpen, setDateOpen] = useState(true)
-    useEffect(() => {
-        setDateOpen(props.open)
+	const [dateOpen, setDateOpen] = useState(true)
+	useEffect(() => {
+		setDateOpen(props.open)
 
-    }, [props.open]);
+	}, [props.open]);
     useEffect(() => {
         const { dateStart, dateEnd } = props.initialDateRange;
         if (isDate(dateStart) && isDate(dateEnd)) {
@@ -115,11 +133,11 @@ const DateRangePickerMain = (props) => {
         }
     };
     const onClose = (e) => {
-        e.preventDefault();
-        setDateOpen(!dateOpen)
-        props.isOpen(e)
+      e.preventDefault();
+	  setDateOpen(!dateOpen)
+	  props.isOpen(e)
 
-
+      
     };
 
     // helpers
@@ -146,8 +164,7 @@ const DateRangePickerMain = (props) => {
         onMonthNavigate,
     };
 
-    return (dateOpen) ? (
-        <ThemeProvider theme={theme}>
+    return ( dateOpen ) ? (
         <Nav
             dateRange={dateRange}
             minDate={minDateValid}
@@ -162,9 +179,7 @@ const DateRangePickerMain = (props) => {
             handlers={handlers}
             onClose={onClose}
         />
-        </ThemeProvider>
-
     ) : null;
 };
 
-export const DateRangePicker = DateRangePickerMain;
+export const DateRangePicker = DateRangePickerImpl;
