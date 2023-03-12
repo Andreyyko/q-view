@@ -7,7 +7,7 @@
  */
 import React, { useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Logo from "./cloki-logo.png";
+import Logo from "../assets/cloki-logo.png";
 
 import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -83,7 +83,7 @@ export default function ResponsiveDateTimePickers() {
          <div className="selector"  >     
               <span className="label">Start</span>
                 <DateTimePicker
-                
+                    ampm={false}
                     renderInput={(params) => <TextField onClick={handleInputClick} 
                     onChange={ e => { handleInputChange(e,'setStartTime')} }
                     {...params} />}
@@ -97,6 +97,7 @@ export default function ResponsiveDateTimePickers() {
           <div className="selector">
           <span className="label">End</span>
                 <DateTimePicker
+                 ampm={false}
                     renderInput={(params) => <TextField
                         onChange={ e => { handleInputChange(e,'setStopTime')} }
                         onClick={handleInputClick} {...params} 
