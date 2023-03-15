@@ -2,17 +2,15 @@
 
 # :smirk: cLoki View
 
-### like Grafana Explore, but for cLoki
+### like Grafana Explore, but for Clickhouse
 
-cLoki-view is a smart and minimal data explorer developed in React/JS and designed for LogQL APIs
-
-<img src="https://user-images.githubusercontent.com/1423657/152552251-3112351a-7051-435a-a056-0ec886c5f252.png"/>
+------
 
 ### Setup
 
 #### :busstop: **Basic Instructions**
 
-***clone the repository***, then:
+***clone***, then:
 
 ##### install: 
 
@@ -20,26 +18,37 @@ cLoki-view is a smart and minimal data explorer developed in React/JS and design
 ~/$ npm install
 ```
 
-##### build (dist): 
+##### build: 
 
 ```bash
 ~/$ npm run build
 ```
-##### start (development mode): 
+##### start (development hot reload mode): 
 
 ```bash
 ~/$ npm start
 ```
 
-#### :busstop:  ENV Parameters:
+will start on ``http://localhost:3000``
 
-- set default parameters in ``./src/environment/env.dev.js``
-  - `API_URL`: LogQL API Url _(default: http://localhost:3000)_
-  - `PORT`: Application Port _(default: 3000)_
-  - `HOST`: Application Host _(default: 0.0.0.0)_
-  
-  
-### Basic Features
+#### :busstop:  **Important:** change api endpoint:
+
+- go to ``./src/environment/env.dev.js``
+
+### Environment Variables:
+
+- ``HOST`` default: `` 0.0.0.0``
+- ``PORT`` default: ``8080``
+- ``API_URL`` default: ``http://localhost:3100``
+
+```bash
+~/$ HOST=localhost PORT=8080 API_URL=http://localhost:3100 npm start
+```
+
+
+
+### Basics
+
 
 **Labels:** 
 
@@ -51,19 +60,20 @@ the values of each label will be retrieved clicking on the ``log browser => [cli
 
 **Query:** 
 
-The LogQL Query will be auto-formed by Label selection, and can be extended manually
+the query will be generated once clicked on values, also could be edited on input
 
 **Show Logs:** 
 
-click on ``show logs`` button to execute your LogQL Query
+click on ``show logs`` button once query is done
 
 ------------
 
-### Project
+##### Project Status
 
-Consult the [cLoki Wiki](https://github.com/lmangani/cLoki/wiki/LogQL-Supported-Queries) for a detailed list of supported features, [changelog](https://github.com/lmangani/cLoki/wiki/Changelog) and [API functionality](https://github.com/lmangani/cLoki/wiki/HTTP-API)
+Consult the [Wiki](https://github.com/lmangani/cLoki/wiki/LogQL-Supported-Queries) for a detailed list of supported features, [changelog](https://github.com/lmangani/cLoki/wiki/Changelog) and [API functionality](https://github.com/lmangani/cLoki/wiki/HTTP-API)
+
+--------------
+
 
 #### Acknowledgements
-(C) 2022 QXIP BV see LICENSE for details
-
-This project is not affiliated or endorsed by Grafana Labs. All rights belong to their respective owners.
+cLoki is not affiliated or endorsed by Grafana Labs. All rights belong to their respective owners.
