@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import Filter from "./Filter";
 import LogView from "./LogView";
 import { connect } from "react-redux";
-import loadLabels from "../actions/LoadLabels";
+import loadLabels from "../actions/loadLabels";
 import loadLogs from "../actions/loadLogs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import loadLabelValues from "../actions/loadLabelValues";
 import { StatusBar } from "./StatusBar";
-import { setStartTime, setStopTime } from "../actions"
+import { setStartTime,setStopTime } from "../actions"
 
 // here should be the api endpoint selector on a menu
 class LogSearch extends Component {
@@ -16,9 +16,14 @@ class LogSearch extends Component {
         super(props);
         props.dispatch(loadLabels());
         this.state = {
-            ...props
+            start:props.start,
+            stop:props.stop,
+            limit:props.limit
+
         }
     }
+    // here we contain the filter that has the labels and the searchlogs
+    // logView has the man container
     render() {
         return (
             <div className="log-search">
@@ -27,9 +32,14 @@ class LogSearch extends Component {
                 />
                 <ToastContainer />
                 <Filter
-                    {...this.props}
+                    labels={this.props.labels}
+                    labelValues={this.props.labelValues}
                     searchLogs={this.searchLogs}
                     searchLabelValues={this.searchLabelValues}
+                
+                    start={this.props.start}
+                    stop={this.props.stop}
+                    limit={this.props.limit}
                 />
 
                 <LogView />
@@ -37,17 +47,16 @@ class LogSearch extends Component {
         );
     }
 
-    searchLogs = (query, time, limit, step) => {
-
+    searchLogs = (query, time,limit) => {
         this.props
-            .dispatch(loadLogs(query, time, limit, step))
+            .dispatch(loadLogs(query, [this.state.start,this.state.stop], limit))
             ?.catch((error) => {
                 toast.error(
                     "Failed to Load Logs from query " + query + "\n" + error
                 );
             });
     };
-    dateRangeChange = ([start, stop]) => {
+    dateRangeChange = ([start,stop]) => {
         this.props.dispatch(setStartTime(start));
         this.props.dispatch(setStopTime(stop));
     }
@@ -64,8 +73,12 @@ class LogSearch extends Component {
 
 const mapStateToProps = (state) => {
     return {
-       ...state
-
+        labels: state.labels,
+        labelValues: state.labelValues,
+        start: state.start,
+        stop: state.stop,
+        limit: state.limit
+        
     };
 };
 

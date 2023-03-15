@@ -1,9 +1,10 @@
 import React, { Component, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "react-md";
 import moment from "moment";
 import LowLight from "react-lowlight";
 import json from 'highlight.js/lib/languages/json'
+
 
 export const ValueTags = (props) => {
 
@@ -28,10 +29,10 @@ class LogView extends Component {
         this.state = {
             limitLoad: this.props.limitLoad || this.LOAD_LIMIT,
             limit: props.limit || 100,
-            messages: props.messages || [],
-            loading: false
+            messages:props.messages||[],
+            loading:false
         }
-
+     
 
     }
     onTagsShow = (show) => {
@@ -47,57 +48,60 @@ class LogView extends Component {
 
 
 
+                
+                {this.getLogs() && this.getLogs().map((value, key) => (
+                    <div
+                        key={key}
+                        className="line"
+                        onClick={e => this.onShowTags(value)}
 
-                    {this.getLogs() && this.getLogs().map((value, key) => (
-                        <div
-                            key={key}
-                            className="line"
-                            onClick={e => this.onShowTags(value)}
+                    >
+                        <span id={value.timestamp} className="timestamp">
+                            {this.formatDate(value.timestamp)}{" "}
+                        </span>
 
-                        >
-                            <span id={value.timestamp} className="timestamp">
-                                {this.formatDate(value.timestamp)}
-                            </span>
+                        <LowLight language='js' value={value.text} />
 
-                            <LowLight language='js' value={value.text} />
-
-                            {value.tags && (
-                                <div className="value-tags-container"
-                                    style={this.onTagsShow(value.showLabels)}
-                                >
-                                    <ValueTags
-                                        tags={value.tags}
-                                    />
+                        {value.tags && (
+                            <div className="value-tags-container"
+                                style={this.onTagsShow(value.showLabels)}
+                            >
+                                <ValueTags
+                                    tags={value.tags}
+                                />
 
 
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                            </div>
+                        )}
+                    </div>
+                ))}
 
-                    {this.getLogs().length > 0 && this.state.limitLoad && this.state.messages > this.state.limit && (
-                        <Button
-                            className="load-all"
-                            onClick={() =>
-                                this.setState({ ...this.state, limitLoad: false })
-                            }
-                        >
-                            Load all
-                        </Button>
-                    )}
-                    {this.props.loading && (
-                        <CircularProgress
-                            className="progress"
-                            id="progress"
-                        />
-                    )}
+                {this.getLogs().length > 0 && this.state.limitLoad  && this.state.messages > this.state.limit && (
+                    <Button
+                        className="load-all"
+                   
+                        theme="primary"
+                        onClick={() =>
+                            this.setState({...this.state,limitLoad:false})
+                        }
+                    >
+                        Load all
+                    </Button>
+                )}
+                {this.props.loading && (
+                    <CircularProgress
+                        className="progress"
+                        scale={10}
+                        id="progress"
+                    />
+                )}
                 </div>
             </div>
         );
     }
 
     getLogs = () => {
-        if (this.state.limitLoad) {
+        if (this.state.limitLoad ) {
             return this.prop?.messages
                 ?.slice(
                     this.props.messages.length - this.state.limit,
@@ -116,7 +120,7 @@ class LogView extends Component {
     }
 
     formatDate = (timestamp) => {
-        return moment(parseInt(timestamp)).format("YYYY-MM-DD HH:mm:ss.SSS UTC");
+        return moment(timestamp).format("YYYY-MM-DD HH:mm:ss UTC");
     };
 }
 
