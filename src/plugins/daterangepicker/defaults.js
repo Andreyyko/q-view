@@ -5,20 +5,14 @@ import {
 	addWeeks,
 	startOfMonth,
 	endOfMonth,
-	addMonths,
-	addMinutes,
-	addHours,
-	addSeconds,
-	startOfDay,
-	endOfDay,
-	getHours
+	addMonths
 } from "date-fns";
 
 const getDefaultRanges = (date) => [
 	{
 		label: "Today",
-		dateStart: startOfDay,
-		dateEnd: endOfDay
+		dateStart: date,
+		dateEnd: date
 	},
 	{
 		label: "Yesterday",
