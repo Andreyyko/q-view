@@ -33,21 +33,13 @@ cLoki-view is a smart and minimal data explorer developed in React/JS and design
 ~/$ npm start
 ```
 
-will serve the UI on ``http://localhost:3000``
+#### :busstop:  ENV Parameters:
 
-#### :busstop:  **Important:** change api endpoint:
-
-- go to ``./src/environment/env.dev.js``
-
-### Environment Variables:
-
-- ``HOST`` default: `` 0.0.0.0``
-- ``PORT`` default: ``8080``
-- ``API_URL`` default: ``http://localhost:3100``
-
-```bash
-~/$ HOST=localhost PORT=8080 API_URL=http://cloki-host:3100 npm start
-```
+- set default parameters in ``./src/environment/env.dev.js``
+  - `API_URL`: LogQL API Url _(default: http://localhost:3100)_
+  - `PORT`: Application Port _(default: 3000)_
+  - `HOST`: Application Host _(default: 0.0.0.0)_
+  
   
 ### Basic Features
 

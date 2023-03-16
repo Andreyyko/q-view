@@ -1,6 +1,16 @@
 
-import { List, ListItem, ListItemText } from "@mui/material";
-import { isSameRange } from "../utils";
+import { List, ListItem, ListItemText } from "@material-ui/core";
+import { isSameDay } from "date-fns";
+
+
+const isSameRange = (first, second) => {
+	const { dateStart: fStart, dateEnd: fEnd } = first;
+	const { dateStart: sStart, dateEnd: sEnd } = second;
+	if (fStart && sStart && fEnd && sEnd) {
+		return isSameDay(fStart, sStart) && isSameDay(fEnd, sEnd);
+	}
+	return false;
+};
 
 const Ranges = props => {
 	return (
