@@ -6,11 +6,13 @@ export default class Filter extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            ...props,
             label: props.label || "",
             labelValues: props.labelValues || [],
+            start: props.start,
+            stop: props.stop,
             labelValue: "",
             query: "",
+            listDisplay: false,
             open: true,
             dateRange: [props.start, props.stop],
         };
@@ -27,7 +29,7 @@ export default class Filter extends Component {
                     query={this.state.query}
                     onSubmit={this.onSubmit}
                     onQuerychange={this.onQuerychange}
-                    browserActive={this.state.labelsBrowserOpen}
+                    browserActive={this.state.listDisplay}
                     onValuesDisplay={this.onValuesDisplay}
                 />
                 <ValuesList
@@ -37,11 +39,16 @@ export default class Filter extends Component {
                     onValueChange={this.onLabelChange}
                     onLabelValueChange={this.onLabelValueChange}
                     labelValue={this.props.labels.length}
-                    hidden={this.props.labelsBrowserOpen}
+                    hidden={this.state.listDisplay}
                 />
             </div>
         );
     }
+
+    onValuesDisplay = (e) => {
+        const listDisplay = !this.state.listDisplay;
+        this.setState({ ...this.state, listDisplay });
+    };
     handleChange(state, value) {
         this.setState({ [state]: value });
     }
@@ -84,8 +91,7 @@ export default class Filter extends Component {
                 query,
                 [this.props.start, this.props.stop],
                 this.props.limit,
-                this.props.step,
-                this.props.apiUrl
+                this.props.step
 
             );
         } else {

@@ -12,12 +12,13 @@ import setLoading from "./setLoading";
 
 // time: [start,end]
 
-export default function loadLogs(label, time, limit, step, apiUrl) {
+export default function loadLogs(label, time, limit, step, direction) {
     // const step = 120
     // const direction = 'backward'
 
     const origin = window.location.origin;
-    const url = apiUrl;
+    const url = environment.apiUrl;
+
     const [startTs, stopTs] = time;
     const parsedTime ="&start=" + startTs.getTime() +"000000" +"&end=" + stopTs.getTime() + "000000";
 

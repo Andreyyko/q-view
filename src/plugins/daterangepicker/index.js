@@ -69,6 +69,8 @@ export function DateRangePickerMain(props) {
 
     const rangeOpen = useSelector((store) => store.rangeOpen);
 
+    const [dateOpen, setDateOpen] = useState(true);
+
     useEffect(() => {
         const { dateStart, dateEnd } = props.initialDateRange;
         if (isDate(dateStart) && isDate(dateEnd)) {

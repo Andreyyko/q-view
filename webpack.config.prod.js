@@ -24,7 +24,7 @@ module.exports = {
                
             },
             {
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
                 
                 loader: "file-loader",
                 options: {
@@ -61,8 +61,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './public/index.html',
-            filename: './index.html',
-          
+            filename: './index.html'
         }),
         new MiniCssExtractPlugin({
             filename: isDevelopment ? '[name].css' : '[name].[hash].css',
