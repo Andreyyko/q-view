@@ -1,29 +1,25 @@
-import React, { useState, useEffect,/* useCallback */ } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {useSelector, useDispatch} from 'react-redux'
-import { setQuery  } from "../../actions";
-import loadLogs from "../../actions/loadLogs"
 import { setLabelsBrowserOpen } from "../../actions/setLabelsBrowserOpen";
 
 export const QueryBar = (props) => {
-    //const [query, setQuery] = useState(props.query);
-   
-    const dispatch = useDispatch()
-    const labelsBrowserOpen = useSelector(( store ) => store.labelsBrowserOpen)
-    const stop = useSelector(store => store.stop)
-    const start = useSelector(store => store.start)
-    const limit = useSelector(store => store.limit)
-    const step = useSelector(store => store.step)
-    const apiUrl = useSelector( store => store.apiUrl)
-    const query = useSelector( (store) => store.query)
-    const [queryInput, setQueryInput] = useState(query)
+    const [query, setQuery] = useState(props.query);
     const [queryValid, setQueryValid] = useState(false)
-  
+    const dispatch = useDispatch()
+    const labelsBrowserOpen = useSelector(( state ) => state.labelsBrowserOpen)
 
+
+// validate query after submit
     useEffect(() => {
-        setQueryInput(query);
-        setQueryValid(onQueryValid(query))
-    }, [query]);
+        setQuery(props.query);
+        setQueryValid(onQueryValid(props.query))
+    }, [props.query]);
 
+    const onSubmit = (e) => {
+        dispatch(setLabelsBrowserOpen(false))
+        e.preventDefault();
+        props.onSubmit(query);
+    };
 
     const onValueDisplay = (e) => {
         e.preventDefault()
@@ -34,8 +30,7 @@ export const QueryBar = (props) => {
     const handleChange = (e) => {
         const qr = e.target.value;
         setQueryValid(onQueryValid(qr))
-        setQueryInput(qr);
-        dispatch(setQuery(qr))
+        setQuery(qr);
     };
 
     const onBrowserActive = () => {
@@ -50,20 +45,6 @@ export const QueryBar = (props) => {
         }
     }
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        dispatch(setLabelsBrowserOpen(false))
-        dispatch(setQuery(queryInput))
-    
-        if (query !== "{}" || query !== "") {
-            dispatch(loadLogs( query, [start, stop], limit, step, apiUrl ))
-    
-        } else {
-    
-            console.log("Please make a log query", query);
-            
-        }
-    };
 
     const onQueryValid = (query) => {
        return query !== '{' && query !== '}' && query !== '{}' && query !== '' // TODO: make a proper query validation
@@ -80,7 +61,7 @@ export const QueryBar = (props) => {
                 className="query-bar-input"
                 placeholder="Enter a cLoki Query"
                 onChange={handleChange}
-                value={queryInput}
+                value={query}
                 tabIndex='0'
                 onKeyDown={handleInputKeyDown}
             />

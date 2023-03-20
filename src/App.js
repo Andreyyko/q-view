@@ -1,16 +1,21 @@
+import React, { Component } from 'react';
 import { Provider } from "react-redux";
+import LogSearch from './components/LogSearch';
 import store from './store/store';
-import { BrowserRouter as Router} from 'react-router-dom';
-import MainView from "./components/MainView";
-export default function App() {
 
+export default class App extends Component {
+
+	constructor(props) {
+		super(props);
+
+		this.store = store
+	}
+
+	render() {
 		return (
-			<Provider store={store}>
-				<Router>
-				<MainView/>
-				</Router>
-			
+			<Provider store={this.store}>
+				<LogSearch/>
 			</Provider>
 		);
-	
+	}
 }

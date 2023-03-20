@@ -1,24 +1,18 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import Logo from "./assets/cloki-logo.png";
+import LinkIcon from '@mui/icons-material/Link';
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { setStopTime, setStartTime, setQueryLimit, setQueryStep } from "../../actions";
-import { DateRangePicker } from "../../plugins/daterangepicker";
 import isDate from "date-fns/isDate";
-import { setApiUrl } from "../../actions/setApiUrl";
-import LinkIcon from '@mui/icons-material/Link';
-import loadLabels from "../../actions/LoadLabels";
-import { setApiError } from "../../actions/setApiError";
-import { updateStateFromQueryParams } from "./helpers/updateStateFromQueryParams";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setQueryLimit, setQueryStep, setStartTime, setStopTime, setTimeRangeLabel } from "../actions";
+import loadLabels from "../actions/LoadLabels";
+import { setApiError } from "../actions/setApiError";
+import { setApiUrl } from "../actions/setApiUrl";
+import Logo from "../assets/cloki-logo.png";
+import { DateRangePicker } from "../plugins/daterangepicker";
+import { findRange } from "../plugins/daterangepicker/utils";
 
-
-export default function StatusBar() {
-
-// update state from query params
-// auto submit if &submit=true
-
-    updateStateFromQueryParams()
+export const StatusBar = () => {
 
     return (
         <div className="status-bar">
@@ -60,18 +54,12 @@ export function ApiSelector() {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(loadLabels(editedUrl))
-
-    }, [apiUrl]);
-
-
-    useEffect(() => {
-        if (apiError) {
+        if(apiError){
             dispatch(setApiError('API URL Error, please adjust API URL'))
         }
-
+        
     }, []);
-
+   
 
     const handleApiUrlOpen = (e) => {
         e.preventDefault()
@@ -83,9 +71,7 @@ export function ApiSelector() {
         setEditedUrl(e.target.value)
     }
     const onUrlSubmit = (e) => {
-
         dispatch(setApiUrl(editedUrl))
-
         dispatch(loadLabels(editedUrl))
     }
 
@@ -166,9 +152,13 @@ export function StatusBarSelectors() {
                     isOpen={isOpen}
                     initialDateRange={initialDateRange()}
                     onChange={({ dateStart, dateEnd }) => {
-                        if (isDate(dateStart)) dispatch(setStartTime(dateStart))
-                        if (isDate(dateEnd)) dispatch(setStopTime(dateEnd))
+                        const isStart = isDate(dateStart);
+                        const isEnd = isDate(dateEnd)
+                        if (isStart) dispatch(setStartTime(dateStart))
+                        if (isEnd) dispatch(setStopTime(dateEnd))
+                        if (isStart && isEnd) dispatch(setTimeRangeLabel(findRange({dateStart: dateStart, dateEnd: dateEnd})))
                     }}
+                    // here
                 />
             </div>
         </LocalizationProvider>
