@@ -111,7 +111,7 @@ class LogView extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        messages: state.logs,
+        messages: state.logs.messages,
         start: state.start,
         stop: state.stop,
         limit: state.limit,

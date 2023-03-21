@@ -1,21 +1,19 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import Logo from "./assets/cloki-logo.png";
+import LinkIcon from '@mui/icons-material/Link';
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { setStopTime, setStartTime, setQueryLimit, setQueryStep } from "../../actions";
-import { DateRangePicker } from "../../plugins/daterangepicker";
 import isDate from "date-fns/isDate";
-import { setApiUrl } from "../../actions/setApiUrl";
-import LinkIcon from '@mui/icons-material/Link';
-import loadLabels from "../../actions/LoadLabels";
-import { setApiError } from "../../actions/setApiError";
-import { updateStateFromQueryParams } from "./helpers/updateStateFromQueryParams";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setQueryLimit, setQueryStep, setStartTime, setStopTime, setTimeRangeLabel } from "../actions";
+import loadLabels from "../actions/LoadLabels";
+import { setApiError } from "../actions/setApiError";
+import { setApiUrl } from "../actions/setApiUrl";
+import Logo from "../assets/cloki-logo.png";
+import { DateRangePicker } from "../plugins/daterangepicker";
+import { DATE_TIME_RANGE } from '../plugins/daterangepicker/consts';
+import { findRange, findRangeByLabel } from "../plugins/daterangepicker/utils";
 
-
-export default function StatusBar() {
-
- updateStateFromQueryParams()
+export const StatusBar = () => {
 
     return (
         <div className="status-bar">
@@ -32,25 +30,17 @@ export default function StatusBar() {
 };
 
 export function StatusBarInput(props) {
-
     const { label, value, dispatchAction, type } = props
     const dispatch = useDispatch()
-
-
-
-    const handleStatusInputChange = (e) => {
-
-    dispatch(dispatchAction(e.target.value))
-} 
-      
-    
     return (
         <div className="selector">
             <span className="label">{label}</span>
             <input
                 className={type}
                 value={value}
-                onChange={handleStatusInputChange}
+                onChange={(newValue) => {
+                    dispatch(dispatchAction(newValue.target.value));
+                }}
             />
 
         </div>
@@ -63,37 +53,14 @@ export function ApiSelector() {
     const [editedUrl, setEditedUrl] = useState(apiUrl)
     const [apiSelectorOpen, setApiSelectorOpen] = useState(false)
     const dispatch = useDispatch()
-    const [isError,setIsError] = useState(true)
-
-
-
-    useEffect(()=>{
-        setEditedUrl(apiUrl)
-        dispatch((setApiUrl(apiUrl)))
-      
-    },[apiUrl])
-
 
     useEffect(() => {
-        if (isError) {
+        if(apiError){
             dispatch(setApiError('API URL Error, please adjust API URL'))
-            setApiSelectorOpen(true)
-        } else {
-            setApiSelectorOpen(false)
-            setIsError(false)
         }
-     
-
-    }, [isError]);
-
-    useEffect(()=> {
-        if(apiError.length > 0) {
-            setIsError(true)
-            setApiSelectorOpen(true)
-          
-        }
-
-    },[apiError])
+        
+    }, []);
+   
 
     const handleApiUrlOpen = (e) => {
         e.preventDefault()
@@ -105,10 +72,8 @@ export function ApiSelector() {
         setEditedUrl(e.target.value)
     }
     const onUrlSubmit = (e) => {
-
         dispatch(setApiUrl(editedUrl))
-
-       
+        dispatch(loadLabels(editedUrl))
     }
 
     return (
@@ -123,7 +88,7 @@ export function ApiSelector() {
                         fontSize="small"
                     />
                 </button>
-                {apiSelectorOpen ? (
+                {apiSelectorOpen || apiError !== '' ? (
                     <div className="selector">
                         <span className="label">API URL</span>
                         <input
@@ -151,12 +116,26 @@ export function StatusBarSelectors() {
     const queryLimit = useSelector((store) => store.limit);
     const queryStep = useSelector((store) => store.step);
     const dispatch = useDispatch();
-    const [open, setOpen] = useState()
+    const [open, setOpen] = useState(false)
 
     const initialDateRange = () => {
-        if (isDate(startTs) && isDate(stopTs)) {
-            return { dateStart: startTs, dateEnd: stopTs }
-        }
+        try {
+            const ls = JSON.parse(localStorage.getItem(DATE_TIME_RANGE));
+            if (ls.label !== "") {
+                const range = findRangeByLabel(ls.label)
+                ls.dateStart = range.dateStart;
+                ls.dateEnd = range.dateEnd;
+            }else {
+                ls.dateStart = new Date(ls.dateStart);
+                ls.dateEnd = new Date(ls.dateEnd);
+            }
+            return ls;            
+        } catch (e) {
+            console.error(e);
+            if (isDate(startTs) && isDate(stopTs)) {
+                return { dateStart: startTs, dateEnd: stopTs }
+            }
+        } 
     }
     const isOpen = (e) => {
         e.preventDefault()
@@ -187,10 +166,14 @@ export function StatusBarSelectors() {
                     open={open}
                     isOpen={isOpen}
                     initialDateRange={initialDateRange()}
-                    onChange={({ dateStart, dateEnd }) => {
-                        if (isDate(dateStart)) dispatch(setStartTime(dateStart))
-                        if (isDate(dateEnd)) dispatch(setStopTime(dateEnd))
+                    onChange={({ dateStart, dateEnd, label }) => {
+                        const isStart = isDate(dateStart);
+                        const isEnd = isDate(dateEnd)
+                        if (isStart) dispatch(setStartTime(dateStart))
+                        if (isEnd) dispatch(setStopTime(dateEnd))
+                        if (isStart && isEnd) dispatch(setTimeRangeLabel(label))
                     }}
+                    // here
                 />
             </div>
         </LocalizationProvider>

@@ -1,7 +1,5 @@
 import * as moment from 'moment';
-import { environment } from '../environment/env.dev';
-
-export default () => {
+const initialState = () => {
     return {
         labels: [],
         labelValues:[],
@@ -9,10 +7,13 @@ export default () => {
         timeRange:[],
         query:'',
         queryValue:'',
-        logs: [],
+        logs: {
+            messages: [],
+        },
         loading: false,
         start:new Date(moment(Date.now()).subtract(5,"minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ")),
         stop:new Date(moment(Date.now()).format("YYYY-MM-DDTHH:mm:ss.SSSZ")),
+        label: 'Last 5 minutes',
         messages:[],
         limitLoad:false,
         limit: 1000,
@@ -20,7 +21,7 @@ export default () => {
         rangeOpen: false,
         labelsBrowserOpen: true,
         apiErrors:'',
-        urlQueryParams:'',
-        apiUrl:'',
+        apiUrl: '',
     }
 }
+export default initialState;

@@ -1,16 +1,21 @@
+import React, { Component } from 'react';
 import { Provider } from "react-redux";
+import LogSearch from './components/LogSearch';
 import store from './store/store';
 
-import MainView from "./components/MainView";
+export default class App extends Component {
 
-export default function App() {
+	constructor(props) {
+		super(props);
 
+		this.store = store
+	}
+
+	render() {
 		return (
-			<Provider store={store}>
-
-				<MainView/>
-			
+			<Provider store={this.store}>
+				<LogSearch/>
 			</Provider>
 		);
-	
+	}
 }
