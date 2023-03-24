@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Logo from "../assets/cloki-logo.png";
+import Logo from "./assets/cloki-logo.png";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { setStopTime, setStartTime, setQueryLimit, setQueryStep } from "../actions";
-import { DateRangePicker } from "../plugins/daterangepicker";
+import { setStopTime, setStartTime, setQueryLimit, setQueryStep } from "../../actions";
+import { DateRangePicker } from "../../plugins/daterangepicker";
 import isDate from "date-fns/isDate";
-import { setApiUrl } from "../actions/setApiUrl";
+import { setApiUrl } from "../../actions/setApiUrl";
 import LinkIcon from '@mui/icons-material/Link';
-import loadLabels from "../actions/LoadLabels";
-export const StatusBar = () => {
+// import loadLabels from "../../actions/LoadLabels";
+import { setApiError } from "../../actions/setApiError";
+// import { updateStateFromQueryParams } from "./helpers/updateStateFromQueryParams";
+
+
+export default function StatusBar() {
+
+// updateStateFromQueryParams()
 
     return (
         <div className="status-bar">
@@ -26,17 +32,25 @@ export const StatusBar = () => {
 };
 
 export function StatusBarInput(props) {
+
     const { label, value, dispatchAction, type } = props
     const dispatch = useDispatch()
+
+
+
+    const handleStatusInputChange = (e) => {
+
+    dispatch(dispatchAction(e.target.value))
+} 
+      
+    
     return (
         <div className="selector">
             <span className="label">{label}</span>
             <input
                 className={type}
                 value={value}
-                onChange={(newValue) => {
-                    dispatch(dispatchAction(newValue.target.value));
-                }}
+                onChange={handleStatusInputChange}
             />
 
         </div>
@@ -45,9 +59,42 @@ export function StatusBarInput(props) {
 
 export function ApiSelector() {
     const apiUrl = useSelector((store) => store.apiUrl)
+    const apiError = useSelector((store) => store.apiErrors)
     const [editedUrl, setEditedUrl] = useState(apiUrl)
     const [apiSelectorOpen, setApiSelectorOpen] = useState(false)
     const dispatch = useDispatch()
+    const [isError,setIsError] = useState(true)
+
+
+
+    useEffect(()=>{
+        setEditedUrl(apiUrl)
+        dispatch((setApiUrl(apiUrl)))
+      
+    },[apiUrl])
+
+
+    useEffect(() => {
+        if (isError) {
+            dispatch(setApiError('API URL Error, please adjust API URL'))
+            setApiSelectorOpen(true)
+        } else {
+            setApiSelectorOpen(false)
+            setIsError(false)
+        }
+     
+
+    }, [isError]);
+
+    useEffect(()=> {
+        if(apiError.length > 0) {
+            setIsError(true)
+            setApiSelectorOpen(true)
+          
+        }
+
+    },[apiError])
+
     const handleApiUrlOpen = (e) => {
         e.preventDefault()
         apiSelectorOpen ? setApiSelectorOpen(false) : setApiSelectorOpen(true)
@@ -58,8 +105,10 @@ export function ApiSelector() {
         setEditedUrl(e.target.value)
     }
     const onUrlSubmit = (e) => {
+
         dispatch(setApiUrl(editedUrl))
-        dispatch(loadLabels(editedUrl))
+
+       
     }
 
     return (
@@ -102,7 +151,7 @@ export function StatusBarSelectors() {
     const queryLimit = useSelector((store) => store.limit);
     const queryStep = useSelector((store) => store.step);
     const dispatch = useDispatch();
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState()
 
     const initialDateRange = () => {
         if (isDate(startTs) && isDate(stopTs)) {
