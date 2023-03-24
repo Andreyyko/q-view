@@ -1,13 +1,12 @@
 import axios from "axios";
 import { environment } from "../environment/env.dev";
-import { errorHandler } from "./errorHandler";
-import { setApiError } from "./setApiError";
 import setLabelValues from "./setLabelValues";
 import setLoading from "./setLoading";
 
 export default function loadLaebelValues(label, labelList, apiUrl) {
 
     if (label?.length <= 0 && label.lsList.length <= 0) {
+        console.log('Labels Error')
         return;
     };
 
@@ -50,16 +49,10 @@ export default function loadLaebelValues(label, labelList, apiUrl) {
                     });
                 }
 
-                dispatch(setLoading(false));
-                dispatch(setApiError(''))
                 dispatch(setLabelValues(response?.data?.data));
-             
-
+                dispatch(setLoading(false));
             }).catch(error => {
                 dispatch(setLoading(false))
-                const {message} = errorHandler(url,error)
-             dispatch(setApiError(message))
-               
                 console.log(error)
             })
     }

@@ -1,18 +1,14 @@
-import LinkIcon from '@mui/icons-material/Link';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import Logo from "../assets/cloki-logo.png";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import isDate from "date-fns/isDate";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setQueryLimit, setQueryStep, setStartTime, setStopTime, setTimeRangeLabel } from "../actions";
-import loadLabels from "../actions/LoadLabels";
-import { setApiError } from "../actions/setApiError";
-import { setApiUrl } from "../actions/setApiUrl";
-import Logo from "../assets/cloki-logo.png";
+import { setStopTime, setStartTime, setQueryLimit, setQueryStep } from "../actions";
 import { DateRangePicker } from "../plugins/daterangepicker";
-import { DATE_TIME_RANGE } from '../plugins/daterangepicker/consts';
-import {  findRangeByLabel } from "../plugins/daterangepicker/utils";
-
+import isDate from "date-fns/isDate";
+import { setApiUrl } from "../actions/setApiUrl";
+import LinkIcon from '@mui/icons-material/Link';
+import loadLabels from "../actions/LoadLabels";
 export const StatusBar = () => {
 
     return (
@@ -49,19 +45,9 @@ export function StatusBarInput(props) {
 
 export function ApiSelector() {
     const apiUrl = useSelector((store) => store.apiUrl)
-    const apiError = useSelector((store) => store.apiErrors)
     const [editedUrl, setEditedUrl] = useState(apiUrl)
     const [apiSelectorOpen, setApiSelectorOpen] = useState(false)
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        if(apiError){
-            dispatch(setApiError('API URL Error, please adjust API URL'))
-        }
-        
-    }, [dispatch, apiError]);
-   
-
     const handleApiUrlOpen = (e) => {
         e.preventDefault()
         apiSelectorOpen ? setApiSelectorOpen(false) : setApiSelectorOpen(true)
@@ -88,7 +74,7 @@ export function ApiSelector() {
                         fontSize="small"
                     />
                 </button>
-                {apiSelectorOpen || apiError !== '' ? (
+                {apiSelectorOpen ? (
                     <div className="selector">
                         <span className="label">API URL</span>
                         <input
@@ -119,23 +105,9 @@ export function StatusBarSelectors() {
     const [open, setOpen] = useState(false)
 
     const initialDateRange = () => {
-        try {
-            const ls = JSON.parse(localStorage.getItem(DATE_TIME_RANGE));
-            if (ls?.label !== "" && typeof ls.label !== 'undefined') {
-                const range = findRangeByLabel(ls?.label)
-                ls.dateStart = range.dateStart;
-                ls.dateEnd = range.dateEnd;
-            }else {
-                ls.dateStart = new Date(ls.dateStart);
-                ls.dateEnd = new Date(ls.dateEnd);
-
-            }
-            return ls;            
-        } catch (e) {
-            if (isDate(startTs) && isDate(stopTs)) {
-                return { dateStart: startTs, dateEnd: stopTs }
-            }
-        } 
+        if (isDate(startTs) && isDate(stopTs)) {
+            return { dateStart: startTs, dateEnd: stopTs }
+        }
     }
     const isOpen = (e) => {
         e.preventDefault()
@@ -166,15 +138,10 @@ export function StatusBarSelectors() {
                     open={open}
                     isOpen={isOpen}
                     initialDateRange={initialDateRange()}
-                    onChange={({ dateStart, dateEnd, label }) => {
-                        const isStart = isDate(dateStart);
-                        const isEnd = isDate(dateEnd)
-                        const isLabel = typeof label !== 'undefined';
-                        if (isStart) dispatch(setStartTime(dateStart))
-                        if (isEnd) dispatch(setStopTime(dateEnd))
-                        if (isLabel) dispatch(setTimeRangeLabel(label))
+                    onChange={({ dateStart, dateEnd }) => {
+                        if (isDate(dateStart)) dispatch(setStartTime(dateStart))
+                        if (isDate(dateEnd)) dispatch(setStopTime(dateEnd))
                     }}
-                    // here
                 />
             </div>
         </LocalizationProvider>

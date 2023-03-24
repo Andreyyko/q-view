@@ -1,4 +1,4 @@
-const reducer =  (state, action) => {
+export default (state, action) => {
     switch (action.type) {
         case "SET_LABELS":
             return { ...state, labels: action.labels };
@@ -12,8 +12,6 @@ const reducer =  (state, action) => {
             return { ...state, start: action.start };
         case "SET_STOP_TIME":
             return { ...state, stop: action.stop };
-        case "SET_TIME_RANGE_LABEL":
-            return { ...state, label: action.label };
         case "SET_QUERY_LIMIT":
                 return { ...state, limit: action.limit };
         case "SET_RANGE_OPEN":
@@ -30,4 +28,3 @@ const reducer =  (state, action) => {
             return { ...state };
     }
 };
-export default reducer;
