@@ -113,7 +113,7 @@ const PickerNav = props => {
 		return isValid(dateRange.dateStart) ? format(dateRange.dateStart, 'yyy-MM-dd HH:mm:ss') : dateRange.dateStart
 	}
 	const getEditedEndDate = () => {
-		return isValid(dateRange.dateEnd) ? format(dateRange.dateEnd, 'yyy-MM-dd HH:mm:ss') : typeof dateRange.dateEnd !== 'undefined' ? dateRange.dateEnd : ""
+		return isValid(dateRange.dateEnd) ? format(dateRange.dateEnd, 'yyy-MM-dd HH:mm:ss') : dateRange.dateEnd
 	}
 	const dateTimeBarStyle = {
 		display: 'flex',
@@ -131,9 +131,7 @@ const PickerNav = props => {
 							<Grid item>
 								<IconButton
 
-									onClick={e => {
-                                        props.onClose(e)
-                                    }}
+									onClick={props.onClose}
 									aria-label="close">
 									<CloseIcon />
 								</IconButton>
@@ -220,7 +218,6 @@ const PickerNav = props => {
 							selectedRange={dateRange}
 							ranges={ranges}
 							setRange={setDateRange}
-                            onClose={props.onClose}
 						/>
 					</Grid>
 				</Grid>
