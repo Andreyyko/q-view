@@ -12,7 +12,6 @@ module.exports = {
         publicPath: "auto",
        
     },
-    devtool: 'inline-source-map',
     performance: {
       hints: false
     },
@@ -28,6 +27,7 @@ module.exports = {
             systemvars:true
         })
     ],
+    devtool: false,
     module: {
         rules: [
             {
@@ -69,7 +69,7 @@ module.exports = {
         static: path.resolve(__dirname, "public"),
         historyApiFallback: true,
         host:  process.env.HOST || "0.0.0.0",
-        port: process.env.PORT ||  4500,
+        port: process.env.PORT ||  8080,
 
         allowedHosts: ["all"],
       

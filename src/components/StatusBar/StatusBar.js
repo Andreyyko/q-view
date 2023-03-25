@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Logo from "./assets/cloki-logo.png";
-import LinkIcon from '@mui/icons-material/Link';
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { setQueryLimit, setQueryStep, setStartTime, setStopTime, setTimeRangeLabel } from "../../actions";
+import { setStopTime, setStartTime, setQueryLimit, setQueryStep} from "../../actions";
+import { DateRangePicker } from "../../plugins/daterangepicker";
 import isDate from "date-fns/isDate";
 import { setApiUrl } from "../../actions/setApiUrl";
-import { setApiError } from "../../actions/setApiError";
-import { DateRangePicker } from "../../plugins/daterangepicker";
-import { DATE_TIME_RANGE } from '../../plugins/daterangepicker/consts';
-import {  findRangeByLabel } from "../../plugins/daterangepicker/utils";
-
+import LinkIcon from '@mui/icons-material/Link';
 
 export default function StatusBar() {
 
@@ -145,24 +141,10 @@ export function StatusBarSelectors() {
     const [copied, setCopied] = useState(false)
     const dispatch = useDispatch();
     const [open, setOpen] = useState()
-
+  
     const initialDateRange = () => {
-        try {
-            const ls = JSON.parse(localStorage.getItem(DATE_TIME_RANGE));
-            if (ls?.label !== "" && typeof ls.label !== 'undefined') {
-                const range = findRangeByLabel(ls?.label)
-                ls.dateStart = range.dateStart;
-                ls.dateEnd = range.dateEnd;
-            }else {
-                ls.dateStart = new Date(ls.dateStart);
-                ls.dateEnd = new Date(ls.dateEnd);
-
-            }
-            return ls;
-        } catch (e) {
-            if (isDate(startTs) && isDate(stopTs)) {
-                return { dateStart: startTs, dateEnd: stopTs }
-            }
+        if (isDate(startTs) && isDate(stopTs)) {
+            return { dateStart: startTs, dateEnd: stopTs }
         }
     }
     const isOpen = (e) => {
@@ -221,15 +203,10 @@ export function StatusBarSelectors() {
                     open={open}
                     isOpen={isOpen}
                     initialDateRange={initialDateRange()}
-                    onChange={({ dateStart, dateEnd, label }) => {
-                        const isStart = isDate(dateStart);
-                        const isEnd = isDate(dateEnd)
-                        const isLabel = typeof label !== 'undefined';
-                        if (isStart) dispatch(setStartTime(dateStart))
-                        if (isEnd) dispatch(setStopTime(dateEnd))
-                        if (isLabel) dispatch(setTimeRangeLabel(label))
+                    onChange={({ dateStart, dateEnd }) => {
+                        if (isDate(dateStart)) dispatch(setStartTime(dateStart))
+                        if (isDate(dateEnd)) dispatch(setStopTime(dateEnd))
                     }}
-                    // here
                 />
             </div>
         </LocalizationProvider>

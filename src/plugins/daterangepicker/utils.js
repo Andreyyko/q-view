@@ -1,16 +1,12 @@
 import {
-    startOfDay,
-    endOfDay,
 	startOfWeek,
 	startOfMonth,
 	endOfWeek,
 	endOfMonth,
 	isBefore,
-    addMinutes,
-    addHours,
 	addDays,
-	addWeeks,
 	addMonths,
+	addWeeks,
 	isSameDay,
 	isWithinInterval,
 	isSameMonth,
@@ -20,7 +16,6 @@ import {
 	min,
 	max
 } from "date-fns";
-import { isSameMinute } from "date-fns/esm";
 
 
 
@@ -69,12 +64,8 @@ export const isRangeSameDay = ({ dateStart, dateEnd }) => {
 	return false;
 };
 
-export const findRange = (dateRange) => {
-    return getDefaultRanges(new Date()).find(range =>  isSameRange(dateRange, range))?.label;
-}
-export const findRangeByLabel = (label) => {
-    return getDefaultRanges(new Date()).find(range => range.label === label);
-}
+
+
 export const parseOptionalDate = (date, defaultValue) => {
 	if (date instanceof Date) {
 		const parsed = toDate(date);
@@ -98,12 +89,10 @@ export const generateYears = (relativeTo, count) => {
 };
 
 export const isSameRange = (first, second) => {
-	const { dateStart: fStart, dateEnd: fEnd, label: fLabel } = first;
-	const { dateStart: sStart, dateEnd: sEnd, label: sLabel } = second;
-    if (fLabel === sLabel) {
-        return true;
-    } else if (fStart && sStart && fEnd && sEnd) {
-		return isSameMinute(fStart, sStart) && isSameMinute(fEnd, sEnd);
+	const { dateStart: fStart, dateEnd: fEnd } = first;
+	const { dateStart: sStart, dateEnd: sEnd } = second;
+	if (fStart && sStart && fEnd && sEnd) {
+		return isSameDay(fStart, sStart) && isSameDay(fEnd, sEnd);
 	}
 	return false;
 };
@@ -123,45 +112,16 @@ export const getValidatedMonths = (range, minDate, maxDate) => {
     }
 };
 
-export const getDefaultRanges = (date) => [
-    {
-		label: "Last 5 minutes",
-		dateStart: addMinutes(date, -5),
-		dateEnd: date
-	},{
-		label: "Last 15 minutes",
-		dateStart: addMinutes(date, -15),
-		dateEnd: date
-	},{
-		label: "Last 30 minutes",
-		dateStart: addMinutes(date, -30),
-		dateEnd: date
-	},{
-		label: "Last 3 hours",
-		dateStart: addHours(date, -3),
-		dateEnd: date
-	},{
-		label: "Last 6 hours",
-		dateStart: addHours(date, -6),
-		dateEnd: date
-	},{
-		label: "Last 12 hours",
-		dateStart: addHours(date, -12),
-		dateEnd: date
-	},{
-		label: "Last 24 hours",
-		dateStart: addHours(date, -24),
-		dateEnd: date
-	},
+const getDefaultRanges = (date) => [
 	{
 		label: "Today",
-		dateStart: startOfDay(date),
-		dateEnd: endOfDay(date)
+		dateStart: date,
+		dateEnd: date
 	},
 	{
 		label: "Yesterday",
-		dateStart: startOfDay(addDays(date, -1)),
-		dateEnd: endOfDay(addDays(date, -1))
+		dateStart: addDays(date, -1),
+		dateEnd: addDays(date, -1)
 	},
 	{
 		label: "This Week",
@@ -177,6 +137,16 @@ export const getDefaultRanges = (date) => [
 		label: "Last 7 Days",
 		dateStart: addWeeks(date, -1),
 		dateEnd: date
+	},
+	{
+		label: "This Month",
+		dateStart: startOfMonth(date),
+		dateEnd: endOfMonth(date)
+	},
+	{
+		label: "Last Month",
+		dateStart: startOfMonth(addMonths(date, -1)),
+		dateEnd: endOfMonth(addMonths(date, -1))
 	}
 ];
 
