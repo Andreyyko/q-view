@@ -19,6 +19,7 @@ export default () => {
         loading: false,
         start: externalState.start || new Date(moment(Date.now()).subtract(5,"minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ")),
         stop: externalState.end || new Date(moment(Date.now()).format("YYYY-MM-DDTHH:mm:ss.SSSZ")),
+        label: 'Last 5 Minutes',
         messages: [],
         limitLoad: false,
         limit: externalState.limit || 1000,
@@ -79,3 +80,4 @@ export function stateFromQueryParams () {
     return {}
   }
 }
+export default initialState;
