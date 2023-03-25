@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const isDevelopment = process.env.NODE_ENV === 'development'
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const Dotenv = require('dotenv-webpack')
+const webpack = require('webpack')
 const path = require("path")
 const TerserPlugin = require('terser-webpack-plugin')
 module.exports = {

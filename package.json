@@ -23,8 +23,7 @@
     "react-dom": "^17.0.2",
     "react-lowlight": "^3.0.0",
     "react-redux": "^7.2.6",
-    "react-router-dom": "^6.2.1",
-    "react-scripts": "^5.0.0",
+    "react-scripts": "5.0.0",
     "redux-thunk": "^2.4.1"
   },
   "scripts": {
@@ -36,8 +35,7 @@
     "eject": "react-scripts eject",
     "start": "npx webpack-dev-server",
     "build-old": "webpack --mode production",
-    "webpack-build": "webpack --config webpack.config.prod.js --mode=production",
-    "build": "CI=false && react-scripts build"
+    "build": "webpack --config webpack.config.prod.js --mode=production"
   },
   "eslintConfig": {
     "extends": [

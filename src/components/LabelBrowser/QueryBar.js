@@ -1,123 +1,80 @@
-import React, { useState, useEffect,/* useCallback */ } from "react";
-import { useSelector, useDispatch } from 'react-redux'
-import { setIsSubmit, setQuery } from "../../actions";
-import loadLogs from "../../actions/loadLogs"
+import React, { useState, useEffect, useCallback } from "react";
+import {useSelector, useDispatch} from 'react-redux'
 import { setLabelsBrowserOpen } from "../../actions/setLabelsBrowserOpen";
 
-export const QueryBar = () => {
-    //const [query, setQuery] = useState(props.query);
-
-    const dispatch = useDispatch()
-    const labelsBrowserOpen = useSelector((store) => store.labelsBrowserOpen)
-    const debug = useSelector(store => store.debug)
-    const stop = useSelector(store => store.stop)
-    const start = useSelector(store => store.start)
-    const limit = useSelector(store => store.limit)
-    const step = useSelector(store => store.step)
-    const apiUrl = useSelector(store => store.apiUrl)
-    const query = useSelector((store) => store.query)
-    const isSubmit = useSelector(store => store.isSubmit)
-    const [queryInput, setQueryInput] = useState(query)
+export const QueryBar = (props) => {
+    const [query, setQuery] = useState(props.query);
     const [queryValid, setQueryValid] = useState(false)
-    const SHOW_LOGS = "Show Logs"
-    const LOG_BROWSER = "Log Browser"
-    const onQueryValid = (query) => {
-        return query !== '{' && query !== '}' && query !== '{}' && query !== '' // TODO: make a proper query validation
-    }
+    const dispatch = useDispatch()
+    const labelsBrowserOpen = useSelector(( state ) => state.labelsBrowserOpen)
 
- 
-    useEffect(()=>{
-   // force a query to be run after load of component
-   if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
 
-   if (onQueryValid(query && isSubmit === "true") ) {
-       if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
-     
-       dispatch(loadLogs(query, [start, stop], limit, step, apiUrl))
-    
-       setTimeout(()=>{
-        dispatch(setIsSubmit(false))
-       },200)
-    
-   } else if( !onQueryValid(query) && isSubmit === "true") {
-    dispatch(setIsSubmit(false))
-   }
-
-    },[])
-
+// validate query after submit
     useEffect(() => {
-        setQueryInput(query);
-        setQueryValid(onQueryValid(query))
-    }, [query, queryInput]);
+        setQuery(props.query);
+        setQueryValid(onQueryValid(props.query))
+    }, [props.query]);
 
+    const onSubmit = (e) => {
+        dispatch(setLabelsBrowserOpen(false))
+        e.preventDefault();
+        props.onSubmit(query);
+    };
 
     const onValueDisplay = (e) => {
         e.preventDefault()
         const isOpen = labelsBrowserOpen ? false : true;
         dispatch(setLabelsBrowserOpen(isOpen))
     };
-
+    
     const handleChange = (e) => {
         const qr = e.target.value;
-        setQueryInput(qr)
-        dispatch(setQuery(qr))
+        setQueryValid(onQueryValid(qr))
+        setQuery(qr);
     };
 
     const onBrowserActive = () => {
         return !labelsBrowserOpen ? ({
-            'borderColor': '#11abab'
+            'borderColor':'#11abab'
         }) : ({})
     }
 
     const handleInputKeyDown = (e) => {
-        if (e.code === 'Enter' && e.ctrlKey) {
+        if(e.code === 'Enter' && e.ctrlKey ){
             onSubmit(e)
         }
     }
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        
-        dispatch(setQuery(queryInput))
 
-        if (onQueryValid(query)) {
-            dispatch(setLabelsBrowserOpen(false))
-            dispatch(loadLogs(query, [start, stop], limit, step, apiUrl))
-
-        } else {
-
-            console.log("Please make a log query", query);
-
-        }
-    };
-
-
-
+    const onQueryValid = (query) => {
+       return query !== '{' && query !== '}' && query !== '{}' && query !== '' // TODO: make a proper query validation
+    }
     return (
-        <div className={"query-bar-container"}>
-            <span
-                style={onBrowserActive()}
-                className={"show-log-browser"} onClick={onValueDisplay}>
-                {LOG_BROWSER}
+        <div className="query-bar-container">
+            <span 
+            style={onBrowserActive()}
+            className={"show-log-browser"} onClick={onValueDisplay}>
+                log browser
             </span>
 
             <input
-                className={"query-bar-input"}
-                placeholder={"Enter a cLoki Query"}
+                className="query-bar-input"
+                placeholder="Enter a cLoki Query"
                 onChange={handleChange}
-                value={queryInput}
+                value={query}
                 tabIndex='0'
                 onKeyDown={handleInputKeyDown}
             />
-
+            
             <button
-                disabled={!queryValid}
+               disabled={!queryValid}
                 type="submit"
                 onClick={onSubmit}
                 className="show-logs"
             >
-                {SHOW_LOGS}
+                Show Logs
             </button>
         </div>
     );
 };
+
