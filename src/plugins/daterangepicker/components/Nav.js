@@ -78,17 +78,15 @@ const PickerNav = props => {
 
 	const handleStopInputChange = (event) => {
 		event.preventDefault()
-		const value = new Date(event.target.value);
-        if (isValid(value)) {
-		    setEditedEndDate(value)
-        }
-    }
+		const value = event.target.value
+
+		setEditedEndDate(value)
+
+	}
 	const handleStartInputChange = (event) => {
 		event.preventDefault()
-		const value = new Date(event.target.value);
-        if (isValid(value)) {        
-		    setEditedStartDate(value);
-        }
+		const value = event.target.value;
+		setEditedStartDate(value);
 	}
 
 
@@ -96,14 +94,11 @@ const PickerNav = props => {
 		e.preventDefault()
         const startDate = new Date(editedStartDate)
 		const endDate = new Date(editedEndDate)
-        console.log(editedStartDate)
 		if (isDate(startDate) && !isSameSecond(dateRange.dateStart, startDate)) {
 			dispatch(setStartTime(startDate));
-            setEditedStartDate(startDate)
 		}
 		if (isValid(endDate) && !isSameSecond(dateRange.dateEnd, endDate)) {
 			dispatch(setStopTime(endDate));
-            setEditedEndDate(endDate)
 		}
 		if (isValid(endDate) && isDate(startDate) && (!isSameSecond(dateRange.dateStart, startDate) || !isSameSecond(dateRange.dateEnd, endDate))) {
             setDateRange({dateStart: startDate, dateEnd: endDate})
@@ -115,10 +110,10 @@ const PickerNav = props => {
         localStorage.setItem(DATE_TIME_RANGE, JSON.stringify(range));
     }
 	const getEditedStartDate = () => {
-		return isValid(editedStartDate) ? format(editedStartDate, 'yyy-MM-dd HH:mm:ss') : editedStartDate
+		return isValid(dateRange.dateStart) ? format(dateRange.dateStart, 'yyy-MM-dd HH:mm:ss') : dateRange.dateStart
 	}
 	const getEditedEndDate = () => {
-		return isValid(editedEndDate) ? format(editedEndDate, 'yyy-MM-dd HH:mm:ss') : typeof editedEndDate !== 'undefined' ? editedEndDate : ""
+		return isValid(dateRange.dateEnd) ? format(dateRange.dateEnd, 'yyy-MM-dd HH:mm:ss') : dateRange.dateEnd
 	}
 	const dateTimeBarStyle = {
 		display: 'flex',
@@ -136,9 +131,7 @@ const PickerNav = props => {
 							<Grid item>
 								<IconButton
 
-									onClick={e => {
-                                        props.onClose(e)
-                                    }}
+									onClick={props.onClose}
 									aria-label="close">
 									<CloseIcon />
 								</IconButton>
@@ -225,7 +218,6 @@ const PickerNav = props => {
 							selectedRange={dateRange}
 							ranges={ranges}
 							setRange={setDateRange}
-                            onClose={props.onClose}
 						/>
 					</Grid>
 				</Grid>
