@@ -9,7 +9,6 @@ export const QueryBar = () => {
 
     const dispatch = useDispatch()
     const labelsBrowserOpen = useSelector(( store ) => store.labelsBrowserOpen)
-    const debug = useSelector(store => store.debug)
     const stop = useSelector(store => store.stop)
     const start = useSelector(store => store.start)
     const limit = useSelector(store => store.limit)
@@ -18,15 +17,6 @@ export const QueryBar = () => {
     const query = useSelector( (store) => store.query)
     const [queryInput, setQueryInput] = useState(query)
     const [queryValid, setQueryValid] = useState(false)
-
-
-      // force a query to be run after load of component
-    if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
-    if (query.length > 1) {
-      if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
-        dispatch(loadLogs( query, [start, stop], limit, step, apiUrl ))
-    }
-
 
 
     useEffect(() => {
