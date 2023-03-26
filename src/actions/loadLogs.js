@@ -2,7 +2,6 @@ import axios from "axios";
 import setLogs from "./setLogs";
 import setLoading from "./setLoading";
 
-import store from '../store/store'
 
 // *query : LogQl Query
 // *limit : Limit of returned lines
@@ -13,13 +12,13 @@ import store from '../store/store'
 
 // *time: [start,end]
 
-export default function loadLogs() {
+export default function loadLogs(label, time, limit, step, apiUrl) {
     // const step = 120
     // const direction = 'backward'
-    const {query: label, start: startTs, stop: stopTs, limit, step, apiUrl} = store.getState();
     const origin = window.location.origin;
     const url = apiUrl;
-    const parsedTime ="&start=" + startTs?.getTime() +"000000" + "&end=" + stopTs?.getTime() + "000000";
+    const [startTs, stopTs] = time;
+    const parsedTime ="&start=" + startTs.getTime() +"000000" +"&end=" + stopTs.getTime() + "000000";
 
     const queryStep = `&step=${step || 120}`;
 

@@ -33,7 +33,7 @@ export const QueryBar = () => {
    if (onQueryValid(query && isSubmit === "true") ) {
        if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
      
-       dispatch(loadLogs())
+       dispatch(loadLogs(query, [start, stop], limit, step, apiUrl))
     
        setTimeout(()=>{
         dispatch(setIsSubmit(false))
