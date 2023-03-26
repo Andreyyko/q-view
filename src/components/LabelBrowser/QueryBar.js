@@ -27,21 +27,21 @@ export const QueryBar = () => {
 
  
     useEffect(()=>{
-    // force a query to be run after load of component
-    if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
+   // force a query to be run after load of component
+   if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
 
-    if (onQueryValid(query && isSubmit === "true") ) {
-        if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
-        // here
-        dispatch(loadLogs())
-
-        setTimeout(()=>{
-            dispatch(setIsSubmit(false))
-        },200)
-
-    } else if( !onQueryValid(query) && isSubmit === "true") {
+   if (onQueryValid(query && isSubmit === "true") ) {
+       if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
+     
+       dispatch(loadLogs())
+    
+       setTimeout(()=>{
         dispatch(setIsSubmit(false))
-    }
+       },200)
+    
+   } else if( !onQueryValid(query) && isSubmit === "true") {
+    dispatch(setIsSubmit(false))
+   }
 
     },[])
 

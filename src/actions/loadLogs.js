@@ -1,10 +1,9 @@
 import axios from "axios";
 import setLogs from "./setLogs";
 import setLoading from "./setLoading";
-
 import store from '../store/store'
-import { findRangeByLabel } from "../plugins/daterangepicker/utils";
-import { setStartTime, setStopTime } from "./";
+import setMatrixData from "./setMatrixData";
+
 // *query : LogQl Query
 // *limit : Limit of returned lines
 // *start : The start time for the query as a nanosecond Unix epoch. Defaults to one hour ago
@@ -17,14 +16,7 @@ import { setStartTime, setStopTime } from "./";
 export default function loadLogs() {
     // const step = 120
     // const direction = 'backward'
-    const localStore = store.getState();
-    const {query: label, limit, step, apiUrl, label: rangeLabel} = localStore;
-    let { start: startTs, stop: stopTs } = localStore;
-    if (rangeLabel !== '') {
-        ;({dateStart: startTs, dateEnd: stopTs } = findRangeByLabel(rangeLabel));
-        store.dispatch(setStartTime(startTs))
-        store.dispatch(setStopTime(stopTs))
-    }
+    const {query: label, start: startTs, stop: stopTs, limit, step, apiUrl} = store.getState();
     const origin = window.location.origin;
     const url = apiUrl;
     const parsedTime ="&start=" + startTs?.getTime() +"000000" + "&end=" + stopTs?.getTime() + "000000";
@@ -85,6 +77,9 @@ export default function loadLogs() {
                     const type = response?.data?.data?.resultType;
 
                     mapStreams(result, messages, type);
+                    if(type==='matrix') {
+                        dispatch(setMatrixData(result))
+                    }
                     dispatch(setLogs(messages || []));
                     dispatch(setLoading(false));
                 }

@@ -4,10 +4,10 @@ import { environment } from '../environment/env.dev';
 
 const debug = setDebug(environment.environment)
 
-const initialState = () => {
+ const createInitialState = () => {
     if (debug) console.log('🚧 LOGIC/ INITIAL STATE 🚧')
-    const externalState = stateFromQueryParams()
-    const state =  {
+    var externalState = stateFromQueryParams()
+    var state =  {
         debug: setDebug(environment.environment),
         labels: [],
         labelValues:[],
@@ -16,10 +16,11 @@ const initialState = () => {
         query: externalState.query || '',
         queryValue: '',
         logs: [],
+        matrixData: [],
         loading: false,
         start: externalState.start || new Date(moment(Date.now()).subtract(5,"minutes").format("YYYY-MM-DDTHH:mm:ss.SSSZ")),
         stop: externalState.end || new Date(moment(Date.now()).format("YYYY-MM-DDTHH:mm:ss.SSSZ")),
-        label: 'Last 5 minutes',
+        label: 'Last 5 Minutes',
         messages: [],
         limitLoad: false,
         limit: externalState.limit || 1000,
@@ -35,7 +36,7 @@ const initialState = () => {
     if (debug) console.log('🚧 LOGIC/ INITIAL STATE ::: ', state)
     return state
 }
-export default initialState;
+
 function setDebug (envSetting) {
   if (envSetting === 'dev') {
     return true
@@ -85,3 +86,5 @@ function stateFromQueryParams () {
     return {}
   }
 }
+
+export default createInitialState;
