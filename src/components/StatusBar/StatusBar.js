@@ -86,8 +86,8 @@ export function ApiSelector() {
 
     }, [apiError])
 
-    const handleApiUrlOpen = (e = null) => {
-        e?.preventDefault()
+    const handleApiUrlOpen = (e) => {
+        e.preventDefault()
         apiSelectorOpen ? setApiSelectorOpen(false) : setApiSelectorOpen(true)
     }
 
@@ -99,10 +99,6 @@ export function ApiSelector() {
         console.log(apiUrl, "API URL CHANGE")
 
         dispatch(setApiUrl(editedUrl))
-        const condition = true;
-        if (condition) {
-            handleApiUrlOpen()
-        }
     }
 
     return (
@@ -182,7 +178,7 @@ export function StatusBarSelectors() {
                 dispatch(setIsSubmit(false))
             }, 1500)
         }, function (err) {
-            console.err('error on copy', err)
+            console.log('error on copy', err)
         })
       },200)
             
