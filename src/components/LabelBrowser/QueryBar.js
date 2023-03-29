@@ -1,4 +1,4 @@
-import React, { useState, useEffect,/* useCallback */ } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsSubmit, setQuery } from "../../actions";
 import loadLogs from "../../actions/loadLogs"
@@ -10,11 +10,6 @@ export const QueryBar = () => {
     const dispatch = useDispatch()
     const labelsBrowserOpen = useSelector((store) => store.labelsBrowserOpen)
     const debug = useSelector(store => store.debug)
-    const stop = useSelector(store => store.stop)
-    const start = useSelector(store => store.start)
-    const limit = useSelector(store => store.limit)
-    const step = useSelector(store => store.step)
-    const apiUrl = useSelector(store => store.apiUrl)
     const query = useSelector((store) => store.query)
     const isSubmit = useSelector(store => store.isSubmit)
     const [queryInput, setQueryInput] = useState(query)
@@ -27,21 +22,21 @@ export const QueryBar = () => {
 
  
     useEffect(()=>{
-    // force a query to be run after load of component
-    if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
+   // force a query to be run after load of component
+   if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
 
-    if (onQueryValid(query && isSubmit === "true") ) {
-        if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
-        // here
-        dispatch(loadLogs())
-
-        setTimeout(()=>{
-            dispatch(setIsSubmit(false))
-        },200)
-
-    } else if( !onQueryValid(query) && isSubmit === "true") {
+   if (onQueryValid(query && isSubmit === "true") ) {
+       if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
+     
+       dispatch(loadLogs())
+    
+       setTimeout(()=>{
         dispatch(setIsSubmit(false))
-    }
+       },200)
+    
+   } else if( !onQueryValid(query) && isSubmit === "true") {
+    dispatch(setIsSubmit(false))
+   }
 
     },[])
 
@@ -82,7 +77,7 @@ export const QueryBar = () => {
 
         if (onQueryValid(query)) {
             dispatch(setLabelsBrowserOpen(false))
-            dispatch(loadLogs(query, [start, stop], limit, step, apiUrl))
+            dispatch(loadLogs())
 
         } else {
 
