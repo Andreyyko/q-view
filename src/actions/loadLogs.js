@@ -1,9 +1,10 @@
 import axios from "axios";
 import setLogs from "./setLogs";
 import setLoading from "./setLoading";
-import store from '../store/store'
-import setMatrixData from "./setMatrixData";
 
+import store from '../store/store'
+import { findRangeByLabel } from "../plugins/daterangepicker/utils";
+import { setStartTime, setStopTime } from "./";
 // *query : LogQl Query
 // *limit : Limit of returned lines
 // *start : The start time for the query as a nanosecond Unix epoch. Defaults to one hour ago
@@ -11,10 +12,19 @@ import setMatrixData from "./setMatrixData";
 // *step : Resolution step width in either a duration [1s, 5s, 5m etc] or number of seconds
 // *direction : Determines sort order of logs. Either forward or backward. Default is backward
 
+// *time: [start,end]
 
 export default function loadLogs() {
-
-    const {query: label, start: startTs, stop: stopTs, limit, step, apiUrl} = store.getState();
+    // const step = 120
+    // const direction = 'backward'
+    const localStore = store.getState();
+    const {query: label, limit, step, apiUrl, label: rangeLabel} = localStore;
+    let { start: startTs, stop: stopTs } = localStore;
+    if (rangeLabel !== '') {
+        ;({dateStart: startTs, dateEnd: stopTs } = findRangeByLabel(rangeLabel));
+        store.dispatch(setStartTime(startTs))
+        store.dispatch(setStopTime(stopTs))
+    }
     const origin = window.location.origin;
     const url = apiUrl;
     const parsedTime ="&start=" + startTs?.getTime() +"000000" + "&end=" + stopTs?.getTime() + "000000";
@@ -73,17 +83,9 @@ export default function loadLogs() {
                     let messages = [];
                     const result = response?.data?.data.result; // array
                     const type = response?.data?.data?.resultType;
-                    if(type==='streams'){
-                      mapStreams(result, messages, type);
-                        dispatch(setMatrixData([]))
-                        dispatch(setLogs(messages || []));
-                        dispatch(setLoading(false));
-                    }
-                   
-                    if(type==='matrix') {
-                        dispatch(setMatrixData(result || []))
-                        dispatch(setLoading(false))
-                    }
+
+                    mapStreams(result, messages, type);
+                    dispatch(setLogs(messages || []));
                     dispatch(setLoading(false));
                 }
                 dispatch(setLoading(false));
