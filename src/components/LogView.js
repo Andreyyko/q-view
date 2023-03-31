@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { CircularProgress } from "@mui/material";
 import * as moment from "moment";
-import ClokiChart from "../plugins/charts";
-
+import store from "../store/store"
+import { IconButton } from "@mui/material";
+import { ZoomIn, ZoomOut } from "@mui/icons-material/";
+import { setLabels } from "../actions";
+import { queryBuilderWithLabels } from "./LabelBrowser/helpers/querybuilder";
+import loadLabelValues from '../actions/loadLabelValues';
 const TAGS_LEVEL = {
     critical: ['emerg', 'fatal', 'alert', 'crit', 'critical'],
     error: ['err', 'eror', 'error', 'warning'],
@@ -13,11 +17,42 @@ const TAGS_LEVEL = {
     trace: ['trace']
 }
 export const ValueTags = (props) => {
-
+    const addLabel = async (e, key, value, isInverted = false) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const {labels, apiUrl} = store.getState();
+        const label = labels.find(label => label.name === key);
+        if (label) {
+            const labelValue = label.values.find(tag => tag.name === value);
+            if (labelValue) {
+                labelValue.selected = !labelValue.selected || (labelValue.inverted !== isInverted);
+                labelValue.inverted = !labelValue.inverted && isInverted;
+                label.selected = label.values.some(value => value.selected);
+                store.dispatch(setLabels(labels));
+                queryBuilderWithLabels()
+            } else {
+                await store.dispatch(loadLabelValues(label,labels,apiUrl));
+                const updatedLabels = store.getState().labels;
+                const updatedLabel = updatedLabels.find(label => label.name === key);
+                const labelValue = updatedLabel.values.find(tag => tag.name === value);
+                labelValue.selected = !labelValue.selected || (labelValue.inverted !== isInverted);
+                labelValue.inverted = !labelValue.inverted && isInverted;
+                updatedLabel.selected = updatedLabel.values.some(value => value.selected);
+                store.dispatch(setLabels(updatedLabels));
+                queryBuilderWithLabels()
+            }
+        }
+    }
     const getTags = (tags) => {
         return Object.entries(tags).map(
             ([key, value], k) => (
                 <div className={"value-tags"} key={k}>
+                    <IconButton  onClick={(e) => addLabel(e, key, value)} aria-label="Filter for value" size="small" color="primary">
+                        <ZoomIn />
+                    </IconButton>
+                    <IconButton  onClick={(e) => addLabel(e, key, value, true)} aria-label="Filter out value" size="small" color="primary">
+                        <ZoomOut />
+                    </IconButton>
                     <span>{key}</span>
                     <span>{value}</span>
                 </div>
@@ -36,7 +71,6 @@ class LogView extends Component {
             limitLoad: this.props.limitLoad || false,
             limit: props.limit || 100,
             messages: props.messages || [],
-            matrixData: props.matrixData || [],
             loading: false
         }
 
@@ -47,12 +81,7 @@ class LogView extends Component {
             display: 'flex'
         } : { display: 'none' })
     }
-    getMatrixForChart = () => {
-        return this.props.matrixData
-    }
-    getLimit = () => {
-        return this.props.limit
-    }
+
     onShowTags = (e, value) => {
         e.preventDefault()
         value.showLabels = !value.showLabels;
@@ -72,63 +101,28 @@ class LogView extends Component {
         return (
             <div className={"log-view"}>
                 <div className={`logs-box`}>
-                    {this.getLogs().length > 0 && this.getMatrixForChart().length < 1 ? (
-                        this.getLogs().map((value, key) => (
-                            <div
-                                key={key}
-                                className={`line ${this.getLogColor(value.tags)}`}
-                                onClick={e => this.onShowTags(e, value)}
-                            >
-                                <span id={value.timestamp} className={"timestamp"}>
-                                    {this.formatDate(value.timestamp)}
-                                </span>
-                                <span className={"log-line"}>{value.text}</span>
-    
-                                {value.tags && (
-                                    <div className={"value-tags-container"}
-                                        style={this.onTagsShow(value.showLabels)}
-                                    >
-                                        <ValueTags
-                                            tags={value.tags}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        )
-
-                    )   ): (null)}
-
-
-                    {this.getMatrixForChart().length > 0 ? (
-                        <ClokiChart
-                        chartLimit={this.getLimit()}
-                        matrixData={this.getMatrixForChart()}
-                        />
-                    ) : (null)}
-                        {this.getLogs().length < 1 && this.getMatrixForChart().length < 1 && !this.props.loading &&(
+                    {this.getLogs() && this.getLogs().map((value, key) => (
                         <div
-                        style={{
-                            color:"white",
-                            display:"flex",
-                            alignItems:"center",
-                            justifyContent:"center",
-                            width:"100%",
-                            height:"175px"
-                        }}
+                            key={key}
+                            className={`line ${this.getLogColor(value.tags)}`}
+                            onClick={e => this.onShowTags(e, value)}
                         >
-                            <span
-                            style={{
-                                fontSize:"1em",
-                                color:"#aaa",
-                                fontWeight:"lighter",
-                                letterSpacing:"1px"
-                            }}
-                            >
-                            Please Adjust Search Parameters and Click on Show Logs 
+                            <span id={value.timestamp} className={"timestamp"}>
+                                {this.formatDate(value.timestamp)}
                             </span>
-                        
-                            </div>
-                    )}
+                            <span className={"log-line"}>{value.text}</span>
+
+                            {value.tags && (
+                                <div className={"value-tags-container"}
+                                    style={this.onTagsShow(value.showLabels)}
+                                >
+                                    <ValueTags
+                                        tags={value.tags}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    ))}
                     {this.props.loading && (
                         <CircularProgress
                             className={"progress"}
@@ -142,8 +136,8 @@ class LogView extends Component {
 
     getLogs = () => {
 
-        return this.props.messages?.sort((a, b) => (a.timestamp < b.timestamp) ? 1 : -1);
-
+            return this.props.messages?.sort((a, b) => (a.timestamp < b.timestamp) ? 1 : -1);
+        
     };
 
     formatDate = (timestamp) => {
@@ -158,7 +152,6 @@ const mapStateToProps = (state) => {
         stop: state.stop,
         limit: state.limit,
         loading: state.loading,
-        matrixData: state.matrixData
     };
 };
 
