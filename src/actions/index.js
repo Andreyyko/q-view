@@ -8,4 +8,5 @@ export * from "./setTimeRangeLabel"
 export * from "./setApiUrl";
 export * from "./setQuery";
 export * from "./setIsSubmit";
-export * from "./setLabels"
+export * from "./setApiError";
+export * from "./errorHandler";
