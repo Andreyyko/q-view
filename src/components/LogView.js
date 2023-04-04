@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { CircularProgress } from "@mui/material";
 import * as moment from "moment";
 import ClokiChart from "../plugins/charts";
+import SearchHistory from "../plugins/searchhistory";
 
 const TAGS_LEVEL = {
     critical: ['emerg', 'fatal', 'alert', 'crit', 'critical'],
@@ -39,22 +40,14 @@ class LogView extends Component {
             matrixData: props.matrixData || [],
             loading: false
         }
+
+
     }
-
-
-     toggleTagsActive(idx) {
-        let arrCopy = [...this.props.messages]
-        arrCopy.forEach( entry => {
-            if(entry.id === idx) {
-                entry.showLabels = entry.showLabels ? false : true
-            }
-        })
-        this.setState({...this.state,logs : arrCopy})
+    onTagsShow = (show) => {
+        return (show ? {
+            display: 'flex'
+        } : { display: 'none' })
     }
-    toggleActiveStyles(idx){
-        return idx.showLabels ? "value-tags-container labelsActive" :  "value-tags-container labelsInactive"
-
-    } 
     getMatrixForChart = () => {
         return this.props.matrixData
     }
@@ -65,7 +58,7 @@ class LogView extends Component {
         e.preventDefault()
         value.showLabels = !value.showLabels;
         const logs = value
-        this.setState({ ...this.state, messages: logs })
+        this.setState({ ...this.state, logs })
     }
 
     getLogColor = (tags) => {
@@ -80,12 +73,12 @@ class LogView extends Component {
         return (
             <div className={"log-view"}>
                 <div className={`logs-box`}>
-                    {this.props.messages.length > 0 && this.getMatrixForChart().length < 1 ? (
-                        this.props.messages.map((value, key) => (
+                    {this.getLogs().length > 0 && this.getMatrixForChart().length < 1 ? (
+                        this.getLogs().map((value, key) => (
                             <div
                                 key={key}
                                 className={`line ${this.getLogColor(value.tags)}`}
-                                onClick={e => this.toggleTagsActive(value.id)}
+                                onClick={e => this.onShowTags(e, value)}
                             >
                                 <span id={value.timestamp} className={"timestamp"}>
                                     {this.formatDate(value.timestamp)}
@@ -93,7 +86,8 @@ class LogView extends Component {
                                 <span className={"log-line"}>{value.text}</span>
     
                                 {value.tags && (
-                                    <div className={this.toggleActiveStyles(value)}
+                                    <div className={"value-tags-container"}
+                                        style={this.onTagsShow(value.showLabels)}
                                     >
                                         <ValueTags
                                             tags={value.tags}
@@ -112,7 +106,7 @@ class LogView extends Component {
                         matrixData={this.getMatrixForChart()}
                         />
                     ) : (null)}
-                        {this.props.messages.length < 1 && this.getMatrixForChart().length < 1 && !this.props.loading &&(
+                        {this.getLogs().length < 1 && this.getMatrixForChart().length < 1 && !this.props.loading &&(
                         <div
                         style={{
                             color:"white",
@@ -136,6 +130,7 @@ class LogView extends Component {
                         
                             </div>
                     )}
+                    <SearchHistory/>
                     {this.props.loading && (
                         <CircularProgress
                             className={"progress"}
@@ -147,6 +142,11 @@ class LogView extends Component {
         );
     }
 
+    getLogs = () => {
+
+        return this.props.messages?.sort((a, b) => (a.timestamp < b.timestamp) ? 1 : -1);
+
+    };
 
     formatDate = (timestamp) => {
         return moment(parseInt(timestamp)).format("YYYY-MM-DD HH:mm:ss.SSS UTC");
