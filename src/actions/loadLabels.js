@@ -19,8 +19,7 @@ export default function loadLabels(apiUrl) {
         method: "GET",
         headers: headers,
         mode: "cors",
-    };
-
+    }; 
     return function (dispatch) {
 
      
@@ -41,8 +40,6 @@ export default function loadLabels(apiUrl) {
                 }));
                
                 dispatch(setLabels(labels || []));
-             
-                dispatch(setApiError(''))
             }
 
         }
@@ -52,7 +49,6 @@ export default function loadLabels(apiUrl) {
                 console.log(error)
                 dispatch(setLoading(false))
                 const {message,status} = errorHandler(url, error)
-                dispatch(setApiError(message || status + 'Error'))
                 dispatch(setLabels([]))
              
             })
