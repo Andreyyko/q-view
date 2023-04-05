@@ -103,8 +103,7 @@ export default function loadLogs() {
                     }
 
                     if (type === "matrix") {
-                        const idResult = result.map( m => ({...m,id:nanoid()}))
-                        dispatch(setMatrixData(idResult || []));
+                        dispatch(setMatrixData(result || []));
                         dispatch(setLoading(false));
                     }
                     dispatch(setLoading(false));

@@ -22,7 +22,6 @@ function ClokiChart({ matrixData }) {
     const [allData, getAllData] = useState(getDataParsed(false));
     const [labels, setLabels] = useState([]);
     const [element, setElement] = useState(chartRef.current);
-    // set it to local storage
 
     const options = {
         xaxis: {
@@ -43,7 +42,8 @@ function ClokiChart({ matrixData }) {
         legend: {
             show: false,
         },
-
+   
+        
         interaction: {
             redrawOverlayInterval: 1,
         },
@@ -89,7 +89,9 @@ function ClokiChart({ matrixData }) {
                 if (previousPoint !== item.dataIndex) {
                     $q("#tooltip").remove();
                     const tooltipTemplate = `
-                    <div style="${"display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #666;padding:6px"}">
+                    <div style="${
+                        "display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #666;padding:6px"
+                    }">
                     <p>${moment(item.datapoint[0]).format(
                         "YYYY-MM-DDTHH:mm:ss.SSSZ"
                     )}</p>
@@ -110,7 +112,7 @@ function ClokiChart({ matrixData }) {
                         item.pageY,
                         tooltipTemplate,
                         labelLength
-                    );
+                    ); 
                 }
             } else {
                 $q("#tooltip").remove();
@@ -181,19 +183,20 @@ function ClokiChart({ matrixData }) {
     }
 
     function getDataParsed(spliced) {
-        const parsed = [...matrixData].map((m) => ({
-            data: formatTs(m.values),
-            label: formatLabel(m.metric),
-            isVisible: true,
-            id:m.id
-        }));
-
         if (spliced) {
-         
-            const splicedData = parsed.splice(0, 20);
-            return splicedData
+            const chartD = [...matrixData];
+            const spliced = chartD.splice(0, 20);
+            return spliced.map((m) => ({
+                data: formatTs(m.values),
+                label: formatLabel(m.metric),
+                isVisible: true,
+            }));
         } else {
-            return parsed
+            return [...matrixData].map((m) => ({
+                data: formatTs(m.values),
+                label: formatLabel(m.metric),
+                isVisible: true,
+            }));
         }
     }
     /**
@@ -203,37 +206,6 @@ function ClokiChart({ matrixData }) {
     function setBarChart() {
         const element = $q(chartRef.current);
         const data = isSpliced ? chartData : allData;
-
-        let newData = [];
-        const lSelected =
-            JSON.parse(localStorage.getItem("labelsSelected")) || [];
-        if (lSelected.length > 0) {
-            const { lines, bars, points } = getSeriesFromChartType("bar");
-            const ids = lSelected.map((m) => m.id);
-            const dataMapped = data.map((series) => {
-                if (!ids.includes(series.id)) {
-                    return {
-                        ...series,
-                        lines: { ...series.lines, show: false },
-                        bars: { ...series.bars, show: false },
-                        points: { ...series.points, show: false },
-                        isVisible: true,
-                    };
-                } else {
-                    return {
-                        ...series,
-                        bars,
-                        lines,
-                        points,
-                        isVisible: false,
-                    };
-                }
-            });
-            newData = dataMapped;
-        } else {
-            newData = data;
-        }
-
         const chartBarSeries = {
             series: barSeries,
         };
@@ -241,7 +213,7 @@ function ClokiChart({ matrixData }) {
         try {
             let plot = $q.plot(
                 element,
-                newData,
+                data,
                 $q.extend(true, {}, chartOptions, chartBarSeries)
             );
 
@@ -250,7 +222,7 @@ function ClokiChart({ matrixData }) {
             setChartType("bar");
             setTypeToLocal("bar");
         } catch (e) {
-            console.log(data, e);
+            console.log(data,e);
         }
     }
 
@@ -260,41 +232,10 @@ function ClokiChart({ matrixData }) {
         const chartPointsSeries = {
             series: pointSeries,
         };
-
-        let newData = [];
-        const lSelected =
-            JSON.parse(localStorage.getItem("labelsSelected")) || [];
-        if (lSelected.length > 0) {
-            const { lines, bars, points } = getSeriesFromChartType("points");
-            const ids = lSelected.map((m) => m.id);
-            const dataMapped = data.map((series) => {
-                if (!ids.includes(series.id)) {
-                    return {
-                        ...series,
-                        lines: { ...series.lines, show: false },
-                        bars: { ...series.bars, show: false },
-                        points: { ...series.points, show: false },
-                        isVisible: true,
-                    };
-                } else {
-                    return {
-                        ...series,
-                        bars,
-                        lines,
-                        points,
-                        isVisible: false,
-                    };
-                }
-            });
-            newData = dataMapped;
-        } else {
-            newData = data;
-        }
-
         try {
             let plot = $q.plot(
                 element,
-                newData,
+                data,
                 $q.extend(true, {}, chartOptions, chartPointsSeries)
             );
             const colorLabels = plot.getData();
@@ -308,45 +249,13 @@ function ClokiChart({ matrixData }) {
     function setLineChart() {
         const element = $q(chartRef.current);
         const data = isSpliced ? chartData : allData;
-
-        let newData = [];
-        const lSelected =
-            JSON.parse(localStorage.getItem("labelsSelected")) || [];
-        if (lSelected.length > 0) {
-            const { lines, bars, points } = getSeriesFromChartType("line");
-            const ids = lSelected.map((m) => m.id);
-            const dataMapped = data.map((series) => {
-                if (!ids.includes(series.id)) {
-                    return {
-                        ...series,
-                        lines: { ...series.lines, show: false },
-                        bars: { ...series.bars, show: false },
-                        points: { ...series.points, show: false },
-                        isVisible: true,
-                    };
-                } else {
-                    return {
-                        ...series,
-                        bars,
-                        lines,
-                        points,
-                        isVisible: false,
-                    };
-                }
-            });
-            newData = dataMapped;
-        } else {
-            newData = data;
-        }
-
         const chartLineSeries = {
             series: lineSeries,
         };
-
         try {
             let plot = $q.plot(
                 element,
-                newData,
+                data,
                 $q.extend(true, {}, chartOptions, chartLineSeries)
             );
             const colorLabels = plot.getData();
@@ -357,51 +266,23 @@ function ClokiChart({ matrixData }) {
             console.log(e);
         }
     }
-
+    /**
+     *
+     *  Chart from selection (Set start and end times and redraw)
+     */
     function setRanges(event, ranges) {
         const element = $q(chartRef.current);
         const data = isSpliced ? chartData : allData;
-
         event.preventDefault();
-
-        let newData = [];
-        const lSelected =
-            JSON.parse(localStorage.getItem("labelsSelected")) || [];
-        if (lSelected.length > 0) {
-            const { lines, bars, points } = getSeriesFromChartType(chartType);
-            const ids = lSelected.map((m) => m.id);
-            const dataMapped = data.map((series) => {
-                if (!ids.includes(series.id)) {
-                    return {
-                        ...series,
-                        lines: { ...series.lines, show: false },
-                        bars: { ...series.bars, show: false },
-                        points: { ...series.points, show: false },
-                        isVisible: true,
-                    };
-                } else {
-                    return {
-                        ...series,
-                        bars,
-                        lines,
-                        points,
-                        isVisible: false,
-                    };
-                }
-            });
-            newData = dataMapped;
-        } else {
-            newData = data;
-        }
 
         try {
             let plot = $q.plot(
                 element,
-                newData,
+                data,
                 $q.extend(true, {}, chartOptions, {
                     xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+                    series: getSeriesFromChartType(chartType),
                 })
-
             );
             setTimeout(() => {
                 const fromTime = ranges.xaxis.from;
@@ -435,43 +316,22 @@ function ClokiChart({ matrixData }) {
      */
 
     function onLabelClick(e, v) {
-        let newList = [];
-        const lSelected =
-            JSON.parse(localStorage.getItem("labelsSelected")) || [];
-
-        if (lSelected.some(({ id }) => id === v.id)) {
-            const filtered = lSelected.filter((f) => f.id !== v.id);
-            localStorage.setItem("labelsSelected", JSON.stringify(filtered));
-            newList = filtered;
-        } else {
-            newList = lSelected.concat(v);
-            localStorage.setItem("labelsSelected", JSON.stringify(newList));
-        }
-
-        if (newList.length > 0) {
-            const ids = newList.map((m) => m.id);
-            const { lines, bars, points } = getSeriesFromChartType(chartType);
-            let dataSelected = e.map((series) => {
-                if (!ids.includes(series.id)) {
-                    return {
-                        ...series,
-                        lines: { ...series.lines, show: false },
-                        bars: { ...series.bars, show: false },
-                        points: { ...series.points, show: false },
-                    };
-                } else {
-                    return {
-                        ...series,
-                        bars,
-                        lines,
-                        points,
-                    };
-                }
-            });
-
+        const dataSet = e.map((m) => {
+            if (m.isVisible) {
+                return {
+                    ...m,
+                    lines: { ...m.lines, show: false },
+                    bars: { ...m.bars, show: false },
+                    points: { ...m.points, show: false },
+                };
+            } else {
+                return m;
+            }
+        });
+        if (dataSet.length > 0 && !v.isVisible) {
             let plot = $q.plot(
                 element,
-                dataSelected,
+                dataSet,
 
                 $q.extend(true, {}, chartOptions, {
                     series: getSeriesFromChartType(chartType),
@@ -482,36 +342,27 @@ function ClokiChart({ matrixData }) {
             setLabels(colorLabels);
         } else {
             const data = isSpliced ? chartData : allData;
-            const { lines, bars, points } = getSeriesFromChartType(chartType);
-            const newData = data.map((series) => {
-                return {
-                    ...series,
-                    bars,
-                    lines,
-                    points,
-                };
-            });
             let plot = $q.plot(
                 element,
-                newData,
+                data,
                 $q.extend(true, {}, chartOptions, {
                     series: getSeriesFromChartType(chartType),
                 })
             );
-
             const colorLabels = plot.getData();
             setLabels(colorLabels);
-            $q(chartRef.current).UseTooltip();
         }
     }
 
     // Init
     useEffect(() => {
+       
         setElement(chartRef.current);
         setLabels(chartData.map(({ label }) => label));
         $q(chartRef.current).bind("plotselected", setRanges);
         setChartData(getDataParsed(isSpliced));
-        localStorage.setItem("labelsSelected", JSON.stringify([]));
+
+ 
     }, []);
 
     // On data update or splicing / showing all data
@@ -523,82 +374,32 @@ function ClokiChart({ matrixData }) {
     }, [matrixData, isSpliced]);
 
     function drawChartFromData() {
-        const data = isSpliced ? chartData : allData
-        const element = $q(chartRef.current);
-
-
-        let newData = [];
-        const lSelected =
-            JSON.parse(localStorage.getItem("labelsSelected")) || [];
-        if (lSelected.length > 0) {
-            const { lines, bars, points } = getSeriesFromChartType(chartType);
-            const ids = lSelected.map((m) => m.id);
-            const dataMapped = data.map((series) => {
-                if (!ids.includes(series.id)) {
-
-                    return {
-                        ...series,
-                        lines: { ...series.lines, show: false },
-                        bars: { ...series.bars, show: false },
-                        points: { ...series.points, show: false },
-                        isVisible: true,
-                    };
-                } else {
-                    return {
-                        ...series,
-                        bars,
-                        lines,
-                        points,
-                        isVisible: false,
-                    };
-                }
-            });
-            newData = dataMapped;
+        if (isSpliced) {
+            drawChart(chartData);
         } else {
-            newData = data;
+            drawChart(allData);
         }
+    }
 
+    function drawChart(data) {
+       if(data?.length){
         try {
             let plot = $q.plot(
-                element,
-                newData,
+                chartRef.current,
+                data,
                 $q.extend(true, {}, chartOptions, {
                     series: getSeriesFromChartType(chartType),
                 })
             );
-
+            // get  generated colors
             const colorLabels = plot.getData();
             setLabels(colorLabels);
             $q(chartRef.current).UseTooltip();
-
-            } catch(e) {
-                console.log(e)
-            }
-
-    }
-
-    function drawChart(data) {
-
-
-
-
-        if (data?.length) {
-            try {
-                let plot = $q.plot(
-                    chartRef.current,
-                    data,
-                    $q.extend(true, {}, chartOptions, {
-                        series: getSeriesFromChartType(chartType),
-                    })
-                );
-                // get  generated colors
-                const colorLabels = plot.getData();
-                setLabels(colorLabels);
-                $q(chartRef.current).UseTooltip();
-            } catch (e) {
-                console.log("error drawing chart", data);
-            }
+        } catch (e) {
+            console.log("error drawing chart",data);
         }
+       }
+     
     }
 
     const handleNoLimitData = (e) => {
@@ -617,7 +418,6 @@ function ClokiChart({ matrixData }) {
                     alignItems: "center",
                     fontSize: ".95rem",
                     cursor: "pointer",
-                    margin:"0px 23px"
                 }}
             >
                 <div
@@ -626,13 +426,12 @@ function ClokiChart({ matrixData }) {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                       
                     }}
                 >
                     {isSpliced ? (
                         <div
                             onClick={handleNoLimitData}
-                            style={{ color: "#aaa", fontSize: "13px" }}
+                            style={{ color: "white" }}
                         >
                             {matrixData.length > 20
                                 ? "Showing: 20 Series, Show All "
@@ -643,7 +442,7 @@ function ClokiChart({ matrixData }) {
                     ) : (
                         <div
                             onClick={handleLimitData}
-                            style={{ color: "#aaa", fontSize: "13px" }}
+                            style={{ color: "white" }}
                         >
                             {"Showing: "}
                             {matrixData.length}
@@ -664,10 +463,10 @@ function ClokiChart({ matrixData }) {
                             margin: "3px",
                             background: chartType === "bar" ? "#333" : "black",
                             color: "#ddd",
-                            padding: "4px 10px",
+                            padding: "3px 6px",
                             borderRadius: "2px",
                             cursor: "pointer",
-                            fontSize: "13px",
+                            fontSize: "1em",
                         }}
                         onClick={setBarChart}
                     >
@@ -680,10 +479,10 @@ function ClokiChart({ matrixData }) {
                             margin: "3px",
                             background: chartType === "line" ? "#333" : "black",
                             color: "#ddd",
-                            padding: "4px 10px",
+                            padding: "3px 6px",
                             borderRadius: "2px",
                             cursor: "pointer",
-                            fontSize: "13px",
+                            fontSize: "1em",
                         }}
                     >
                         {"line chart"}
@@ -696,10 +495,10 @@ function ClokiChart({ matrixData }) {
                             background:
                                 chartType === "points" ? "#333" : "black",
                             color: "#ddd",
-                            padding: "4px 10px",
+                            padding: "3px 6px",
                             borderRadius: "2px",
                             cursor: "pointer",
-                            fontSize: "13px",
+                            fontSize: "1em",
                         }}
                     >
                         {"points chart"}
