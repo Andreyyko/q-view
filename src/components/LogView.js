@@ -1,15 +1,10 @@
-import { ZoomIn, ZoomOut } from "@mui/icons-material/";
-import { CircularProgress, IconButton } from "@mui/material";
-import * as moment from "moment";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { setLabels } from "../actions";
-import loadLabelValues from '../actions/loadLabelValues';
+import { CircularProgress } from "@mui/material";
+import * as moment from "moment";
 import ClokiChart from "../plugins/charts";
-import store from "../store/store";
-import { queryBuilderWithLabels } from "./LabelBrowser/helpers/querybuilder";
+import SearchHistory from "../plugins/searchhistory";
 
-import loadLogs from "../actions/loadLogs"
 const TAGS_LEVEL = {
     critical: ['emerg', 'fatal', 'alert', 'crit', 'critical'],
     error: ['err', 'eror', 'error', 'warning'],
@@ -20,43 +15,10 @@ const TAGS_LEVEL = {
 }
 export const ValueTags = (props) => {
 
-    const addLabel = async (e, key, value, isInverted = false) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const {labels, apiUrl} = store.getState();
-        const label = labels.find(label => label.name === key);
-        if (label) {
-            const labelValue = label.values.find(tag => tag.name === value);
-            if (labelValue) {
-                labelValue.selected = !labelValue.selected || (labelValue.inverted !== isInverted);
-                labelValue.inverted = !labelValue.inverted && isInverted;
-                label.selected = label.values.some(value => value.selected);
-                store.dispatch(setLabels(labels));
-            } else {
-                await store.dispatch(loadLabelValues(label,labels,apiUrl));
-                const updatedLabels = store.getState().labels;
-                const updatedLabel = updatedLabels.find(label => label.name === key);
-                const labelValue = updatedLabel.values.find(tag => tag.name === value);
-                labelValue.selected = !labelValue.selected || (labelValue.inverted !== isInverted);
-                labelValue.inverted = !labelValue.inverted && isInverted;
-                updatedLabel.selected = updatedLabel.values.some(value => value.selected);
-                store.dispatch(setLabels(updatedLabels));
-            }
-            queryBuilderWithLabels()
-            store.dispatch(loadLogs())
-        }
-    }
     const getTags = (tags) => {
         return Object.entries(tags).map(
             ([key, value], k) => (
                 <div className={"value-tags"} key={k}>
-                    <span aria-label="Filter for value" title="Filter for value" onClick={(e) => addLabel(e, key, value)} class={'icon'}>
-                        <ZoomIn color='primary'/>
-                    </span>
-                    <span aria-label="Filter out value" title='Filter out value' onClick={(e) => addLabel(e, key, value, true)} class={'icon'}>
-                        <ZoomOut color='primary'/>
-                    </span>
-                    
                     <span>{key}</span>
                     <span>{value}</span>
                 </div>
@@ -175,6 +137,7 @@ class LogView extends Component {
                         
                             </div>
                     )}
+                    <SearchHistory/>
                     {this.props.loading && (
                         <CircularProgress
                             className={"progress"}
