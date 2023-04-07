@@ -1,18 +1,16 @@
 import * as moment from 'moment';
 import { environment } from '../environment/env.dev';
-import localService from '../services/localService';
 
 const debug = setDebug(environment.environment)
 
 const initialState = () => {
     if (debug) console.log('🚧 LOGIC/ INITIAL STATE 🚧')
     const externalState = stateFromQueryParams()
-    const historyService = localService().historyStore()
     const state =  {
         debug: setDebug(environment.environment),
         labels: [],
         labelValues:[],
-        queryHistory: historyService.getAll() || [],
+        queryHistory:[],
         timeRange:[],
         query: externalState.query || '',
         queryValue: '',
@@ -28,14 +26,12 @@ const initialState = () => {
         step: externalState.step || 100,
         rangeOpen: false,
         labelsBrowserOpen: true,
-        historyOpen: false,
         apiErrors: '',
         urlQueryParams: externalState || {},
         urlLocation: '',
         apiUrl: externalState.apiUrl || environment.apiUrl || '',
         isSubmit: externalState.isSubmit || false,
-        chartType:'line',
-        
+        chartType:'line'
     }
     if (debug) console.log('🚧 LOGIC/ INITIAL STATE ::: ', state)
     return state
