@@ -2,7 +2,6 @@ import { setQuery } from "../../../actions";
 import store from "../../../store/store";
 
 export function queryBuilder(labels) {
-    console.log(labels)
     const selectedLabels = [];
     for (const label of labels) {
         if (label.selected && label.values && label.values.length > 0) {
@@ -31,6 +30,6 @@ export function queryBuilder(labels) {
 export function queryBuilderWithLabels() {
     const labels = store.getState().labels;
     console.log(labels)
-  const query = queryBuilder(labels)
-   store.dispatch(setQuery(query));
+    const query = queryBuilder(labels)
+    store.dispatch(setQuery(query));
 }

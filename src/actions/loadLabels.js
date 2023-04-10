@@ -32,7 +32,10 @@ export default function loadLabels(apiUrl) {
                 const labels = response?.data?.data.sort().map((label) => ({
                     name: label,
                     selected: false,
+                    loading: false,
                     values: [],
+                    hidden: false,
+                    facets: 0,
                 }));
                 dispatch(setLabels(labels || []));
             }

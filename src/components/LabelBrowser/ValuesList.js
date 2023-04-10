@@ -32,6 +32,7 @@ export const ValuesList = (props) => {
     const [labelsSelected, setLabelsSelected] = useState([]);
     const labels = useSelector(state => { 
         const selected = state.labels.filter((f) => f.selected);
+        console.log(JSON.stringify(selected) !== JSON.stringify(labelsSelected))
         if (JSON.stringify(selected) !== JSON.stringify(labelsSelected)) {
             setLabelsSelected(selected);
         }
