@@ -29,6 +29,7 @@ export function queryBuilder(labels) {
 }
 export function queryBuilderWithLabels() {
     const labels = store.getState().labels;
-  const query = queryBuilder(labels)
-   store.dispatch(setQuery(query));
+    console.log(labels)
+    const query = queryBuilder(labels)
+    store.dispatch(setQuery(query));
 }
