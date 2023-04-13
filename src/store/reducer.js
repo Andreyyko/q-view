@@ -40,8 +40,6 @@ const reducer =  (state, action) => {
             return {...state, chartType: action.setChartType};
         case "SET_QUERY_HISTORY":
             return {...state, queryHistory: action.queryHistory};
-        case "SET_LINKS_HISTORY":
-            return {...state, linksHistory: action.linksHistory};
         case "SET_HISTORY_OPEN":
                 return {...state, historyOpen: action.historyOpen};
         default:
