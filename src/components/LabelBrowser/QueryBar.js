@@ -12,7 +12,6 @@ import setHistoryOpen from "../../actions/setHistoryOpen";
 import { Tooltip } from "@mui/material";
 import { decodeQuery } from "../UpdateStateFromQueryParams";
 import localUrl from "../../services/localUrl";
-import setLinksHistory from "../../actions/setLinksHistory";
 
 
 const HistoryButton = styled.button`
@@ -120,8 +119,7 @@ export const QueryBar = () => {
                 dispatch(setLabelsBrowserOpen(false));
                 decodeQuery(query,apiUrl)
                 dispatch(loadLogs());
-              const storedUrl =  saveUrl.add({data: window.location.href, description:'From Query Submit'})
-              dispatch(setLinksHistory(storedUrl))
+                saveUrl.add({data: window.location.href, description:'From Query Submit'})
             } catch (e) {
                 console.log(e);
             }
