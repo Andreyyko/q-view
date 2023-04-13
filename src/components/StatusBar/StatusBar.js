@@ -15,7 +15,6 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import store from '../../store/store'
 import loadLabels from "../../actions/LoadLabels";
 import localUrl from "../../services/localUrl";
-import setLinksHistory from "../../actions/setLinksHistory";
 
 export default function StatusBar() {
 
@@ -182,8 +181,7 @@ export function StatusBarSelectors() {
        const setSubmit = dispatch(setIsSubmit(true)) 
       setTimeout(()=>{
         navigator.clipboard.writeText(window.location.href).then(function () {
-            const storedUrl = saveUrl.add({data:window.location.href,description:'From Shared URL'})
-            dispatch(setLinksHistory(storedUrl))
+            saveUrl.add({data:window.location.href,description:'From Shared URL'})
             setCopied(true)
             setTimeout(() => {
                 setCopied(false)
