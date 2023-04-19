@@ -232,7 +232,7 @@ useEffect(()=>{
                             </span>
 
                         </span>
-                    </React.Fragment> : ''
+                    </React.Fragment> : undefined
                     }>
                 <button style={dateButtonStyles}
                     onClick={openButtonHandler} className={'date-time-selector'}
