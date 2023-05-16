@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 
-import dTheme from "../../../theme/themes";
+import darkTheme from "../../../theme/dark";
 import { BtnSmall } from "../../../theme/styles/Button";
 import { InputSmall } from "../../../theme/styles/Input";
 
+const dTheme = darkTheme;
 
 export const InputGroup = styled.div`
     display: flex;

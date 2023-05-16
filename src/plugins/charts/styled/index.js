@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import theme from "../../../theme/themes";
+import darkTheme from "../../../theme/dark";
 
+const theme = darkTheme;
 
 /**
  * Labels styles

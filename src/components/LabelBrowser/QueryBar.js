@@ -22,8 +22,7 @@ import ShowLogsButton from "./components/ShowLogsButton/ShowLogsButton";
 import queryInit from "./helpers/queryInit";
 import onQueryValid from "./helpers/onQueryValid";
 import debugLog from "./helpers/debugLog";
-import { ThemeProvider } from '@emotion/react';
-import { themes } from "../../theme/themes";
+
 export const QueryBar = () => {
     const dispatch = useDispatch();
     const historyService = localService().historyStore();
@@ -33,8 +32,7 @@ export const QueryBar = () => {
     const apiUrl = useSelector((store) => store.apiUrl);
     const isSubmit = useSelector((store) => store.isSubmit);
     const historyOpen = useSelector((store) => store.historyOpen);
-    const isEmbed = useSelector( ( store ) => store.isEmbed);
-    const theme = useSelector((store) => store.theme);
+    const isEmbed = useSelector( ( store ) => store.isEmbed) 
 
     const [queryInput, setQueryInput] = useState(query);
     const [queryValid, setQueryValid] = useState(false);
@@ -127,8 +125,6 @@ export const QueryBar = () => {
                 
             `}
         >
-            
-        <ThemeProvider theme={themes[theme]}>
             <MobileTopQueryMenu>
                 <div
                     className={css`
@@ -175,9 +171,8 @@ export const QueryBar = () => {
                     isMobile={false}
                 />
             </QueryBarContainer>
-        
-        </ThemeProvider>
         </div>
+
         )
 
     );

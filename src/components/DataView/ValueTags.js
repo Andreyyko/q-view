@@ -5,11 +5,8 @@ import loadLabelValues from "../../actions/loadLabelValues";
 import loadLogs from "../../actions/loadLogs";
 import { ZoomIn, ZoomOut } from "@mui/icons-material/";
 import { useSelector } from "react-redux";
-import { themes } from "../../theme/themes";
-import { ThemeProvider } from "@emotion/react";
 
 export default function ValueTags({ tags }) {
-    const theme = useSelector((store) => store.theme);
     const isEmbed = useSelector((store) => store.isEmbed);
     async function addLabel(e, key, value, isInverted = false) {
         e.preventDefault();
@@ -51,8 +48,7 @@ export default function ValueTags({ tags }) {
     }
 
     return (
-        
-        <ThemeProvider theme={themes[theme]}>
+        <>
             {Object.entries(tags).map(([key, value], k) => (
                 <div className={"value-tags"} key={k}>
                     {!isEmbed && (
@@ -80,6 +76,6 @@ export default function ValueTags({ tags }) {
                     <span>{value}</span>
                 </div>
             ))}
-        </ThemeProvider>
+        </>
     );
 }

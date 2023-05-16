@@ -3,12 +3,13 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import DisplaySettingsIcon from "@mui/icons-material/DisplaySettings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+
 import CopyButton from "./CopyButton/CopyButton";
 import { styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import setSettingsDialogOpen from "../../actions/setSettingsDialogOpen";
-import { themes } from "../../theme/themes";
+import { MenuButton } from "./styled";
 
 const StyledMenu = styled((props) => (
     <Menu
@@ -34,8 +35,9 @@ const StyledMenu = styled((props) => (
             padding: "4px 0",
         },
         "& .MuiMenuItem-root": {
+            fontSize:12,
             "& .MuiSvgIcon-root": {
-                fontSize: 18,
+                fontSize: 12,
                 color: theme.palette.text.secondary,
                 marginRight: theme.spacing(1.5),
             },
@@ -61,19 +63,18 @@ export default function ClokiMenu() {
 
         handleClose();
     };
-    const theme = useSelector(store => store.theme);
     return (
         <div>
-            <Button
-                style={{ color: themes[theme].textColor, background: themes[theme].mainBgColor }}
+            <MenuButton
+                style={{ color: "#ddd" }}
                 id="basic-button"
                 aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
             >
-                <MenuIcon />
-            </Button>
+                <MenuIcon style={{height:'16px',width:'16px'}} />
+            </MenuButton>
             <StyledMenu
                 id="basic-menu"
                 anchorEl={anchorEl}

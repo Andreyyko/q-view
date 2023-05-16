@@ -9,8 +9,9 @@ import TabPanelUnstyled from "@mui/base/TabPanelUnstyled";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import LinkIcon from "@mui/icons-material/Link";
 import { createTheme } from "@mui/material";
-import dTheme from "../../../theme/themes";
+import darkTheme from "../../../theme/dark";
 
+const dTheme = darkTheme;
 export const Tab = styled(TabUnstyled)`
     color: ${dTheme.buttonText};
     cursor: pointer;
@@ -227,7 +228,7 @@ export const FilterInput = styled.input`
 `;
 export const RowData = styled.span`
     flex: 1;
-    font-family: "monospace";
+    font-family: monospace;
     font-size: "13px";
     color: ${dTheme.buttonText};
     white-space: nowrap;

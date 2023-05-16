@@ -1,7 +1,9 @@
 import {
     Paper,
     Grid,
-    Typography
+    Typography,
+    ThemeProvider,
+    createTheme,
 } from "@mui/material";
 import { withStyles, createStyles } from "@mui/styles";
 import {
@@ -23,12 +25,13 @@ import Heading from "./Heading";
 import Day from "./Day";
 import { WEEK_DAYS } from "../consts";
 
-import { themes } from "../../../../../theme/themes";
-import { useSelector } from 'react-redux';
-import { ThemeProvider } from '@emotion/react';
-
 const NAVIGATION_ACTION = { Previous: -1, Next: 1 };
 
+const theme = createTheme({
+    palette: {
+        mode: "dark",
+    },
+});
 const styles = (theme) =>
     createStyles({
         root: { 
@@ -48,7 +51,6 @@ const styles = (theme) =>
         },
     });
 const Month = (props) => {
-    const theme = useSelector((store) => store.theme);
     const {
         classes,
         helpers,
@@ -64,7 +66,7 @@ const Month = (props) => {
     const [back, forward] = props.navState;
 
     return (
-        <ThemeProvider theme={themes[theme]}>
+        <ThemeProvider theme={theme}>
             <Paper square elevation={0} className={classes.root}>
                 <Grid container>
                     <Heading
