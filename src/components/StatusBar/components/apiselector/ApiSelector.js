@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import loadLabels from "../../../../actions/loadLabels";
+import loadLabels from "../../../../actions/LoadLabels";
 import { setLabelsBrowserOpen } from "../../../../actions/setLabelsBrowserOpen";
 import setMatrixData from "../../../../actions/setMatrixData";
 import loadLogs from "../../../../actions/loadLogs";

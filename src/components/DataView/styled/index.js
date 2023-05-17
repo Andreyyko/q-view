@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
 import { THEME_COLORS } from '../theme/theme';
 import { CircularProgress } from "@mui/material";
-import darkTheme from "../../../theme/dark";
 
-const theme = darkTheme;
 
 export const DataViewStyled = styled.div`
-    background: ${theme.viewBg};
+    background: ${props => props.theme.viewBg};
     margin: 6px 8px;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -21,7 +19,7 @@ export const DataViewStyled = styled.div`
 
     &::-webkit-scrollbar-thumb {
         border-radius: 10px;
-        background: ${theme.scrollbarThumb};
+        background: ${props => props.theme.scrollbarThumb};
     }
 `;
 
@@ -33,7 +31,8 @@ export const EmptyViewContainer = styled.div`
     width: 100%;
     height: 175px;
     font-size: 1em;
-    color: ${theme.textOff};
+    color: ${props => props.theme.textOff};
+    background: ${props => props.theme.secondaryWidgetContainer};
     text-align: center;
 `;
 
@@ -45,15 +44,15 @@ export const DataViewCont = styled.div`
 
 export const LogRow = styled.div`
     padding: 0.3rem;
-    color: white;
-    font-size: 12px;
+    color: ${props => props.theme.textColor};
+    font-size: 13px;
     cursor: pointer;
     margin-bottom: 4px;
     padding-left: 0.5rem;
     margin-left: 0.25rem;
     transition: 0.2s all;
     &:hover {
-        background: black;
+        background: ${props => props.theme.widgetContainer};
     }
 
     p {
@@ -64,15 +63,15 @@ export const LogRow = styled.div`
 `;
 
 export const RowLogContent = styled.span`
-    font-size: 12px;
+    font-size: 0.95em;
     font-family: monospace;
-    color: ${theme.textWhite};
+    color: ${props => props.theme.textPrimary};
     line-height: 1.5;
 `;
 
 export const RowTimestamp = styled.span`
     position: relative;
-    color: ${theme.textColor};
+    color: ${props => props.theme.textColor};
     margin-right: 0.25rem;
 `;
 

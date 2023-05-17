@@ -5,50 +5,68 @@
 
 # :eye: cLoki View
 
-### like Grafana Explore [^1], but for cLoki [^2]
+### like Grafana Explore, but for cLoki
 
-cLoki-view is a smart and minimal data explorer developed in React/JS and designed for LogQL APIs such as [cLoki](https://cloki.org)
+cLoki-view is a smart and minimal data explorer developed in React/JS and designed for LogQL APIs
 
 <img src="https://user-images.githubusercontent.com/1423657/152640509-82d7704a-4e9a-4a2b-9b7e-1819984c7581.png"/><img src="https://user-images.githubusercontent.com/1423657/155608224-8654694b-b999-4781-994a-5a87e39dfddf.png" />
 
-### Features
-- Label Browser
-- Display Logs & Charts
-- Timerange Selector
-- Query History
-- Mobile View
-- Embeddable Results
-- 100% Client-Side
+### Setup
 
+#### :busstop: **Basic Instructions**
 
-### Usage
+***clone the repository***, then:
 
-Use the [public client](https://view.cloki.org) _(no data goes through the server)_ or [build](BUILD.md) and run your own instance
+##### install: 
 
-#### Environment Variables:
+```bash
+~/$ npm install
+```
+
+##### build (dist): 
+
+```bash
+~/$ npm run build
+```
+##### start (development mode): 
+
+```bash
+~/$ npm start
+```
+
+will serve the UI on ``http://localhost:8080``
+
+#### :busstop:  **Important:** set api endpoint:
+
+- go to ``./src/environment/env.dev.js``
+
+### Environment Variables:
 
 - ``HOST`` default: `` 0.0.0.0``
 - ``PORT`` default: ``8080``
 - ``API_URL`` default: ``http://localhost:3100``
 
-##### Example 
 ```bash
 ~/$ HOST=localhost PORT=8080 API_URL=http://cloki-host:3100 npm start
 ```
+  
+### Basic Features
 
-##### URL Parameters
-cLoki-view can be controlled through URL parameters
+**Labels:** 
 
-| param | description |  |
-|-------|-------------|---------|
-| `apiUrl` | _LogQL API URL_ | http://localhost:3100 |
-| `query`  | _LogQL query_   | |
-| `from`   | _timestamp Ns_  | |
-| `to`     | _timestamp Ns_  | |
-| `limit`  | _query limit_   | |
-| `step`   | _query step_    | |
-| `isEmbed` | _embed mode_   | false |
+the labels will be loaded atomatically on every DOM change
 
+**Label Values:** 
+
+the values of each label will be retrieved clicking on the ``log browser => [click on some label]``
+
+**Query:** 
+
+The LogQL Query will be auto-formed by Label selection, and can be extended manually
+
+**Show Logs:** 
+
+click on ``show logs`` button to execute your LogQL Query
 
 ------------
 
@@ -58,7 +76,4 @@ Consult the [cLoki Wiki](https://github.com/lmangani/cLoki/wiki/LogQL-Supported-
 
 ### Acknowledgements
 - (C) 2022 QXIP BV see LICENSE for details
-
-[^1]: cLoki is not affiliated or endorsed by Grafana Labs or ClickHouse Inc. All rights belong to their respective owners.
-[^2]: cLoki is part of the cLoki project, licensed under the AGPLv3 LICENSE by QXIP BV
-
+- This project is not affiliated or endorsed by Grafana Labs. All rights belong to their respective owners.

@@ -77,7 +77,7 @@
     max-width: 450px;
     .value-tags {
         font-family: monospace;
-        font-size: 12px;
+        font-size: 0.95em;
         display: flex;
         margin: 2px;
         padding: 2px;
@@ -89,11 +89,8 @@
             display: flex;
             flex: 1;
             line-height: 34px;
-            color: #cccccd;
         }
-        &:hover {
-            background: black;
-        }
+
         .icon {
             padding: 5px;
             flex: 0;

@@ -12,7 +12,7 @@ import localUrl from "../../services/localUrl";
 import setLinksHistory from "../../actions/setLinksHistory";
 import QueryEditor from "../../plugins/queryeditor";
 
-import loadLabels from "../../actions/loadLabels";
+import loadLabels from "../../actions/LoadLabels";
 import { decodeQuery } from "../../helpers/UpdateStateFromQueryParams";
 import { css } from "@emotion/css";
 import { MobileTopQueryMenu, QueryBarContainer } from "./components/styled";
@@ -22,8 +22,8 @@ import ShowLogsButton from "./components/ShowLogsButton/ShowLogsButton";
 import queryInit from "./helpers/queryInit";
 import onQueryValid from "./helpers/onQueryValid";
 import debugLog from "./helpers/debugLog";
-import  {sendLabels} from "../../hooks/useLabels";
-
+import { ThemeProvider } from '@emotion/react';
+import { themes } from "../../theme/themes";
 export const QueryBar = () => {
     const dispatch = useDispatch();
     const historyService = localService().historyStore();
@@ -33,44 +33,32 @@ export const QueryBar = () => {
     const apiUrl = useSelector((store) => store.apiUrl);
     const isSubmit = useSelector((store) => store.isSubmit);
     const historyOpen = useSelector((store) => store.historyOpen);
-    const isEmbed = useSelector( ( store ) => store.isEmbed) 
+    const isEmbed = useSelector( ( store ) => store.isEmbed);
+    const theme = useSelector((store) => store.theme);
+
     const [queryInput, setQueryInput] = useState(query);
     const [queryValid, setQueryValid] = useState(false);
     const [queryValue, setQueryValue] = useState(queryInit(query));
-    const labels = useSelector( store => store.labels)
+
     const queryHistory = useSelector((store) => store.queryHistory);
     const saveUrl = localUrl();
     useEffect(() => {
         const dLog = debugLog(query);
         debug && dLog.logicQueryBar();
-        // labels first load from api url
-        const labels = sendLabels(apiUrl)
 
         if (onQueryValid(query && isSubmit === "true")) {
             debug && dLog.queryBarDispatch();
-            return labels.then( data => {
-                decodeQuery(query,apiUrl,data)
-    
-        })
+
             dispatch(setLoading(true));
             dispatch(loadLogs());
 
             setTimeout(() => {
                 dispatch(setIsSubmit(false));
-                
-  
-
             }, 200);
         } else if (!onQueryValid(query) && isSubmit === "true") {
             
             dispatch(setIsSubmit(false));
         }
-
-        return labels.then( data => {
-                decodeQuery(query,apiUrl,data)
-
-        })
-       
     }, []);
 
     useEffect(() => {
@@ -113,9 +101,7 @@ export const QueryBar = () => {
                 });
                 dispatch(setQueryHistory(historyUpdated));
                 dispatch(setLabelsBrowserOpen(false));
-                decodeQuery(queryInput,apiUrl,labels)
-              
-
+                decodeQuery(query, apiUrl);
                 dispatch(setLoading(true));
                 dispatch(loadLogs());
                 const storedUrl = saveUrl.add({
@@ -141,6 +127,8 @@ export const QueryBar = () => {
                 
             `}
         >
+            
+        <ThemeProvider theme={themes[theme]}>
             <MobileTopQueryMenu>
                 <div
                     className={css`
@@ -187,8 +175,9 @@ export const QueryBar = () => {
                     isMobile={false}
                 />
             </QueryBarContainer>
+        
+        </ThemeProvider>
         </div>
-
         )
 
     );

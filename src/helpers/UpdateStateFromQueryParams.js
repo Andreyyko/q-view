@@ -11,11 +11,12 @@ import {
     setQueryStep,
     setStartTime,
     setStopTime,
+    setTheme,
 
 } from "../actions";
 
-import  loadLabels  from "../actions/loadLabels"
 
+import loadLabels from "../actions/LoadLabels";
 import loadLabelValues from "../actions/loadLabelValues";
 import setFromTime from "../actions/setFromTime";
 import setIsEmbed from "../actions/setIsEmbed";
@@ -36,12 +37,12 @@ export function UpdateStateFromQueryParams() {
     const from = useSelector((store) => store.from);
     const to = useSelector((store)=> store.to);
     const step = useSelector((store) => store.step);
-    const labels = useSelector((store) => store.labels)
     const apiUrl = useSelector((store) => store.apiUrl);
     const isSubmit = useSelector((store) => store.isSubmit);
     const isEmbed = useSelector((store) => store.isEmbed);
     const query = useSelector((store) => store.query);
-
+    const theme = useSelector((store) => store.theme)
+    const isLightTheme = window.matchMedia('(prefers-color-scheme: light)').matches;
     const STORE_KEYS = {
         apiUrl,
         query,
@@ -53,6 +54,7 @@ export function UpdateStateFromQueryParams() {
         to,
         isSubmit,
         isEmbed,
+        theme
     };
 
     const STORE_ACTIONS = {
@@ -66,10 +68,10 @@ export function UpdateStateFromQueryParams() {
         to: setToTime,
         isSubmit: setIsSubmit,
         isEmbed: setIsEmbed,
-
+        theme: setTheme
     };
 
-    const STRING_VALUES = ["limit", "step", "apiUrl"];
+    const STRING_VALUES = ["limit", "step", "apiUrl", "theme"];
 
     const QUERY_VALUE = "query";
 
@@ -101,11 +103,7 @@ export function UpdateStateFromQueryParams() {
                         STRING_VALUES.includes(param) &&
                         startParams[param] !== ""
                     ) {
-       
                         dispatch(STORE_ACTIONS[param](startParams[param]));
-                        if(param === 'apiUrl') {
-                         dispatch(loadLabels(startParams[param]))
-                        }
                     } else if (
                         QUERY_VALUE === param &&
                         startParams[param] !== ""
@@ -134,12 +132,11 @@ export function UpdateStateFromQueryParams() {
                     if (QUERY_VALUE === param) {
                     }
                 });
-
-                decodeQuery(decodeURIComponent(startParams.query),apiUrl,labels);
+                decodeQuery(decodeURIComponent(startParams.query), apiUrl);
                 dispatch(setLabelsBrowserOpen(false));
-                
             }
         } else {
+            console.log('test')
             dispatch(setApiUrl(environment.apiUrl));
 
             const allParams = STRING_VALUES.concat(TIME_VALUES);
@@ -165,8 +162,7 @@ export function UpdateStateFromQueryParams() {
                 }
             });
             const newQuery = STORE_KEYS[query];
-
-            decodeQuery(newQuery, apiUrl, labels);
+            decodeQuery(newQuery, apiUrl);
 
             window.location.hash = urlFromHash;
         }
@@ -215,8 +211,8 @@ export function UpdateStateFromQueryParams() {
     }, [STORE_KEYS]);
 }
 
-export  function decodeQuery(query, apiUrl, labels=[]) {
-
+export async function decodeQuery(query, apiUrl) {
+    await store.dispatch(loadLabels(apiUrl));
     const queryArr = query
         ?.match(/[^{\}]+(?=})/g, "$1")
         ?.map((m) => m.split(","))
@@ -266,12 +262,9 @@ export  function decodeQuery(query, apiUrl, labels=[]) {
             };
             labelObj.values.push(valueObj);
             labelsFromQuery.push(labelObj);
- 
         }
     });
-
-    const newLabels = labels 
-
+    const newLabels = store.getState().labels;
     newLabels?.forEach((label) => {
         if (label.selected && label.values > 0) {
             label.selected = false;

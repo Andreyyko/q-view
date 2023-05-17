@@ -2,9 +2,7 @@ import { setQuery } from "../../../actions";
 import store from "../../../store/store";
 
 export function queryBuilder(labels) {
-    const actualLabels = store.getState().labels
     const actualQuery = store.getState().query
-  //  console.log(actualLabels)
     const preTags = actualQuery.split("{")[0]
     const postTags = actualQuery.split("}")[1]
     const selectedLabels = [];
@@ -32,7 +30,6 @@ export function queryBuilder(labels) {
     }
     return [preTags,"{", selectedLabels.join(","), "}",postTags].join("");
 }
-
 export function queryBuilderWithLabels() {
     const labels = store.getState().labels;
    
