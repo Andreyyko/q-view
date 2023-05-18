@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import { themes } from "../../../../../theme/themes";
+import darkTheme from "../../../../../theme/dark";
 import { BtnSmall } from "../../../../../theme/styles/Button";
-import { ThemeProvider } from '@emotion/react';
-import { useSelector } from 'react-redux';
+const theme = darkTheme;
+
 const SelectorsContainer = styled.div`
     display: ${(props) => (props.isDisplay ? "flex" : "none")};
     flex-direction: column;
@@ -14,8 +14,8 @@ const SelectorsContainer = styled.div`
         flex-direction: column;
         margin-bottom: 15px;
         .label {
-            font-size: 0.85em;
-            color: ${props => props.theme.inputLabelColor};
+            font-size: 12px;
+            color: ${theme.inputLabelColor};
             width: 50px;
             margin-left: 5px;
             margin-bottom: 5px;
@@ -28,13 +28,13 @@ const SelectorsContainer = styled.div`
                 font-size:14px;
                 width: 170px;
                 line-height: 20px;
-                border:1px solid ${props => props.theme.buttonHover};
-                color: ${props => props.theme.textColor};
+                border:1px solid ${theme.buttonHover};
+                color: ${theme.textColor};
                 margin: 0;
                 padding:0px 8px;
                 margin-right: 5px;
                 &:focus{
-                    border:1px solid ${props => props.theme.buttonDefault};
+                    border:1px solid ${theme.buttonDefault};
                 }
             }
         }
@@ -42,26 +42,26 @@ const SelectorsContainer = styled.div`
 `;
 
 const AbsoluteSubmitButton = styled(BtnSmall)`
-    color: ${props => props.theme.buttonText};
-    background: ${props => props.theme.primaryDark};
+    color: ${theme.buttonText};
+    background: ${theme.primaryDark};
     padding: 6px;
     justify-content: center;
     margin-top:10px;
     margin-bottom: 10px;
     cursor: pointer;
     &:hover {
-        background: ${props => props.theme.primaryLight};
+        background: ${theme.primaryLight};
     }
 `;
 
 const CalendarBtn = styled(BtnSmall)`
    
-    color: ${props => props.theme.buttonText};
-    background: ${props => props.theme.buttonDefault};
+    color: ${theme.buttonText};
+    background: ${theme.buttonDefault};
     padding:8px;
     &:hover {
-        background: ${props => props.theme.buttonHover};
-        color: ${props => props.theme.textColor};
+        background: ${theme.buttonHover};
+        color: ${theme.textColor};
     }
 `;
 
@@ -81,7 +81,6 @@ export default function AbsoluteSelector({
     styles,
     isMobile,
 }) {
-    const theme = useSelector((store) => store.theme);
     function handleStartOpen() {
         if (isFullCalendar) {
             setCalendarOpen((open) => (open ? false : true));
@@ -107,7 +106,6 @@ export default function AbsoluteSelector({
     }
 
     return (
-        <ThemeProvider theme={themes[theme]}>
         <SelectorsContainer isDisplay={styles}>
           
             <div className={"time-selectors"}>
@@ -149,6 +147,5 @@ export default function AbsoluteSelector({
                 {"Apply Time Range"}
             </AbsoluteSubmitButton>
         </SelectorsContainer>
-        </ThemeProvider>
     );
 }

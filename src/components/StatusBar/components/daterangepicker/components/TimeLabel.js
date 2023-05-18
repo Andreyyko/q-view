@@ -1,8 +1,5 @@
 import styled from "@emotion/styled";
 import { format, isValid } from "date-fns";
-import { ThemeProvider } from '@emotion/react';
-import { useSelector } from 'react-redux';
-import { themes } from "../../../../../theme/themes";
 
 const TimeLabelCont = styled.div`
     display: flex;
@@ -15,9 +12,8 @@ const TimeLabelCont = styled.div`
 `;
 
 export default function TimeLabel({ dateRange }) {
-    const theme = useSelector((store) => store.theme);
     return (
-        <ThemeProvider theme={themes[theme]}>
+        <>
             <TimeLabelCont>
                 <span className="time-span">
                     {isValid(dateRange.dateStart)
@@ -34,6 +30,6 @@ export default function TimeLabel({ dateRange }) {
                         : ""}
                 </span>
             </TimeLabelCont>
-        </ThemeProvider>
+        </>
     );
 }

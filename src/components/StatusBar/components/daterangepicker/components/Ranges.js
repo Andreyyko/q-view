@@ -1,10 +1,6 @@
 import styled from "@emotion/styled";
 import { isSameRange } from "../utils";
 
-import { useSelector } from 'react-redux';
-import { themes } from "../../../../../theme/themes";
-import { ThemeProvider } from '@emotion/react';
-
 const StyledList = styled.div`
     display: flex;
     flex-direction: column;
@@ -25,15 +21,13 @@ const StyledList = styled.div`
         font-size: 12px;
         cursor: pointer;
         &:hover {
-            background: ${props => props.theme.buttonHover};
+            background: #11111155;
         }
     }
 `;
 
 const Ranges = (props) => {
-    const theme = useSelector((store) => store.theme);
     return (
-        <ThemeProvider theme={themes[theme]}>
         <StyledList>
             {props.ranges.map((range, idx) => (
                 <button
@@ -50,7 +44,7 @@ const Ranges = (props) => {
                                 : "normal",
                             color: isSameRange(range, props.selectedRange)
                                 ? "orange"
-                                : themes[theme].textColor,
+                                : "white",
                             whiteSpace: "nowrap",
                         }}
                     >
@@ -59,7 +53,6 @@ const Ranges = (props) => {
                 </button>
             ))}
         </StyledList>
-        </ThemeProvider>
     );
 };
 

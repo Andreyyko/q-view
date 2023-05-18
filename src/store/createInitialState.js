@@ -46,7 +46,7 @@ export default function initialState() {
         limit: urlState.limit || 100,
         step: urlState.step || 100,
         rangeOpen: false,
-        labelsBrowserOpen: true,
+        labelsBrowserOpen: false,
         settingsMenuOpen: false,
         timePickerOpen: false,
         settingsDialogOpen: false,
@@ -59,7 +59,7 @@ export default function initialState() {
         isEmbed: urlState.isEmbed || false,
         chartType: "line",
         notifications: [],
-        theme: "dark",
+        theme: "darkTheme",
     };
     const debug = state.debugMode;
     if (debug) console.log("🚧 LOGIC/ INITIAL STATE ::: ", state);
