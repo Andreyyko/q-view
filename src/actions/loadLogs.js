@@ -7,7 +7,6 @@ import { nanoid } from "nanoid";
 import { setStartTime, setStopTime } from "./";
 import { findRangeByLabel } from "../components/StatusBar/components/daterangepicker/utils";
 
-
 export default function loadLogs() {
     const localStore = store.getState();
     const {
@@ -28,7 +27,8 @@ export default function loadLogs() {
     const parsedStart = getTimeParsed(startTs);
     const parsedStop = getTimeParsed(stopTs);
 
-    const parsedTime = "&start=" + (from || parsedStart) + "&end=" + (to || parsedStop);
+    const parsedTime =
+        "&start=" + (from || parsedStart) + "&end=" + (to || parsedStop);
 
     if (findRangeByLabel(rangeLabel)) {
         ({ dateStart: startTs, dateEnd: stopTs } =
@@ -37,10 +37,14 @@ export default function loadLogs() {
 
     store.dispatch(setStartTime(startTs));
     store.dispatch(setStopTime(stopTs));
+
     const origin = window.location.origin;
     const url = apiUrl;
+
     const queryStep = `&step=${step || 120}`;
+
     const encodedQuery = `${encodeURIComponent(query)}`;
+
     const getUrl = `${url}/loki/api/v1/query_range?query=${encodedQuery}&limit=${limit}${parsedTime}${queryStep}`;
 
     const options = {
@@ -57,8 +61,8 @@ export default function loadLogs() {
         type === "streams"
             ? fromNanoSec(ts)
             : type === "matrix"
-                ? toMiliseC(ts)
-                : ts;
+            ? toMiliseC(ts)
+            : ts;
     const mapStreams = (streams, messages, type) => {
         streams.forEach((stream) => {
             stream.values.forEach((log, i) => {
@@ -71,8 +75,8 @@ export default function loadLogs() {
                         type === "streams"
                             ? stream.stream
                             : type === "matrix"
-                                ? stream.metric
-                                : {},
+                            ? stream.metric
+                            : {},
                     showTs: true,
                     showLabels: false,
                     id: nanoid(),
@@ -122,13 +126,10 @@ export default function loadLogs() {
                 dispatch(setLoading(false));
             })
             .catch((error) => {
-
                 dispatch(setLogs([]));
                 dispatch(setMatrixData([]));
-
                 dispatch(setLoading(false));
-    
-
+                console.log(error);
             });
     };
 }

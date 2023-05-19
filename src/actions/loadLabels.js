@@ -2,6 +2,8 @@ import axios from "axios";
 import { setLabels } from "./setLabels";
 import setLoading from "./setLoading";
 import { setApiError } from "./setApiError";
+import { errorHandler } from "./errorHandler";
+import { setLabelsBrowserOpen } from "./setLabelsBrowserOpen";
 
 export default function loadLabels(apiUrl) {
     const origin = window.location.origin;
@@ -27,6 +29,7 @@ export default function loadLabels(apiUrl) {
             ?.then((response) => {
                 if (response) {
                     if (response?.data?.data === [])
+                        console.log("no labels found");
                     if (response?.data?.data?.length > 0) {
                         const labels = response?.data?.data
                             .sort()
@@ -36,21 +39,22 @@ export default function loadLabels(apiUrl) {
                                 values: [],
                             }));
                         dispatch(setLabels(labels || []));
-        
                         dispatch(setApiError(""));
                     }
                 } else {
                     dispatch(setLoading(false));
                     dispatch(
-                        setApiError("")
+                        setApiError("API Not Found, Please adjust API URL")
                     );
+                    dispatch(setLabelsBrowserOpen(true));
                     dispatch(setLabels([]));
-             
                 }
             })
             .catch((error) => {
                 console.log(error);
                 dispatch(setLoading(false));
+                const { message, status } = errorHandler(url, error);
+                dispatch(setApiError(`Status: ${status}, ${message}`));
                 dispatch(setLabels([]));
             });
     };

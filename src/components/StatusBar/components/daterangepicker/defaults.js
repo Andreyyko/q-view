@@ -6,8 +6,12 @@ import {
 	startOfMonth,
 	endOfMonth,
 	addMonths,
+	addMinutes,
+	addHours,
+	addSeconds,
 	startOfDay,
 	endOfDay,
+	getHours
 } from "date-fns";
 
 const getDefaultRanges = (date) => [
