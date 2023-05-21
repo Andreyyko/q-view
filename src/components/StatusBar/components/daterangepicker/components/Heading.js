@@ -5,17 +5,17 @@ import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import { setMonth, getMonth, setYear, getYear } from "date-fns";
 import { MONTHS } from "../consts";
-import { HeadingStyles } from "./styles";
+import { HeadingStyles, theme } from "./styles";
 import { generateYears } from "../utils";
 import styled from "@emotion/styled";
-import { themes } from "../../../../../theme/themes";
-import { useSelector } from 'react-redux';
+import darkTheme from "../../../../../theme/dark";
+const ctheme = darkTheme;
 const DateSelect = styled.select`
     cursor: pointer;
 
     position: relative;
     font-size: 14px;
-    color: ${props => props.theme.textColor};
+    color: ${ctheme.textColor};
     background: #333;
     border: none;
     border-radius: 3px;
@@ -29,7 +29,7 @@ const DateSelect = styled.select`
 
     &::-webkit-scrollbar-thumb {
         border-radius: 10px;
-        background: ${props => props.theme.scrollbarThumb};
+        background: ${ctheme.scrollbarThumb};
     }
 `;
 
@@ -42,7 +42,6 @@ const Heading = ({
     onClickNext,
     onClickPrevious,
 }) => {
-    const theme = useSelector((store) => store.theme);
     const handleMonthChange = (event) => {
         setDate(setMonth(date, parseInt(event.target.value)));
     };
@@ -52,7 +51,7 @@ const Heading = ({
     };
 
     return (
-        <ThemeProvider theme={themes[theme]}>
+        <ThemeProvider theme={theme}>
             <Grid
                 container
                 justifyContent={"space-between"}

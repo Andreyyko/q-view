@@ -2,16 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Legend } from "./Legend";
 import { useSelector, useDispatch } from "react-redux";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import loadLabels from "../../actions/loadLabels";
+
 import { queryBuilder } from "./helpers/querybuilder";
 import { setQuery } from "../../actions";
 import loadLabelValues from "../../actions/loadLabelValues";
 
 import Tooltip from "@mui/material/Tooltip";
 import styled from "@emotion/styled";
-
-import { ThemeProvider } from '@emotion/react';
-import { themes } from "../../theme/themes";
+import loadLabels from "../../actions/loadLabels";
 
 const ErrorContainer = styled.div`
     padding: 20px;
@@ -27,36 +25,11 @@ const LabelErrorStyled = styled.div`
     border-radius: 3px;
     font-size: 1em;
 `;
-const ValuesListStyled = styled.div`
-    background: ${props => props.theme.widgetContainer};
-    small {
-        color: ${props => props.theme.textColor};
-    }
-    button {
-        color: ${props => props.theme.textColor};
-        background: ${props => props.theme.buttonDefault};
-        &:hover{
-            background: ${props => props.theme.buttonHover};
-        }
-    }
-    .values-container {
-        .values-column {
-            background: ${props => props.theme.secondaryWidgetContainer};
-        }
-        .values-column-title{
-            color: ${props => props.theme.textColor};
-            background: ${props => props.theme.widgetTitle};
-            border-bottom: 2px solid ${props => props.theme.widgetTitleBorder};
-        }
-    }
-`;
+
 export const LabelsFetchError = () => {
     const labelError = useSelector((store) => store.apiErrors);
-    const theme = useSelector((store) => store.theme);
 
     return (
-        
-        <ThemeProvider theme={themes[theme]}>
         <ErrorContainer>
             {labelError !== "" && (
                 <LabelErrorStyled>
@@ -64,7 +37,6 @@ export const LabelsFetchError = () => {
                 </LabelErrorStyled>
             )}
         </ErrorContainer>
-        </ThemeProvider>
     );
 };
 
@@ -77,21 +49,17 @@ export const ValuesList = (props) => {
         }
         return state.labels;
     });
-
+    //const labels = useSelector((store)=> store.labels)
     const [labelList, setLabelList] = useState(labels);
 
-    const theme = useSelector((store) => store.theme);
     const dispatch = useDispatch();
-    const debug = useSelector((store) => store.debug);
+    const debug = useSelector((store) => store.debugMode);
     const apiUrl = useSelector((store) => store.apiUrl);
-    //if(debug) console.log('🚧 LOGIC/LabelBrowser/ValuesList', apiUrl)
+    if (debug) console.log("🚧 LOGIC/LabelBrowser/ValuesList", apiUrl);
     const labelsBrowserOpen = useSelector((store) => store.labelsBrowserOpen);
-
     const CLEAR = "clear";
-
     useEffect(() => {
         dispatch(loadLabels(apiUrl));
-        //   setLabelList(labels)
     }, [apiUrl]);
 
     useEffect(() => {
@@ -106,11 +74,8 @@ export const ValuesList = (props) => {
     const onLabelOpen = (e, value) => {
         e.preventDefault();
         value.selected = !value.selected;
-        //  setLabel(value);
         const selected = labelList.filter((f) => f.selected);
         setLabelsSelected(selected);
-
-        //   setFilteredPlaceholder(value);
 
         const query = queryBuilder(labelList);
         dispatch(setQuery(query));
@@ -144,81 +109,85 @@ export const ValuesList = (props) => {
             };
         } else return {};
     };
+    const isString = (value) => {
+        return typeof value === "string";
+    };
     return (
         labelsBrowserOpen && (
-            <ThemeProvider theme={themes[theme]}>
-            <ValuesListStyled>
-                    
-                <div className={"labels-container"}>
-                    <div className={"valuesList"}>
-                        {labelList.length > 0 ? (
-                            <div className={"valuelist-title"}>
-                                <Legend
-                                    title={"Select labels to search in"}
-                                    text={
-                                        "Which labels would you like to consider for your search?"
-                                    }
-                                />
+            <div className={"labels-container"}>
+                <div className={"valuesList"}>
+                    {labelList.length > 0 ? (
+                        <div className={"valuelist-title"}>
+                            <Legend
+                                title={"Select labels to search in"}
+                                text={
+                                    "Which labels would you like to consider for your search?"
+                                }
+                            />
 
-                                <div className={"valuelist-content"}>
-                                    <button
-                                        className={"refresh-button"}
-                                        onClick={handleRefresh}
-                                        title={"Refresh Labels List"}
-                                    >
-                                        <RefreshIcon fontSize={"small"} />
-                                    </button>
-                                    {labelList &&
-                                        labelList?.map((value, key) => (
-                                            <small
-                                                title={value.name}
-                                                key={key}
-                                                id={value.name}
-                                                style={styleValue(value)}
-                                                onClick={(e) =>
-                                                    onLabelOpen(e, value)
-                                                }
-                                            >
-                                                {value.name}
-                                            </small>
-                                        ))}
-                                </div>
+                            <div className={"valuelist-content"}>
+                                <button
+                                    className={"refresh-button"}
+                                    onClick={handleRefresh}
+                                    title={"Refresh Labels List"}
+                                >
+                                    <RefreshIcon fontSize={"small"} />
+                                </button>
+                                {labelList &&
+                                    labelList?.map((value, key) => (
+                                        <small
+                                            title={value?.name || ""}
+                                            key={key}
+                                            id={value.name}
+                                            style={styleValue(value)}
+                                            onClick={(e) =>
+                                                onLabelOpen(e, value)
+                                            }
+                                        >
+                                            {value.name}
+                                        </small>
+                                    ))}
                             </div>
-                        ) : (
-                            <LabelsFetchError />
-                        )}
+                        </div>
+                    ) : (
+                        <LabelsFetchError />
+                    )}
 
-                        {selectedList() && (
-                            <div className={"values-container"}>
-                                <div className={"values-container-column"}>
-                                    {labelsSelected.map((labelSelected, skey) => (
-                                        <div className={"values-column"} key={skey}>
-                                            <div className={"values-column-title"}>
-                                                <span>
-                                                    {labelSelected.name} (
-                                                    {labelSelected.values.length})
-                                                </span>
-                                                <span
-                                                    className={"close-column"}
-                                                    onClick={(e) =>
-                                                        onLabelOpen(
-                                                            e,
-                                                            labelSelected
-                                                        )
-                                                    }
-                                                >
-                                                    {CLEAR}
-                                                </span>
-                                            </div>
-                                            <div
-                                                className={
-                                                    "valuelist-content column"
+                    {selectedList() && (
+                        <div className={"values-container"}>
+                            <div className={"values-container-column"}>
+                                {labelsSelected.map((labelSelected, skey) => (
+                                    <div className={"values-column"} key={skey}>
+                                        <div className={"values-column-title"}>
+                                            <span>
+                                                {labelSelected.name} (
+                                                {labelSelected.values.length})
+                                            </span>
+                                            <span
+                                                className={"close-column"}
+                                                onClick={(e) =>
+                                                    onLabelOpen(
+                                                        e,
+                                                        labelSelected
+                                                    )
                                                 }
                                             >
-                                                {labelSelected?.values?.map(
-                                                    (value, key) => (
+                                                {CLEAR}
+                                            </span>
+                                        </div>
+                                        <div
+                                            className={
+                                                "valuelist-content column"
+                                            }
+                                        >
+                                            {labelSelected?.values?.map(
+                                                (value, key) =>
+                                                    isString(value.name) ? (
                                                         <Tooltip
-                                                            title={value.name}
+                                                            title={
+                                                                value?.name ||
+                                                                ""
+                                                            }
                                                             key={key}
                                                             placement="bottom"
                                                         >
@@ -239,18 +208,20 @@ export const ValuesList = (props) => {
                                                                 {value.name}
                                                             </small>
                                                         </Tooltip>
+                                                    ) : (
+                                                        <small key={key}>
+                                                            unknown
+                                                        </small>
                                                     )
-                                                )}
-                                            </div>
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                ))}
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
-            </ValuesListStyled>
-            </ThemeProvider>
+            </div>
         )
     );
 };

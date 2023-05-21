@@ -45,13 +45,13 @@ import {
     SettingItemContainer,
     TimeSpan,
     HistoryRow,
-    StyledDrawer
+    theme,
 } from "./styled";
 
 import AlertDialog from "./components/AlertDialog/AlertDialog";
 import EmptyHistoryDisplay from "./components/EmptyHistoryDisplay/EmptyHistoryDisplay";
 import CloseButton from "./components/CloseButton/CloseButton";
-import { themes } from "../../theme/themes";
+
 function QueryHistoryTabs({
     historyTabHeader,
     historyTab,
@@ -613,7 +613,6 @@ const QueryHistory = (props) => {
     const queryHistory = useSelector((store) => store.queryHistory);
     const linksHistory = useSelector((store) => store.linksHistory);
     const historyOpen = useSelector((store) => store.historyOpen);
-    const theme = useSelector(store => store.theme);
 
     const [starredItems, setStarredItems] = useState([]);
     const [filtered, setFiltered] = useState([]);
@@ -759,9 +758,9 @@ const QueryHistory = (props) => {
         }
     }
     return (
-        <ThemeProvider theme={themes[theme]}>
+        <ThemeProvider theme={theme}>
             {historyOpen && (
-                <StyledDrawer
+                <Drawer
                     anchor={"bottom"}
                     style={{ maxHeight: "250px" }}
                     open={historyOpen}
@@ -871,7 +870,7 @@ const QueryHistory = (props) => {
                         }
                         closeButton={<CloseButton onClose={handleClose} />}
                     />
-                </StyledDrawer>
+                </Drawer>
             )}
         </ThemeProvider>
     );

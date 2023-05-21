@@ -2,9 +2,14 @@ import React, { useState, useEffect } from "react";
 
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import { createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { withStyles } from "@mui/styles";
-import { css } from "@emotion/css";
+import { css, jsx } from "@emotion/css";
 
 import {
     format,
@@ -14,8 +19,10 @@ import {
     isSameSecond,
     isBefore,
 } from "date-fns";
+import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
 import Month from "./Month";
 import Ranges from "./Ranges";
+import CloseIcon from "@mui/icons-material/Close";
 import { DATE_TIME_RANGE, MARKERS } from "../consts";
 import { useDispatch } from "react-redux";
 import {
@@ -28,9 +35,8 @@ import { findRangeByLabel } from "../utils";
 import AbsoluteSelector from "./AbsoluteSelector";
 import { useMediaQuery } from "react-responsive";
 import styled from "@emotion/styled";
-import {themes} from "../../../../../theme/themes";
-import { useSelector } from 'react-redux';
-import { ThemeProvider } from '@emotion/react';
+import darkTheme from "../../../../../theme/dark";
+const dTheme = darkTheme;
 const PickerTypeButton = styled.button`
     padding: 10px;
     border-radius: 3px;
@@ -53,45 +59,50 @@ const PickerTypeButton = styled.button`
     }
 `;
 
-const StyledNav = styled.div`
-        .header {
-            padding: 10px;
-            justifyContent: space-between;
-        }
-        .headerItem {
-            textAlign: center;
-        }
-        .dateComplete {
-            fontSize: .85em;
-        }
-        .divider {
-            borderLeft: 1px solid action;
-            marginBottom: 20;
-        }
-        .container {
-            position: absolute;
-            z-index: 1000;
-            top: 45px;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            background: ${({theme}) => theme.mainBgColor};
-        };
-        .applyButton {
-            color: white;
-            background: hsl(0; 0%; 31%);
-            border: 1px solid hsl(0; 0%; 31%);
-            padding: 6px 8px;
-            borderRadius: 3px;
-            marginLeft: 10px;
-            cursor: pointer;
-        }
-        `
+const styles = (theme) =>
+    createStyles({
+        header: {
+            padding: "10px",
+            justifyContent: "space-between",
+        },
+        headerItem: {
+            textAlign: "center",
+        },
+        dateComplete: {
+            fontSize: ".85em",
+        },
+        divider: {
+            borderLeft: `1px solid action`,
+            marginBottom: 20,
+        },
+        container: {
+            position: "absolute",
+            zIndex: 1000,
+            top: 45,
+            right: 0,
+            display: "flex",
+            flexDirection: "column",
+            overflowY: "auto",
+        },
+        applyButton: {
+            color: "white",
+            background: "#4f4f4f",
+            border: "1px solid #4f4f4f",
+            padding: "6px 8px",
+            borderRadius: "3px",
+            marginLeft: "10px",
+            cursor: "pointer",
+        },
+    });
 
-// open month only at
-export const PickerNav = (props) => {
+const theme = createTheme({
+    palette: {
+        mode: "dark",
+    },
+});
+const PickerNav = (props) => {
     const {
+        classes,
         ranges,
         dateRange,
         minDate,
@@ -121,7 +132,6 @@ export const PickerNav = (props) => {
     const [startCalendar, setStartCalendar] = useState(false);
     const [stopCalendar, setStopCalendar] = useState(false);
 
-    const theme = useSelector((store) => store.theme);
     useEffect(() => {
         if (rangeLabel) {
             const newRange = findRangeByLabel(rangeLabel);
@@ -199,9 +209,8 @@ export const PickerNav = (props) => {
     };
 
     return (
-        <ThemeProvider theme={themes[theme]}>
-            <StyledNav>
-            <Paper className={'container'} elevation={5}>
+        <ThemeProvider theme={theme}>
+            <Paper className={classes.container} elevation={5}>
                 <Grid display={"flex"} style={{ flex: "1" }}>
                     {calendarOpen && isBigScreen && (
                         <Grid container direction={"row"} wrap={"nowrap"}>
@@ -212,7 +221,7 @@ export const PickerNav = (props) => {
                                 navState={[true, canNavigateCloser]}
                                 marker={MARKERS.FIRST_MONTH}
                             />
-                            <div className={'divider'} />
+                            <div className={classes.divider} />
                             <Month
                                 {...commonProps}
                                 value={secondMonth}
@@ -362,7 +371,7 @@ export const PickerNav = (props) => {
                             )}
                         </div>
 
-                        <div className={"divider"} />
+                        <div className={classes.divider} />
 
                         {isBigScreen && (
                             <Grid style={{ display: "flex", flex: 1 }}>
@@ -377,7 +386,8 @@ export const PickerNav = (props) => {
                     </Grid>
                 </Grid>
             </Paper>
-            </StyledNav>
         </ThemeProvider>
     );
 };
+// open month only at
+export default withStyles(styles)(PickerNav);
