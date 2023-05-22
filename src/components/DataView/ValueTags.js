@@ -5,8 +5,18 @@ import loadLabelValues from "../../actions/loadLabelValues";
 import loadLogs from "../../actions/loadLogs";
 import { ZoomIn, ZoomOut } from "@mui/icons-material/";
 import { useSelector } from "react-redux";
+import { themes } from "../../theme/themes";
+import { ThemeProvider } from "@emotion/react";
+import styled from '@emotion/styled'
 
+const ValueTagsStyled = styled.div`
+    color: ${props => props.theme.textPrimary}
+    &:hover {
+        background: ${props => props.theme.widgetContainer};
+    }
+`
 export default function ValueTags({ tags }) {
+    const theme = useSelector((store) => store.theme);
     const isEmbed = useSelector((store) => store.isEmbed);
     async function addLabel(e, key, value, isInverted = false) {
         e.preventDefault();
@@ -48,8 +58,10 @@ export default function ValueTags({ tags }) {
     }
 
     return (
-        <>
+        
+        <ThemeProvider theme={themes[theme]}>
             {Object.entries(tags).map(([key, value], k) => (
+                <ValueTagsStyled>
                 <div className={"value-tags"} key={k}>
                     {!isEmbed && (
                         <>
@@ -75,7 +87,8 @@ export default function ValueTags({ tags }) {
                     <span>{key}</span>
                     <span>{value}</span>
                 </div>
+                </ValueTagsStyled>
             ))}
-        </>
+        </ThemeProvider>
     );
 }
