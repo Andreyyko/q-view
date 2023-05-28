@@ -10,7 +10,7 @@ font-size: 12px;
 padding:0px 8px;
 `;
 const QuerySwitchCont = styled.div`
-    height:30px;
+  
     display: flex;
     align-items: center;
     font-size: 12px;
