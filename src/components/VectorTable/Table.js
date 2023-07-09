@@ -50,7 +50,7 @@ export const AddLabels = ({ tkey, value, query }) => {
 
 export function Table({ columns, data }) {
     const [tableHeight, setTableHeight] = useState(window.innerHeight - 200);
-    const { query, responseType } = useSelector((store) => store);
+    const { query } = useSelector((store) => store);
     useEffect(() => {
         if (tableHeight !== window.innerHeight - 200)
             setTableHeight(window.innerHeight - 200);
@@ -65,10 +65,11 @@ export function Table({ columns, data }) {
         []
     );
 
-    const options = useMemo(
-        () => ({ columns, data, defaultColumn }),
-        [columns, data, defaultColumn]
-    );
+    const options = useMemo(() => ({ columns, data, defaultColumn }), [
+        columns,
+        data,
+        defaultColumn,
+    ]);
 
     const {
         getTableProps,
@@ -103,16 +104,13 @@ export function Table({ columns, data }) {
                                 title={cell.render("Cell").props.value}
                             >
                                 {cell.render("Cell")}{" "}
-                                {responseType === "vector" && (
-                                    <AddLabels
-                                        tkey={
-                                            cell.render("Cell").props.column
-                                                .Header
-                                        }
-                                        value={cell.render("Cell").props.value}
-                                        query={query}
-                                    />
-                                )}
+                                <AddLabels
+                                    tkey={
+                                        cell.render("Cell").props.column.Header
+                                    }
+                                    value={cell.render("Cell").props.value}
+                                    query={query}
+                                />
                             </div>
                         );
                     })}
@@ -135,7 +133,6 @@ export function Table({ columns, data }) {
                                 className="th"
                             >
                                 {column.render("Header")}
-
                                 <span>
                                     {column.isSorted
                                         ? column.isSortedDesc
@@ -143,7 +140,6 @@ export function Table({ columns, data }) {
                                             : " 🔼"
                                         : ""}
                                 </span>
-
                                 <div
                                     {...column.getResizerProps()}
                                     className={`resizer ${
@@ -160,7 +156,7 @@ export function Table({ columns, data }) {
                 <FixedSizeList
                     height={tableHeight}
                     itemCount={rows.length}
-                    itemSize={25}
+                    itemSize={26}
                     width={totalColumnsWidth + scrollbarWidth}
                 >
                     {RenderRow}

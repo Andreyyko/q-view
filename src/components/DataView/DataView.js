@@ -9,6 +9,7 @@ import { themes } from "../../theme/themes";
 import { LogRows } from "./LogRows";
 import { VectorTable } from "../VectorTable/VectorTable";
 
+
 class DataView extends Component {
     constructor(props) {
         super(props);
@@ -20,10 +21,7 @@ class DataView extends Component {
             loading: false,
             theme: props.theme,
             vectorData: props.vectorData || [],
-            tableData: props.tableData || {},
             isEmptyView: props.isEmptyView || false,
-            isTableView: props.isTableView || false,
-            responseType: props.responseType || "",
         };
     }
 
@@ -35,17 +33,17 @@ class DataView extends Component {
         return this.props.limit;
     };
 
+    
+
     render() {
         return (
             <ThemeProvider theme={themes[this.props.theme]}>
                 <DataViewStyled>
                     <DataViewCont>
-                        {this.props.messages.length > 0 &&
-                            !this.props.isTableView && (
-                                <LogRows messages={this.props.messages} />
-                            )}
-                        {this.getMatrixForChart().length > 0 &&
-                        !this.props.isTableView ? (
+                        { this.props.messages.length > 0 && (
+                            <LogRows messages={this.props.messages} />
+                        )}
+                        {this.getMatrixForChart().length > 0 ? (
                             <ClokiChart
                                 chartLimit={this.getLimit()}
                                 matrixData={this.getMatrixForChart()}
@@ -55,16 +53,8 @@ class DataView extends Component {
                         {this.props.loading && <Loader />}
 
                         {this.props.isEmptyView && <EmptyView />}
-                        {this.props.vectorData?.dataRows?.length > 0 &&
-                            !this.props.isEmptyView && (
-                                <VectorTable data={this.props.vectorData} />
-                            )}
-                        {this.props.tableData &&
-                            this.props?.responseType !== "vector" &&
-                            this.props.isTableView && (
-                                <VectorTable data={this.props.tableData} />
-                            )}
-
+                        {  this.props.vectorData?.dataRows?.length > 0 && !this.props.isEmptyView && (<VectorTable data={this.props.vectorData} />)}
+                        
                         <QueryHistory />
                     </DataViewCont>
                 </DataViewStyled>
@@ -80,11 +70,8 @@ const mapStateToProps = (state) => {
         loading: state.loading,
         matrixData: state.matrixData,
         vectorData: state.vectorData,
-        tableData: state.tableData,
         theme: state.theme,
         isEmptyView: state.isEmptyView,
-        isTableView: state.isTableView,
-        responseType: state.responseType,
     };
 };
 

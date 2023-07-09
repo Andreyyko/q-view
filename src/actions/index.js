@@ -23,6 +23,3 @@ export * from "./setTheme";
 export * from "./setIsEmptyView";
 export * from "./setTableData";
 export * from "./setVectorData";
-export * from "./setTableData";
-export * from "./setResponseType"; 
-export * from "./setIsTableView";
