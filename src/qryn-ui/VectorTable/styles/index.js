@@ -1,15 +1,31 @@
 import styled from "@emotion/styled";
 
 export const TableStyles = styled.div`
-    padding: 1rem;
+
+    
     display: block;
     overflow: auto;
+        &::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background: ${(props) => props.theme.scrollbarThumb};
+    }
     .table {
         border-spacing: 0;
         border-radius: 4px;
         font-size: 12px;
         color: ${(props) => props.theme.textColor};
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
 
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background: ${(props) => props.theme.scrollbarThumb};
+    }
         .tr {
             display: block;
             :last-child {
@@ -35,11 +51,9 @@ export const TableStyles = styled.div`
             border-bottom: 1px solid ${(props) => props.theme.buttonBorder};
             border-right: 1px solid ${(props) => props.theme.buttonBorder};
 
-            ${"" /* In this example we use an absolutely position resizer,
-     so this is required. */}
-            position: relative;
+            position:relative;
             white-space: nowrap;
-            overflow:hidden;
+            overflow: hidden;
             .show-add-labels {
                 display: none;
             }
@@ -65,7 +79,6 @@ export const TableStyles = styled.div`
                 top: 0;
                 transform: translateX(50%);
                 z-index: 1;
-                ${"" /* prevents from scrolling while dragging on touch devices */}
                 touch-action:none;
                 &.isResizing {
                     background: blue;

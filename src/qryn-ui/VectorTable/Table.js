@@ -9,17 +9,19 @@ import {
 import { FixedSizeList } from "react-window";
 import { scrollbarWidth } from "./helpers";
 import { getStyles } from "./styles";
-import { useSelector } from "react-redux";
-import { addLabel } from "../DataView/ValueTags";
 import { ZoomIn, ZoomOut } from "@mui/icons-material/";
+import { addLabel } from "../../components/DataView/ValueTags";
 
-export const AddLabels = ({ tkey, value, query }) => {
+export const AddLabels = (props) => {
+    // get queryObject from parent
+    const { tkey, value, actualQuery } = props;
+
     return (
         <div className="show-add-labels">
             <span
                 aria-label="Filter for value"
                 title="Filter for value"
-                onClick={(e) => addLabel(e, tkey, value, false, query)}
+                onClick={(e) => addLabel(e, tkey, value, false, actualQuery)}
                 className={"icon"}
             >
                 <ZoomIn
@@ -33,7 +35,7 @@ export const AddLabels = ({ tkey, value, query }) => {
             <span
                 aria-label="Filter out value"
                 title="Filter out value"
-                onClick={(e) => addLabel(e, tkey, value, true, query)}
+                onClick={(e) => addLabel(e, tkey, value, true, actualQuery)}
                 className={"icon"}
             >
                 <ZoomOut
@@ -48,9 +50,12 @@ export const AddLabels = ({ tkey, value, query }) => {
     );
 };
 
-export function Table({ columns, data }) {
+export function Table(props) {
+    const { columns, data, actQuery } = props;
+
+    const { responseType } = actQuery;
     const [tableHeight, setTableHeight] = useState(window.innerHeight - 200);
-    const { query } = useSelector((store) => store);
+
     useEffect(() => {
         if (tableHeight !== window.innerHeight - 200)
             setTableHeight(window.innerHeight - 200);
@@ -65,11 +70,10 @@ export function Table({ columns, data }) {
         []
     );
 
-    const options = useMemo(() => ({ columns, data, defaultColumn }), [
-        columns,
-        data,
-        defaultColumn,
-    ]);
+    const options = useMemo(
+        () => ({ columns, data, defaultColumn }),
+        [columns, data, defaultColumn]
+    );
 
     const {
         getTableProps,
@@ -78,11 +82,7 @@ export function Table({ columns, data }) {
         headerGroups,
         rows,
         prepareRow,
-        page,
-        state,
-        gotoPage,
-        setPageSize,
-        pageOptions,
+
     } = useTable(options, useFlexLayout, useResizeColumns, useSortBy);
 
     const RenderRow = useCallback(
@@ -104,13 +104,16 @@ export function Table({ columns, data }) {
                                 title={cell.render("Cell").props.value}
                             >
                                 {cell.render("Cell")}{" "}
-                                <AddLabels
-                                    tkey={
-                                        cell.render("Cell").props.column.Header
-                                    }
-                                    value={cell.render("Cell").props.value}
-                                    query={query}
-                                />
+                                {responseType === "vector" && (
+                                    <AddLabels
+                                        actualQuery={actQuery}
+                                        tkey={
+                                            cell.render("Cell").props.column
+                                                .Header
+                                        }
+                                        value={cell.render("Cell").props.value}
+                                    />
+                                )}
                             </div>
                         );
                     })}
@@ -133,6 +136,7 @@ export function Table({ columns, data }) {
                                 className="th"
                             >
                                 {column.render("Header")}
+
                                 <span>
                                     {column.isSorted
                                         ? column.isSortedDesc
@@ -140,6 +144,7 @@ export function Table({ columns, data }) {
                                             : " 🔼"
                                         : ""}
                                 </span>
+
                                 <div
                                     {...column.getResizerProps()}
                                     className={`resizer ${
@@ -156,7 +161,7 @@ export function Table({ columns, data }) {
                 <FixedSizeList
                     height={tableHeight}
                     itemCount={rows.length}
-                    itemSize={26}
+                    itemSize={25}
                     width={totalColumnsWidth + scrollbarWidth}
                 >
                     {RenderRow}
