@@ -6,6 +6,6 @@ import { setVectorData } from "../setVectorData";
 export async function resetNoData(dispatch:Function) {
     dispatch(setLogs([]));
     dispatch(setMatrixData([]));
-    dispatch(setVectorData({type:'',data:[]}));
+    dispatch(setVectorData({}));
     dispatch(setIsEmptyView(true))
 }

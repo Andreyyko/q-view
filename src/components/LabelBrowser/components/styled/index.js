@@ -14,7 +14,6 @@ export const HistoryButtonStyled = styled(BtnSmall)`
     color: ${(props)=> props.theme.textColor};
     background: ${(props) => props.theme.buttonDefault};
     border:1px solid ${(props)=>props.theme.buttonBorder};
-    height:28px;
     span {
         margin-left: 5px;
     }
@@ -28,7 +27,6 @@ export const ShowLabelsBtn = styled(BtnSmall)`
         border:1px solid ${(props)=>props.theme.buttonBorder};
     text-overflow: ellipsis;
     transition: 0.25s all;
-    padding-left:6px;
     justify-content: flex-start;
     color: ${({ theme }) => theme.textColor};
     height: 28px;
@@ -44,7 +42,7 @@ export const ShowLabelsBtn = styled(BtnSmall)`
 
 export const QueryBarContainer = styled.div`
     display: flex;
-    padding: 6px;
+    padding: 3px 6px;
     margin-top:5px;
     margin-left: 0px;
     background: ${({ theme }) => theme.widgetContainer};
@@ -58,8 +56,6 @@ export const ShowLogsBtn = styled(BtnSmall)`
     margin-left: 5px;
     transition: 0.25s all;
     justify-content: center;
-    padding: 3px 12px;
-    height:28px;
     &:hover {
         background: ${(props) => props.theme.primaryLight};
     }
@@ -81,6 +77,6 @@ export const MobileTopQueryMenu = styled.div`
     @media screen and (max-width: 864px) {
         display: flex;
         justify-content: space-between;
-        margin: 5px;
+        margin: 10px;
     }
 `;

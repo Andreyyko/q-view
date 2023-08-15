@@ -2,23 +2,21 @@ import styled from "@emotion/styled";
 import { CircularProgress } from "@mui/material";
 
 export const DataViewStyled = styled.div`
-    background: ${({theme}) => theme.mainBgColor};
-    border: 1px solid ${({theme})=> theme.buttonBorder};
-    margin: 5px;
-    padding:6px;
-    overflow-y: auto;
+    background: ${(props) => props.theme.mainBgColor};
+    margin: 6px 8px;
+    overflow-y: scroll;
     overflow-x: hidden;
     position: relative;
     flex: 1;
     border-radius: 3px;
 
     &::-webkit-scrollbar {
-        width: 5px;
+        width: 10px;
     }
 
     &::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        background: ${({theme}) => theme.scrollbarThumb};
+        border-radius: 10px;
+        background: ${(props) => props.theme.scrollbarThumb};
     }
 `;
 
@@ -26,42 +24,22 @@ export const EmptyViewContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    flex:1;
-    height:100%;
+    width: 100%;
+    height: 175px;
     font-size: 1em;
     color: ${({ theme }) => theme.textOff};
     background: ${({ theme }) => theme.secondaryWidgetContainer};
     text-align: center;
 `;
 
-export const DataViewHeader = styled.div`
-display:flex;
-align-items:center;
-font-size:10px;
-font-family: monospace;
-margin: 0px 10px;
-color:${({ theme }) => theme.textColor};
-span {
-    background:${({ theme }) => theme.inputBg};
-    padding:4px;
-    border-radius:4px;
-    border: 1px solid ${({ theme }) => theme.buttonBorder};
-    margin: 0px 5px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-`
-
 export const DataViewCont = styled.div`
     display: flex;
     min-height: min-content;
     flex-direction: column;
-    height:100%;
 `;
 
 export const LogRow = styled.div`
-    color: ${({theme}) => theme.textColor};
+    color: ${(props) => props.theme.textColor};
     font-size: 12px;
     cursor: pointer;
     padding-left: 0.5rem;
@@ -72,14 +50,14 @@ export const LogRow = styled.div`
     margin-top: 2px;
     font-family: monospace;
     &:hover {
-        background: ${({theme}) => theme.logBgColor};
+        background: ${(props) => props.theme.logBgColor};
     }
 
     p {
         display: inline-block;
     }
 
-    border-left: 4px solid ${({rowColor}) => rowColor};
+    border-left: 4px solid ${(props) => props.rowColor};
     .log-ts-row {
         display: flex;
     }
@@ -87,13 +65,13 @@ export const LogRow = styled.div`
 
 export const RowLogContent = styled.span`
     font-size: 12px;
-    color: ${({theme}) => theme.textPrimary};
+    color: ${(props) => props.theme.textPrimary};
     line-height: 1.5;
 `;
 
 export const RowTimestamp = styled.span`
     position: relative;
-    color: ${({theme}) => theme.textColor};
+    color: ${(props) => props.theme.textColor};
     margin-right: 0.25rem;
     white-space: nowrap;
     font-size: 12px;

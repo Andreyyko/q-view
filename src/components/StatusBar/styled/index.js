@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import theme from "../../../theme/themes";
 import { BtnSmall } from "../../../theme/styles/Button";
 import { InputSmall } from "../../../theme/styles/Input";
 export const MenuButton = styled(BtnSmall)`
@@ -14,8 +15,7 @@ export const MenuButton = styled(BtnSmall)`
 export const StatusBarCont = styled.div`
     display: flex;
     justify-content: space-between;
-    padding: 10px;
-    background: ${({theme})=>theme.widgetContainer}
+    padding: 0px 7px;
 `;
 
 export const StatusCont = styled.div`
@@ -126,8 +126,6 @@ export const UrlCopyButton = styled(BtnSmall)`
         background: ${props => props.theme.buttonHover};
     }
 `;
-
-
 
 export const DatePickerButton = styled(BtnSmall)`
     background: ${props => props.theme.buttonDefault};

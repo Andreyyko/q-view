@@ -21,7 +21,7 @@ const StyledList = styled.div`
     }
 
     &::-webkit-scrollbar-thumb {
-        border-radius: 5px;
+        border-radius: 10px;
         background: ${props => props.theme.buttonDefault};
     }
     button {

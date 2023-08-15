@@ -1,13 +1,14 @@
 import { useSelector, useDispatch } from "react-redux";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { createAlert, setIsSubmit } from "../../../actions";
+import { notificationTypes } from "../../notifications/consts";
 import localUrl from "../../../services/localUrl";
 import setLinksHistory from "../../../actions/setLinksHistory";
 import { MenuItem } from "@mui/material";
-import { notificationTypes } from "../../../qryn-ui/notifications/consts";
 
 export default function CopyButton() {
     const dispatch = useDispatch();
+    const query = useSelector((store) => store.query);
     const saveUrl = localUrl();
     const LINK_COPIED = "Link Copied To Clipboard";
     function shareLink() {
@@ -16,13 +17,13 @@ export default function CopyButton() {
             if (navigator?.clipboard && window.isSecureContext) {
                 navigator?.clipboard?.writeText(window.location.href).then(
                     function () {
-                      
+                        if (query.length > 0) {
                             const storedUrl = saveUrl.add({
                                 data: window.location.href,
                                 description: "From Shared URL",
                             });
                             dispatch(setLinksHistory(storedUrl));
-                        
+                        }
 
                         dispatch(
                             createAlert({
@@ -47,13 +48,13 @@ export default function CopyButton() {
                 textArea.select();
               
                 return new Promise((res, rej) => {
-               
+                    if (query.length > 0) {
                         const storedUrl = saveUrl.add({
                             data: window.location.href,
                             description: "From Shared URL",
                         });
                         dispatch(setLinksHistory(storedUrl));
-                 
+                    }
               
                     document.execCommand("copy") ? res() : rej();
                     textArea.remove();
@@ -68,7 +69,7 @@ export default function CopyButton() {
         }, 200);
     }
     return (
-        <MenuItem onClick={shareLink} disabled={false}>
+        <MenuItem onClick={shareLink} disabled={query.length < 1}>
             {" "}
             <ContentCopyIcon fontSize={"15px"} />
             <span>{"Copy Link"}</span>
