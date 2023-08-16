@@ -1,45 +1,57 @@
+import { ThemeProvider } from "@emotion/react";
+import styled from "@emotion/styled";
 import memoize from "memoize-one";
 import { PureComponent } from "react";
+import { useSelector } from "react-redux";
+import { themes } from "../../../theme/themes";
 import { formatDate, getRowColor } from "../helpers";
 import { LogRow, RowLogContent, RowTimestamp } from "../styled";
 import ValueTags from "../ValueTags";
 
-function Row({ toggleItemActive, index, log }) {
+const RowsCont = styled.div`
+overflow:hidden;    
+overflow-y: auto;
+    height:calc(100% - 20px);
+
+   
+`;
+function Row(props) {
+    const { toggleItemActive, index, log, actQuery } = props;
 
     return (
         <LogRow
-        rowColor={getRowColor(log.tags)}
-        onClick={() => {
-            toggleItemActive(index);
-        }}
-    >
-        <div className="log-ts-row">
-            <RowTimestamp>{formatDate(log.timestamp)}</RowTimestamp>
-            <RowLogContent>{log.text}</RowLogContent>
-        </div>
-
-        {log.showLabels && (
-            <div className="value-tags-container">
-                <ValueTags tags={log.tags} />
+            rowColor={getRowColor(log.tags)}
+            onClick={() => {
+                toggleItemActive(index);
+            }}
+        >
+            <div className="log-ts-row">
+                <RowTimestamp>{formatDate(log.timestamp)}</RowTimestamp>
+                <RowLogContent>{log.text}</RowLogContent>
             </div>
-        )}
-    </LogRow>
-    )
- 
+
+            {log.showLabels && (
+                <div className="value-tags-container">
+                    <ValueTags actQuery={actQuery} tags={log.tags} />
+                </div>
+            )}
+        </LogRow>
+    );
 }
- 
 
 const createItemData = memoize((items, toggleItemActive) => ({
     items,
     toggleItemActive,
 }));
 
-function Logs({ items, toggleItemActive }) {
+function Logs(props) {
+    const { items, toggleItemActive } = props;
     const itemData = createItemData(items, toggleItemActive);
     return (
         itemData &&
         itemData.items.map((log, key) => (
             <Row
+                {...props}
                 key={key}
                 index={key}
                 log={log}
@@ -48,7 +60,7 @@ function Logs({ items, toggleItemActive }) {
         ))
     );
 }
-
+/// pass the
 export class LogRows extends PureComponent {
     constructor(props) {
         super(props);
@@ -71,11 +83,31 @@ export class LogRows extends PureComponent {
         });
 
     render() {
+        const { name } = this.props;
+
+        // actual panel
+        const actPanel = this.props[name];
+
+        // queries from panel
+        const queries = actPanel || [];
+
+        // active DataView data
+
+        const actDataView = this.props.dataView;
+
+        //
+        const sourceId = actDataView["id"];
+
+        const actQuery = queries.find(({ id }) => id === sourceId);
+
         return (
-            <Logs
-                items={this.state.messages}
-                toggleItemActive={this.toggleItemActive}
-            />
+            <RowsCont>
+                <Logs
+                    actQuery={actQuery}
+                    items={this.state.messages}
+                    toggleItemActive={this.toggleItemActive}
+                />
+            </RowsCont>
         );
     }
 }

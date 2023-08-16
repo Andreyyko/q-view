@@ -1,9 +1,9 @@
 {
-  "name": "cloki-view",
-  "description": "LogQL UI for cLoki",
+  "name": "qryn-view",
+  "description": "LogQL UI for qryn",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/metrico/cloki-view.git"
+    "url": "git+ssh://git@github.com/metrico/qryn-view.git"
   },
   "author": "joel@qxip.net",
   "version": "0.18.2",
@@ -16,7 +16,6 @@
     "@mui/lab": "^5.0.0-alpha.66",
     "@mui/material": "^5.3.1",
     "@mui/styles": "^5.3.0",
-    "@reduxjs/toolkit": "^1.7.1",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -46,6 +45,7 @@
     "react-router-dom": "^6.2.1",
     "react-table": "7.7.0",
     "react-window": "^1.8.7",
+    "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
     "slate": "^0.73.1",
     "slate-history": "^0.66.0",
