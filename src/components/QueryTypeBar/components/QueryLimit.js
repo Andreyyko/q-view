@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setRightPanel } from "../../../actions/setRightPanel";
-import { setLeftPanel } from "../../../actions/setLeftPanel";
+import { setQueryLimit } from "../../../actions";
 
 const InputGroup = styled.div`
     display: flex;
@@ -29,42 +28,17 @@ const Input = styled.input`
     padding-left: 8px;
 `;
 
-export default function QueryLimit(props) {
+export default function QueryLimit() {
     const dispatch = useDispatch();
-    const { id } = props.data;
-
-    const left = useSelector((store) => store.left);
-    const right = useSelector((store) => store.right);
-    const [editedValue, setEditedValue] = useState(props.data.limit);
-
-    const limitFromProps = useMemo(() => props.data.limit, [props.data.limit]);
+    const limit = useSelector((store) => store.limit);
+    const [editedValue, setEditedValue] = useState(limit);
 
     useEffect(() => {
-        setEditedValue(limitFromProps);
-    }, [limitFromProps, setEditedValue]);
+        setEditedValue(limit);
+    }, [limit, setEditedValue]);
 
     function onLimitChange(e) {
-        const limitTxt = e.target.value;
-
-        if (props.name === "left") {
-            const leftC = [...left];
-            leftC.forEach((query) => {
-                if (query.id === id) {
-                    query.limit = limitTxt;
-                }
-            });
-            dispatch(setLeftPanel(leftC));
-        }
-
-        if (props.name === "right") {
-            const rightC = [...right];
-            rightC.forEach((query) => {
-                if (query.id === id) {
-                    query.limit = limitTxt;
-                }
-            });
-            dispatch(setRightPanel(rightC));
-        }
+        dispatch(setQueryLimit(e.target.value));
     }
     return (
         <InputGroup>

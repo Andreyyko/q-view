@@ -28,7 +28,7 @@ const DateSelect = styled.select`
     }
 
     &::-webkit-scrollbar-thumb {
-        border-radius: 5px;
+        border-radius: 10px;
         background: ${props => props.theme.scrollbarThumb};
     }
 `;

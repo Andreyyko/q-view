@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import setQueryHistory from "../../actions/setQueryHistory";
 import loadLogs from "../../actions/loadLogs";
 import setHistoryOpen from "../../actions/setHistoryOpen";
-import { createAlert } from "../../actions";
+import { createAlert, setQuery } from "../../actions";
 import { format } from "date-fns";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import StarIcon from "@mui/icons-material/Star";
@@ -21,6 +21,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
 
+import { notificationTypes } from "../notifications/consts";
 import localUrl from "../../services/localUrl";
 
 import setLinksHistory from "../../actions/setLinksHistory";
@@ -51,7 +52,6 @@ import AlertDialog from "./components/AlertDialog/AlertDialog";
 import EmptyHistoryDisplay from "./components/EmptyHistoryDisplay/EmptyHistoryDisplay";
 import CloseButton from "./components/CloseButton/CloseButton";
 import { themes } from "../../theme/themes";
-import { notificationTypes } from "../../qryn-ui/notifications/consts";
 function QueryHistoryTabs(props) {
     const {
         historyTabHeader,
@@ -62,8 +62,10 @@ function QueryHistoryTabs(props) {
         linksTab,
         settingTab,
         settingTabHeader,
-    } = props;
+        
+    } = props
     return (
+        
         <TabsContainer defaultValue={0}>
             <TabsList>
                 <Tab>
@@ -108,7 +110,6 @@ function QueryHistoryTabs(props) {
 }
 
 function HistoryLinkParams({
-    pos,
     item,
     copyLink,
     handleDelete,
@@ -123,8 +124,7 @@ function HistoryLinkParams({
 
     return (
         <LinkParams open={open}>
-            <HistoryLinkQuery pos={pos} onOpen={open} />
-
+            <HistoryLinkQuery item={item} onOpen={open} />
             <button
                 className="open-button"
                 onClick={(e) => {
@@ -185,29 +185,26 @@ function HistoryLinkParams({
             <div className="block-params">
                 <p>
                     <span className="key"> Query:</span>{" "}
-                    <span className="value">
+                    <span
+                   className="value"
+                    >
                         {decodeURIComponent(item.params.query)}
                     </span>{" "}
                 </p>
                 <p>
-                    <span className="key"> API URL:</span>{" "}
-                    <span className="value">{item.params.apiUrl}</span>{" "}
+                    <span className="key"> API URL:</span> <span className="value">{item.params.apiUrl}</span>{" "}
                 </p>
                 <p>
-                    <span className="key">From: </span>{" "}
-                    <span className="value">{item?.fromDate}</span>{" "}
+                    <span className="key">From: </span> <span className="value">{item?.fromDate}</span>{" "}
                 </p>
                 <p>
-                    <span className="key"> To: </span>{" "}
-                    <span className="value"> {item?.toDate}</span>{" "}
+                    <span className="key"> To: </span> <span className="value"> {item?.toDate}</span>{" "}
                 </p>
                 <p>
-                    <span className="key">Limit: </span>{" "}
-                    <span className="value">{item.params.limit}</span>{" "}
+                    <span className="key">Limit: </span> <span className="value">{item.params.limit}</span>{" "}
                 </p>
                 <p>
-                    <span className="key"> Step:</span>{" "}
-                    <span className="value">{item.params.step}</span>{" "}
+                    <span className="key"> Step:</span> <span className="value">{item.params.step}</span>{" "}
                 </p>
             </div>
             <HistoryLinkTools
@@ -222,13 +219,12 @@ function HistoryLinkParams({
     );
 }
 
-function HistoryLinkQuery({ pos, onOpen }) {
+function HistoryLinkQuery({ item, onOpen }) {
     return (
         <div style={{ display: onOpen ? "none" : "flex", width: "30vw" }}>
-            <RowData>
-                {"Link "}
-                {pos}{" "}
-            </RowData>
+            <Tooltip title={decodeURIComponent(item?.params?.query)}>
+                <RowData>{decodeURIComponent(item?.params?.query)} </RowData>
+            </Tooltip>
         </div>
     );
 }
@@ -306,19 +302,7 @@ function QueryHistoryTab({
     useEffect(() => {
         setListDisplay(queryHistory);
     }, [queryHistory]);
-
     // const listDisplay = filtered.length > 0 ? filtered : queryHistory
-    function queryNameDisplay(data) {
-        let query = "";
-        if (typeof data === "string") {
-            try {
-                query = JSON.parse(data)["queryInput"];
-            } catch (e) {
-                query = data;
-            }
-        }
-        return query;
-    }
     return (
         <QueryHistoryContainer className={isStarred ? "starredCont" : ""}>
             {listDisplay.length > 0 ? (
@@ -333,7 +317,7 @@ function QueryHistoryTab({
                             {listDisplay.length - index}
                         </span>
                         <Tooltip title={item.data}>
-                            <RowData>{queryNameDisplay(item.data)} </RowData>
+                            <RowData>{item.data} </RowData>
                         </Tooltip>
                         <span>
                             {format(item.timestamp, "yyyy/MM/dd HH:mm:ss")}
@@ -428,7 +412,6 @@ function LinksHistoryTab({
                         </span>
 
                         <HistoryLinkParams
-                            pos={listDisplay?.length - index}
                             item={item}
                             copyLink={copyLink}
                             handleDelete={handleDelete}
@@ -656,22 +639,8 @@ const QueryHistory = (props) => {
     }
 
     function handleSubmit(item) {
-        const initialObj = {
-            id: "",
-            limit: 100,
-            panel: "left",
-            queryInput: "",
-            queryType: "instant",
-        };
-        let logData = {};
-        try {
-            logData = JSON.parse(item.data);
-        } catch (e) {
-            logData = { ...initialObj };
-        }
-
-        const { id, limit, panel, queryInput, queryType } = logData;
-        dispatch(loadLogs(queryInput, queryType, limit, panel, id));
+        dispatch(setQuery(item.data));
+        dispatch(loadLogs());
     }
 
     function handleLinkSubmit(link) {
@@ -745,9 +714,7 @@ const QueryHistory = (props) => {
         }
     }
     function copyQuery(item) {
-        const query = JSON.parse(item)["queryInput"];
-
-        navigator.clipboard.writeText(query).then(
+        navigator.clipboard.writeText(item).then(
             function () {
                 if (item.length > 0) {
                     dispatch(

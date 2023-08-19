@@ -143,7 +143,6 @@ export default function SettingsDialog({ open, onClose }) {
                     <InputGroup>
                         <SettingLabel>Theme: {theme}</SettingLabel>
                         <Switch
-                        size={'small'}
                             checked={themeSet === "dark"}
                             onChange={handleThemeSwitch}
                             inputProps={{ "aria-label": "controlled" }}
@@ -153,7 +152,6 @@ export default function SettingsDialog({ open, onClose }) {
                     <InputGroup>
                         <SettingLabel>Set Debug Mode</SettingLabel>
                         <Switch
-                        size={'small'}
                             checked={debugMode}
                             onChange={handleDebugSwitch}
                             inputProps={{ "aria-label": "controlled" }}

@@ -2,10 +2,8 @@ import axios from "axios";
 import { setLabels } from "./setLabels";
 import { setApiError } from "./setApiError";
 import { createAlert } from "./createAlert";
-function getTimeParsed(time) {
-    return time.getTime() + "000000";
-}
-export default function loadLabels(apiUrl, start, end) {
+
+export default function loadLabels(apiUrl) {
     const origin = window.location.origin;
     const url = apiUrl;
     const headers = {
@@ -23,22 +21,23 @@ export default function loadLabels(apiUrl, start, end) {
         mode: "cors",
     };
 
-    const nanoStart = getTimeParsed(start);
-    const nanoEnd = getTimeParsed(end);
-
     return function (dispatch) {
         axios
-            .get(
-                `${url.trim()}/loki/api/v1/label?start=${nanoStart}&end=${nanoEnd}`,
-                options
-            )
+            .get(`${url.trim()}/loki/api/v1/label`, options)
             ?.then((response) => {
                 if (response) {
                     if (response?.data?.data?.length > 0) {
-                        let labels = response?.data?.data?.sort();
+                        let labels = response?.data?.data
+                            ?.sort()
+                            ?.map((label) => ({
+                                name: label,
+                                selected: false,
+                                values: [],
+                            }));
                         if (labels) {
                             dispatch(setLabels(labels || []));
                             dispatch(setApiError(""));
+               
                         }
                     } else {
                         dispatch(
@@ -49,6 +48,8 @@ export default function loadLabels(apiUrl, start, end) {
                         );
                     }
                 } else {
+             
+
                     dispatch(setApiError(""));
                     dispatch(setLabels([]));
                 }
