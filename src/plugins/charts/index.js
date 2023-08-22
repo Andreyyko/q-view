@@ -24,7 +24,13 @@ import {
 import UseTooltip from "./UseTooltip";
 import { CHART_OPTIONS } from "./consts";
 
-export default function ClokiChart({ matrixData }) {
+export default function ClokiChart(props) {
+
+
+    const {matrixData, actualQuery} = props
+
+    const {expr, queryType, limit, panel, id} = actualQuery
+
     const chartRef = useRef(null);
 
     const $q = window.jQuery;
@@ -42,19 +48,30 @@ export default function ClokiChart({ matrixData }) {
     const [chartType, setChartType] = useState(getTypeFromLocal() || "line");
 
     function getDataParsed(spliced) {
-        const parsed = [...matrixData].map((m) => ({
-            data: formatTs(m.values),
-            label: formatLabel(m.metric),
+        let parsed = [{
+            data: [],
+            label: [],
+            isVisible: true,
+            id:'',
+        }]
+
+        if(matrixData.length > 0) {
+            
+         parsed = [...matrixData]?.map((m) => ({
+            data: formatTs(m?.values),
+            label: formatLabel(m?.metric),
             isVisible: true,
             id: m.id,
         }));
 
         if (spliced) {
-            const splicedData = parsed.splice(0, 20);
+            const splicedData = parsed?.splice(0, 20);
             return splicedData;
         } else {
             return parsed;
         }
+    }
+    return parsed
     }
 
     function plotChartData(data, type, element) {
@@ -95,10 +112,10 @@ export default function ClokiChart({ matrixData }) {
         let newData = [];
         const lSelected =
             JSON.parse(localStorage.getItem("labelsSelected")) || [];
-        if (lSelected.length > 0) {
+        if (lSelected?.length > 0) {
             const { lines, bars, points } = getSeriesFromChartType(chartType);
-            const ids = lSelected.map((m) => m.id);
-            const dataMapped = data.map((series) => {
+            const ids = lSelected?.map((m) => m.id);
+            const dataMapped = data?.map((series) => {
                 if (!ids.includes(series.id)) {
                     return {
                         ...series,
@@ -158,7 +175,7 @@ export default function ClokiChart({ matrixData }) {
 
                 dispatch(setTimeRangeLabel(timeRangeLabel));
 
-                dispatch(loadLogs());
+                dispatch(loadLogs(expr, queryType, limit, panel, id));
             }, 400);
         } catch (e) {
             console.log("error on chart redraw", e);
@@ -180,9 +197,9 @@ export default function ClokiChart({ matrixData }) {
         }
 
         if (newList.length > 0) {
-            const ids = newList.map((m) => m.id);
+            const ids = newList?.map((m) => m.id);
             const { lines, bars, points } = getSeriesFromChartType(chartType);
-            let dataSelected = e.map((series) => {
+            let dataSelected = e?.map((series) => {
                 if (!ids.includes(series.id)) {
                     return {
                         ...series,
@@ -217,7 +234,7 @@ export default function ClokiChart({ matrixData }) {
         } else {
             const data = isSpliced ? chartData : allData;
             const { lines, bars, points } = getSeriesFromChartType(chartType);
-            const newData = data.map((series) => {
+            const newData = data?.map((series) => {
                 return {
                     ...series,
                     bars,
@@ -245,7 +262,7 @@ export default function ClokiChart({ matrixData }) {
 
     useEffect(() => {
         setElement(chartRef.current);
-        setLabels(chartData.map(({ label }) => label));
+        setLabels(chartData?.map(({ label }) => label));
         $q(chartRef.current).bind("plotselected", setRanges);
         setChartData(getDataParsed(isSpliced));
         localStorage.setItem("labelsSelected", JSON.stringify([]));
@@ -289,7 +306,7 @@ export default function ClokiChart({ matrixData }) {
     };
 
     return (
-        <div style={{ margin: "10px" }}>
+        <div style={{height:'inherit'}}>
             <ChartTools
                 matrixData={matrixData}
                 chartType={chartType}

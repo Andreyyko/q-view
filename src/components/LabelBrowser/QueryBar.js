@@ -1,80 +1,144 @@
-import React, { useState, useEffect } from "react";
+/**React */
+import { useState, useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { setQuery } from "../../actions";
-import loadLogs from "../../actions/loadLogs";
-import { setLabelsBrowserOpen } from "../../actions/setLabelsBrowserOpen";
-import localService from "../../services/localService";
-import setQueryHistory from "../../actions/setQueryHistory";
-
-import setHistoryOpen from "../../actions/setHistoryOpen";
-import localUrl from "../../services/localUrl";
-import setLinksHistory from "../../actions/setLinksHistory";
-import QueryEditor from "../../plugins/queryeditor";
-
+/**npm */
 import { css } from "@emotion/css";
+import { ThemeProvider } from "@emotion/react";
+import { Dialog, Switch } from "@mui/material";
+import { useMediaQuery } from "react-responsive";
+import CloseIcon from "@mui/icons-material/Close";
+/**Actions */
+import loadLogs from "../../actions/loadLogs";
+import setQueryHistory from "../../actions/setQueryHistory";
+import setHistoryOpen from "../../actions/setHistoryOpen";
+import setLinksHistory from "../../actions/setLinksHistory";
+import setIsEmptyView from "../../actions/setIsEmptyView";
+import { setLeftPanel } from "../../actions/setLeftPanel";
+import { setRightPanel } from "../../actions/setRightPanel";
+/**Services */
+import localService from "../../services/localService";
+import localUrl from "../../services/localUrl";
+/**Plugins */
+import QueryEditor from "../../plugins/queryeditor";
 import { MobileTopQueryMenu, QueryBarContainer } from "./components/styled";
+/**Buttons */
 import HistoryButton from "./components/HistoryButton/HistoryButton";
 import ShowLabelsButton from "./components/ShowLabelsButton/ShowLabelsButton";
 import ShowLogsButton from "./components/ShowLogsButton/ShowLogsButton";
+import ShowQuerySettingsButton from "./components/ShowQuerySettingsButton/ShowQuerySettingsButton";
+/**Helpers */
 import queryInit from "./helpers/queryInit";
 import onQueryValid from "./helpers/onQueryValid";
 import debugLog from "./helpers/debugLog";
-import { ThemeProvider } from "@emotion/react";
-import { themes } from "../../theme/themes";
+import { decodeQuery, decodeExpr } from "../../helpers/decodeQuery";
+/**Hooks */
 import { sendLabels } from "../../hooks/useLabels";
+/**Components */
 import QueryTypeBar from "../QueryTypeBar";
-import { decodeQuery } from "../../helpers/decodeQuery";
-import setIsEmptyView from "../../actions/setIsEmptyView";
+import QueryTypeSwitch from "../QueryTypeBar/components/QueryTypeSwitch";
+import QueryLimit from "../QueryTypeBar/components/QueryLimit";
+/**Theme */
+import { themes } from "../../theme/themes";
 
-export const QueryBar = () => {
+/**Styled*/
+import {
+    InputGroup,
+    SettingCont,
+    SettingHeader,
+    SettingCloseBtn,
+    SettingsInputContainer,
+    SettingLabel,
+} from "./components/styled";
+
+export const QueryBar = (props) => {
+    const { data, name } = props;
+    const { queryType, limit, id } = data;
+    const { hash } = useLocation();
     const dispatch = useDispatch();
     const historyService = localService().historyStore();
-    const labelsBrowserOpen = useSelector((store) => store.labelsBrowserOpen);
-    const debug = useSelector((store) => store.debugMode);
-    const query = useSelector((store) => store.query);
-    const apiUrl = useSelector((store) => store.apiUrl);
-    const historyOpen = useSelector((store) => store.historyOpen);
-    const isEmbed = useSelector((store) => store.isEmbed);
-    const theme = useSelector((store) => store.theme);
-    const [queryInput, setQueryInput] = useState(query);
+    const {
+        debug,
+        apiUrl,
+        historyOpen,
+        isEmbed,
+        theme,
+        labels,
+        queryHistory,
+        start,
+        stop,
+    } = useSelector((store) => store);
+    const left = useSelector((store) => store.left);
+    const right = useSelector((store) => store.right);
+    const isTabletOrMobile = useMediaQuery({ query: "(max-width: 914px)" });
+    const [queryInput, setQueryInput] = useState(data.expr);
     const [queryValid, setQueryValid] = useState(false);
-    const [queryValue, setQueryValue] = useState(queryInit(query));
-    const labels = useSelector((store) => store.labels);
-    const queryHistory = useSelector((store) => store.queryHistory);
+    const [queryValue, setQueryValue] = useState(queryInit(data.expr));
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {});
     const saveUrl = localUrl();
+    const expr = useMemo(() => {
+        return data.expr;
+    }, [data.expr]);
 
     useEffect(() => {
-        const dLog = debugLog(query);
+        const dLog = debugLog(expr);
         debug && dLog.logicQueryBar();
-        const labels = sendLabels(apiUrl);
-        if (isEmbed) dispatch(loadLogs());
-        if (onQueryValid(query)) {
+        const labels = sendLabels(apiUrl, start, stop);
+
+        if (isEmbed) dispatch(loadLogs(queryInput, queryType, limit, name, id));
+        if (onQueryValid(expr)) {
             debug && dLog.queryBarDispatch();
             return labels.then((data) => {
-                decodeQuery(query, apiUrl, data);
+                decodeQuery(data, expr, apiUrl, labels);
             });
         } else {
-            dispatch(setIsEmptyView(true))
+            dispatch(setIsEmptyView(true));
         }
     }, []);
 
     useEffect(() => {
-        setQueryInput(query);
-        setQueryValue([{ children: [{ text: query }] }]);
-        setQueryValid(onQueryValid(query));
-    }, [query]);
+        setQueryInput(expr);
 
-    const onValueDisplay = (e) => {
-        e.preventDefault();
-        const isOpen = labelsBrowserOpen ? false : true;
-        dispatch(setLabelsBrowserOpen(isOpen));
-    };
+        setQueryValue([{ children: [{ text: expr }] }]);
+
+        setQueryValid(onQueryValid(expr));
+    }, [expr]);
 
     function handleQueryChange(e) {
         setQueryValue(e);
 
+        const queryParams = new URLSearchParams(hash.replace("#", ""));
         const multiline = e.map((text) => text.children[0].text).join("\n");
-        dispatch(setQuery(multiline));
+
+        if (name === "left") {
+            const leftC = [...left];
+            leftC.forEach((query) => {
+                if (query.id === id) {
+                    query.expr = multiline;
+                }
+            });
+
+            dispatch(setLeftPanel(leftC));
+            queryParams.set("left", encodeURIComponent(JSON.stringify(leftC)));
+        }
+
+        if (name === "right") {
+            const rightC = [...right];
+            rightC.forEach((query) => {
+                if (query.id === id) {
+                    query.expr = multiline;
+                }
+            });
+            dispatch(setRightPanel(rightC));
+            queryParams.set(
+                "right",
+                encodeURIComponent(JSON.stringify(rightC))
+            );
+        }
+
+        window.location.hash = queryParams;
     }
 
     const handleInputKeyDown = (e) => {
@@ -82,39 +146,86 @@ export const QueryBar = () => {
             onSubmit(e);
         }
     };
+
     const onSubmit = (e) => {
         e.preventDefault();
-
-        dispatch(setQuery(queryInput));
 
         if (onQueryValid(queryInput)) {
             try {
                 const historyUpdated = historyService.add({
-                    data: queryInput,
+                    data: JSON.stringify({
+                        queryInput,
+                        queryType,
+                        limit,
+                        panel: name,
+                        id,
+                    }),
                     url: window.location.hash,
                 });
+
                 dispatch(setQueryHistory(historyUpdated));
-                dispatch(setLabelsBrowserOpen(false));
-                
+
                 decodeQuery(queryInput, apiUrl, labels);
-                
-                dispatch(loadLogs());
+
+                const labelsDecoded = decodeExpr(data.expr);
+
+                if (name === "left") {
+                    const leftC = [...left];
+                    leftC.forEach((query) => {
+                        if (query.id === id) {
+                            query.labels = [...labelsDecoded];
+                        }
+                    });
+
+                    dispatch(setLeftPanel(leftC));
+                }
+
+                if (name === "right") {
+                    const rightC = [...right];
+                    rightC.forEach((query) => {
+                        if (query.id === id) {
+                            query.labels = [...labelsDecoded];
+                        }
+                    });
+                    dispatch(setRightPanel(rightC));
+                }
+
+                dispatch(loadLogs(queryInput, queryType, limit, name, id));
+
                 const storedUrl = saveUrl.add({
                     data: window.location.href,
                     description: "From Query Submit",
                 });
+
                 dispatch(setLinksHistory(storedUrl));
             } catch (e) {
                 console.log(e);
             }
         } else {
-            dispatch(setIsEmptyView(true))
-            console.log("Please make a log query", query);
+            dispatch(setIsEmptyView(true));
+
+            console.log("Please make a log query", expr);
         }
     };
 
     function handleHistoryClick(e) {
         dispatch(setHistoryOpen(!historyOpen));
+    }
+
+    function onClose() {
+        if (open) {
+            setOpen(false);
+        } else {
+            setOpen(true);
+        }
+    }
+
+    function showQuerySettings() {
+        if (open) {
+            setOpen(false);
+        } else {
+            setOpen(true);
+        }
     }
     return (
         !isEmbed && (
@@ -130,10 +241,12 @@ export const QueryBar = () => {
                                 display: flex;
                             `}
                         >
-                            <ShowLabelsButton
-                                onValueDisplay={onValueDisplay}
-                                labelsBrowserOpen={labelsBrowserOpen}
+                            <ShowLabelsButton {...props} isMobile={true} />
+
+                            <ShowQuerySettingsButton
+                                {...props}
                                 isMobile={true}
+                                onClick={showQuerySettings}
                             />
                             <HistoryButton
                                 queryLength={queryHistory.length}
@@ -149,13 +262,11 @@ export const QueryBar = () => {
                         />
                     </MobileTopQueryMenu>
                     <QueryBarContainer>
-                        <ShowLabelsButton
-                            onValueDisplay={onValueDisplay}
-                            labelsBrowserOpen={labelsBrowserOpen}
-                        />
+                        <ShowLabelsButton {...props} />
 
                         <QueryEditor
                             onQueryChange={handleQueryChange}
+                            defaultValue={expr || ""}
                             value={queryValue}
                             onKeyDown={handleInputKeyDown}
                         />
@@ -164,15 +275,172 @@ export const QueryBar = () => {
                             queryLength={queryHistory.length}
                             handleHistoryClick={handleHistoryClick}
                         />
+
                         <ShowLogsButton
                             disabled={!queryValid}
                             onClick={onSubmit}
                             isMobile={false}
                         />
                     </QueryBarContainer>
-                    <QueryTypeBar />
+
+                    {!isTabletOrMobile && <QueryTypeBar {...props} />}
+                    {isTabletOrMobile && (
+                        <QuerySetting
+                            open={open}
+                            handleClose={onClose}
+                            {...props}
+                        />
+                    )}
                 </ThemeProvider>
             </div>
         )
+    );
+};
+
+export const QuerySetting = (props) => {
+    const dispatch = useDispatch();
+    const theme = useSelector((store) => store.theme);
+    const left = useSelector((store) => store.left);
+    const right = useSelector((store) => store.right);
+
+    const responseType = useSelector((store) => store.responseType);
+
+    const { hash } = useLocation();
+    const { id } = props.data;
+    const { open, handleClose } = props;
+
+    const [isTableViewSet, setIsTableViewSet] = useState(props.data.tableView);
+    const [queryTypeSwitch, setQueryTypeSwitch] = useState(
+        props.data.queryType
+    );
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(hash.replace("#", ""));
+        const urlPanel = urlParams.get(props.name);
+
+        const parsedPanel = JSON.parse(decodeURIComponent(urlPanel));
+
+        if (parsedPanel?.length > 0) {
+            const queryMD = parsedPanel.find(
+                (f) => f.idRef === props.data.idRef
+            );
+
+            if (props.name === "left" && queryMD) {
+                const leftC = [...left];
+                leftC.forEach((query) => {
+                    if (query.idRef === props.data.idRef) {
+                        query.queryType = queryMD.queryType;
+                    }
+                });
+                dispatch(setLeftPanel(leftC));
+            }
+            if (props.name === "right" && queryMD) {
+                const rightC = [...right];
+                rightC.forEach((query) => {
+                    if (query.idRef === props.data.idRef) {
+                        query.queryType = queryMD.queryType;
+                    }
+                });
+                dispatch(setRightPanel(rightC));
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        setIsTableViewSet(props.data.tableView);
+    }, [setIsTableViewSet, props.data.tableView]);
+
+    const SWITCH_OPTIONS = [
+        { value: "range", label: "Range" },
+        { value: "instant", label: "Instant" },
+    ];
+
+    function onSwitchChange(e) {
+        // modify query type switch value
+        if (props.name === "left") {
+            const leftC = [...left];
+            leftC.forEach((query) => {
+                if (query.id === id) {
+                    query.queryType = e;
+                }
+            });
+            dispatch(setLeftPanel(leftC));
+        }
+
+        if (props.name === "right") {
+            const rightC = [...right];
+            rightC.forEach((query) => {
+                if (query.id === id) {
+                    query.queryType = e;
+                }
+            });
+            dispatch(setRightPanel(rightC));
+        }
+
+        setQueryTypeSwitch(e);
+    }
+
+    function handleTableViewSwitch() {
+        // modify table view switch value
+        if (props.name === "right") {
+            const rightC = [...right];
+            rightC.forEach((query) => {
+                if (query.id === id) {
+                    query.tableView = isTableViewSet ? false : true;
+                }
+            });
+            dispatch(setRightPanel(rightC));
+        }
+
+        if (props.name === "left") {
+            const leftC = [...left];
+            leftC.forEach((query) => {
+                if (query.id === id) {
+                    query.tableView = isTableViewSet ? false : true;
+                }
+            });
+            dispatch(setLeftPanel(leftC));
+        }
+    }
+
+    return (
+        <Dialog open={open} onClose={handleClose}>
+            <SettingCont>
+                <SettingHeader>
+                    <h3>Query Options</h3>
+                    <SettingCloseBtn onClick={handleClose}>
+                        {" "}
+                        <CloseIcon />{" "}
+                    </SettingCloseBtn>
+                </SettingHeader>
+
+                <SettingsInputContainer>
+                    <div className="options-input">
+                        <QueryTypeSwitch
+                            options={SWITCH_OPTIONS}
+                            onChange={onSwitchChange}
+                            defaultActive={queryTypeSwitch}
+                        />
+                    </div>
+                    <div className="options-input">
+                        <QueryLimit {...props} />
+                    </div>
+
+                    {responseType !== "vector" && (
+                        <div className="options-input">
+                            <InputGroup>
+                                <SettingLabel>Table View</SettingLabel>
+                                <Switch
+                                    checked={isTableViewSet}
+                                    size={"small"}
+                                    onChange={handleTableViewSwitch}
+                                    inputProps={{ "aria-label": "controlled" }}
+                                />
+                            </InputGroup>
+                        </div>
+                    )}
+                </SettingsInputContainer>
+            </SettingCont>
+        </Dialog>
     );
 };

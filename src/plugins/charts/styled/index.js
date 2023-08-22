@@ -1,11 +1,9 @@
 import styled from "@emotion/styled";
-import theme from "../../../theme/themes";
-
 /**
  * Labels styles
  */
 export const LabelsContainer = styled("div")`
-    position: absolute;
+
     display: flex;
     flex-wrap: wrap;
     max-height: calc(100% - 300px);
@@ -13,11 +11,11 @@ export const LabelsContainer = styled("div")`
     margin: 10px 20px;
     padding-bottom: 10px;
     &::-webkit-scrollbar {
-        width: 10px;
+        width: 5px;
     }
 
     &::-webkit-scrollbar-thumb {
-        border-radius: 10px;
+        border-radius: 5px;
         background: ${(props) => props.theme.scrollbarThumb};
     }
 `;
