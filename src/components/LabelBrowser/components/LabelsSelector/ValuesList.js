@@ -23,6 +23,7 @@ export const selectedStyle = {
 
 export const LabelValue = (props) => {
     const dispatch = useDispatch();
+
     let { value, data, onValueClick, actPanel, name } = props;
 
     const valueSelected = useMemo(() => value.selected, [value.selected]);
@@ -93,7 +94,7 @@ export const LabelValue = (props) => {
 export default function ValuesList(props) {
     const dispatch = useDispatch();
     const { name, data } = props;
-    const { dataSourceId } = data;
+    const { dataSourceType } = data;
     const { start, stop } = useSelector((store) => store);
     const panelQuery = useSelector((store) => store[name]);
 
@@ -102,7 +103,7 @@ export default function ValuesList(props) {
     // get values hook
 
     const { response, controller, loading } = useLabelValues(
-        dataSourceId,
+        dataSourceType,
         props.label,
         start,
         stop

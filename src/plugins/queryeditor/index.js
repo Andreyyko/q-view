@@ -73,7 +73,7 @@ function Leaf({ attributes, children, leaf }) {
                 `}
         ${(leaf.string || leaf.char) &&
                 css`
-                    color: green;
+                    color: #7bdb40;
                 `}
         ${(leaf.function || leaf["class-name"] || leaf["attr-name"]) &&
                 css`

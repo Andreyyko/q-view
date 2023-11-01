@@ -2,12 +2,14 @@ import axios from "axios";
 import { errorHandler } from "./errorHandler";
 import { setApiError } from "./setApiError";
 
-export default function loadLabelValues(label, labelList='', url) {
+import store from '../store/store'
+
+export default function loadLabelValues(label, labelList='', apiUrl='') {
     if (!label || (label?.length <= 0 && label.lsList.length <= 0)) {
         return () => {};
     }
 
-   // const url = store.getState().apiUrl;
+    const url = store.getState().apiUrl;
 
     const origin = window.location.origin;
 
@@ -25,7 +27,6 @@ export default function loadLabelValues(label, labelList='', url) {
         headers: headers,
         mode: "cors",
     };
-
 
     return async (dispatch) => {
         await axios

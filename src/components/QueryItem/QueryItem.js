@@ -25,7 +25,6 @@ const panelAction = (panel, data) => {
 };
 
 const dataViewAction = (panel, data) => {
-
     if (panel === "left") {
         return setLeftDataView(data);
     } else {
@@ -34,11 +33,10 @@ const dataViewAction = (panel, data) => {
 };
 
 export default function QueryItem(props) {
-
+    // first data load
     useEffect(() => {
-        const { expr, queryType, limit, panel, id, dataSourceType, dataSourceId, direction } =
+        const { expr, queryType, limit, panel, id, dataSourceType, direction } =
             props.data;
-
         dispatch(
             getData(
                 dataSourceType,
@@ -47,8 +45,7 @@ export default function QueryItem(props) {
                 limit,
                 panel,
                 id,
-                direction,
-                dataSourceId
+                direction
             )
         );
     }, []);
@@ -69,8 +66,6 @@ export default function QueryItem(props) {
     const panelSelected = useSelector((store) => store[name]);
 
     const isQueryOpen = useState(true);
-    
-
 
     function filterPanel(panel) {
         if (panel?.length > 1) {
