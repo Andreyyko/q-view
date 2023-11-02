@@ -90,19 +90,18 @@ function setDataView(panel: string) {
 }
 
 export function parseStreamResponse(responseProps: QueryResult) {
-    const { result, time, debugMode, queryType, panel, id, dispatch, direction } =
+    const { result, time, debugMode, queryType, panel, id, dispatch } =
         responseProps;
     // get sorted messages
-    const messages = mapStreams(result, direction);
+    const messages = mapStreams(result);
     // get current dataView and update action
     const dataView = setDataView(panel);
 
     dispatch(setMatrixData([]));
 
     const tableResult = getStreamTableResult(result);
-    dispatch(setTableData(tableResult)); 
-
-    const messSorted = sortMessagesByTimestamp(messages, direction);
+    dispatch(setTableData(tableResult));
+    const messSorted = sortMessagesByTimestamp(messages);
     function unite(args: any) {
         return [].concat.apply([], args).filter(function (elem, index, self) {
             return self.indexOf(elem) === index;
@@ -123,7 +122,7 @@ export function parseStreamResponse(responseProps: QueryResult) {
             getAsyncResponse(dispatch(setLogs(messSorted || []))).then(() => {
                 if (messSorted.length === 0) {
                     if (debugMode)
-                        console.log("🚧 getData / getting no messages sorted");
+                        console.log("🚧 loadLogs / getting no messages sorted");
                     dispatch(setIsEmptyView(true));
                 }
 

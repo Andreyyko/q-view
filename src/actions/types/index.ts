@@ -1,6 +1,6 @@
 import { AxiosRequestHeaders, Method } from "axios";
 
-export type QueryResultType = "streams" | "vector" | "matrix" | "scalar";
+export type QueryResultType = "streams" | "vector" | "matrix";
 
 export type Endpoint = {
     instant: string;
@@ -15,10 +15,8 @@ export type QueryResult = {
     dispatch: Function;
     type: QueryResultType;
     panel: string;
-    id: string;
-    ts: number;
-    direction: QueryDirection
-
+    id: string
+    ts: number
 };
 
 export type Message = {
@@ -26,7 +24,7 @@ export type Message = {
     timestamp: number;
     text: string;
     tags: object;
-    isShowTs: boolean;
+    showTs: boolean;
     showLabels: boolean;
     id: string;
 };
@@ -43,7 +41,7 @@ export type QueryOptions = {
 };
 
 export type QueryType = "range" | "instant";
-export type QueryDirection = "forward" | 'backwards'
+
 export type QueryParams = {
     queryUrl?: string;
     encodedQuery?: string;
@@ -51,5 +49,4 @@ export type QueryParams = {
     time?: number | string;
     parsedTime?: number | string;
     queryStep: number | string;
-    direction: QueryDirection;
 };

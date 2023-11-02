@@ -1,5 +1,5 @@
 import getTimeParams from "./getTimeParams";
-import { QueryDirection, QueryResult } from "../types";
+import { QueryResult } from "../types";
 import store from "../../store/store";
 import setIsEmptyView from "../setIsEmptyView";
 import { parseResponse } from "./parseResponse";
@@ -7,14 +7,13 @@ import { resetNoData } from "./resetNoData";
 import setResponseType from "../setResponseType";
 
 export async function processResponse(
-    type:string,
     response: any,
     dispatch: Function,
     panel: string,
-    id: string,
-    direction:QueryDirection
+    id: string
 ) {
-    const { time } = getTimeParams(type);
+  
+    const { time } = getTimeParams();
     const { queryType, debugMode } = store.getState();
     if (response?.data?.streams?.length === 0) {
         const resultQuery: QueryResult = {
@@ -26,8 +25,7 @@ export async function processResponse(
             type: "streams",
             panel,
             id,
-            ts: Date.now(),
-            direction
+            ts: Date.now()
         };
 
         parseResponse(resultQuery);
@@ -50,8 +48,7 @@ export async function processResponse(
             type,
             panel,
             id,
-            ts: Date.now(),
-            direction
+            ts: Date.now()
         };
 
         parseResponse(resultQuery);

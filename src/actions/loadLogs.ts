@@ -8,7 +8,7 @@ import { getEndpointParams } from "./helpers/getEndpointParams";
 import { resetParams } from "./helpers/resetParams";
 import { resetNoData } from "./helpers/resetNoData";
 import { processResponse } from "./helpers/processResponse";
-import { QueryType, QueryDirection } from "./types";
+import { QueryType } from "./types";
 import { getTimeSpan } from "./helpers/getTimeSpan";
 
 /**
@@ -20,23 +20,18 @@ import { getTimeSpan } from "./helpers/getTimeSpan";
  * @param id  the query ID
  * @returns void
  */
-
-// this one should load logs and metrics data
-// just change endpoint
-
-export default function getData(
-    type: string,
+export default function loadLogs(
     queryInput: string,
     queryType: QueryType,
     limit: number,
     panel: string,
-    id: string,
-    direction: QueryDirection = "forward"
+    id: string
 ) {
+
     const { debugMode } = store.getState();
     const options = getQueryOptions();
-    const tSpan = getTimeSpan(queryInput);
-    const params = getEndpointParams(type, queryInput, limit, tSpan, direction);
+    const tSpan = getTimeSpan(queryInput)
+    const params = getEndpointParams(queryInput, limit, tSpan);
     const endpoint = getEndpoint(queryType)(params);
 
     return async function (dispatch: Function) {
@@ -50,19 +45,12 @@ export default function getData(
 
         cancelToken = axios.CancelToken.source();
         options.cancelToken = cancelToken.token;
-
         try {
             await axios
                 ?.get(endpoint, options)
                 ?.then((response) => {
-                    processResponse(
-                        type,
-                        response,
-                        dispatch,
-                        panel,
-                        id,
-                        direction
-                    );
+                    // the panel should be set inside processResponse
+                    processResponse(response, dispatch, panel, id);
                 })
                 .catch((error) => {
                     resetNoData(dispatch);

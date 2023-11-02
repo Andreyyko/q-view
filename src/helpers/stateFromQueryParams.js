@@ -18,11 +18,9 @@ export const initialUrlState = {
             lastIdx: 1,
             panel: "left",
             queryType: "range",
-            dataSourceType:'logs',
             limit: 100,
             step: 5,
             tableView: false,
-            isShowTs: true,
             browserOpen: false,
             expr: "",
             labels: [], // name: selected:
@@ -39,11 +37,9 @@ export const initialUrlState = {
             lastIdx: 1,
             panel: "right",
             queryType: "range",
-            dataSourceType:'logs',
             limit: 100,
             step: 5,
             tableView: false,
-            isShowTs: true,
             browserOpen: false,
             expr: "",
             labels: [], // name: selected:
