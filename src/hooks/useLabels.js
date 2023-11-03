@@ -3,12 +3,21 @@ import axios from "axios";
 function getTimeParsed(time) {
     return time.getTime() + "000000";
 }
-export const sendLabels = async (apiUrl, start, stop) => {
 
-    const startNs = getTimeParsed(start)
-    const stopNs = getTimeParsed(stop)
+
+const getUrlFromType = (apiUrl, type, startNs, stopNs) => {
+    if (type === 'metrics') {
+        return `${apiUrl}/api/v1/labels`
+    } else {
+        return `${apiUrl}/loki/api/v1/label?start=${startNs}&end=${stopNs}`
+    }
+    
+  }
+
+export const sendLabels = async (id,type, apiUrl, start, stop) => {
+    const startNs = type === 'metrics' ? start : getTimeParsed(start)
+    const stopNs = type === 'metrics' ? stop: getTimeParsed(stop)
     const origin = window.location.origin;
-    const url = apiUrl;
     const headers = {
         "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Headers": [
@@ -23,9 +32,9 @@ export const sendLabels = async (apiUrl, start, stop) => {
         headers: headers,
         mode: "cors",
     };
-
-    const res = await axios
-        .get(`${url.trim()}/loki/api/v1/label?start=${startNs}&end=${stopNs}`, options)
+    if(type !== 'flux') {
+        const res = await axios
+        .get(getUrlFromType(apiUrl,type, startNs, stopNs), options)
         .then((response) => {
             if (response) {
                 if (response?.data?.data === []) console.log("no labels found");
@@ -45,4 +54,6 @@ export const sendLabels = async (apiUrl, start, stop) => {
         .catch((e) => console.log(e));
 
     return res;
+    }
+
 };
