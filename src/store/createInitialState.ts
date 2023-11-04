@@ -5,8 +5,10 @@ import stateFromQueryParams from "../helpers/stateFromQueryParams";
 import localService from "../services/localService";
 import localUrl from "../services/localUrl";
 import {
+    defaultLinkedFields,
     defaultDataSources,
     defaultDatasourcesFieldTypes,
+    defaultLogsLinkedFieldTypes,
     defaultLinkedFieldTypes,
 } from "../views/DataSources/store/defaults";
 
@@ -157,13 +159,12 @@ export default function initialState() {
 
         left: urlState["left"] || [
             {
-                id: "widYlu_fXweET5D4",
+                id: nanoid(),
                 idRef: "L-A",
                 lastIdx: 1,
                 panel: "left",
                 queryType: "range",
-                dataSourceType: "logs",
-                dataSourceId:'cHI2SqPzH_kxYRXj',
+                dataSourceType:'logs',
                 limit: 100,
                 step: 100,
                 tableView: false,
@@ -172,19 +173,18 @@ export default function initialState() {
                 expr: "",
                 labels: [], // name: selected:
                 values: [], // label name selected
-                direction: "forward",
+                direction: 'forward'
             },
         ],
 
         right: urlState["right"] || [
             {
-                id: "ndFM1zV-aow5hJ0P",
+                id: nanoid(),
                 idRef: "R-A",
                 lastIdx: 1,
                 panel: "right",
                 queryType: "range",
-                dataSourceType: "logs",
-                dataSourceId:'cHI2SqPzH_kxYRXj',
+                dataSourceType:'logs',
                 limit: 100,
                 step: 100,
                 tableView: false,
@@ -193,18 +193,21 @@ export default function initialState() {
                 expr: "",
                 labels: [], // name: selected:
                 values: [], // label name selected
-                direction: "forward",
+                direction: 'forward'
             },
         ],
 
         leftDataView: [],
         rightDataView: [],
+        linkedFields: settingsState()["hasLfSettings"]
+            ? settingsState()["linkedFieldsSettings"]
+            :defaultLinkedFields,
         dataSources: settingsState()["hasDsSettings"]
             ? settingsState()["dataSourceSettings"]
             : defaultDataSources,
-        linkedFieldTypes: defaultLinkedFieldTypes,
-        dataSourcesFieldTypes: defaultDatasourcesFieldTypes,
-        linkTypes: ["logs", "traces", "metrics", "flux"],
+        linkedFieldTypes:defaultLinkedFieldTypes,
+        dataSourcesFieldTypes:defaultDatasourcesFieldTypes,
+        linkTypes: ["logs", "traces", "metrics"],
         visTypes: ["chart", "logs", "table", "trace", "graph"],
         chartType: "line",
         resposeType: "",

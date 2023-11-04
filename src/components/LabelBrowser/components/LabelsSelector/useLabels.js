@@ -22,25 +22,9 @@ const getTimestamp = (time, type) =>
         metrics: getTimeSec(time),
         logs: getTimeParsed(time),
     }[type]);
-
-export default function useLabels(id, dataSourceURL = "") {
-    const { start, stop } = useSelector((store) => store);
-    const dataSources = useSelector((store) => store.dataSources);
-
-    const currentDataSource = useMemo(() => {
-        const current = dataSources.find((f) => f.id === id);
-        if (dataSourceURL !== "") {
-            current.url = dataSourceURL;
-        }
-
-        return current;
-    }, [id, dataSources]);
-
-    const [type, setType] = useState(currentDataSource.type || "");
-
-    useEffect(() => {
-        setType(currentDataSource.type);
-    }, [currentDataSource, setType]);
+    
+export default function useLabels(type) {
+    const { start, stop, apiUrl } = useSelector((store) => store);
 
     let timeStart, timeEnd;
 
@@ -50,12 +34,12 @@ export default function useLabels(id, dataSourceURL = "") {
     const controller = new AbortController();
 
     const [url, setUrl] = useState(
-        getUrlFromType(currentDataSource.url, type, timeStart, timeEnd)
+        getUrlFromType(apiUrl, type, timeStart, timeEnd)
     );
 
     useEffect(() => {
-        setUrl(getUrlFromType(currentDataSource.url, type, timeStart, timeEnd));
-    }, [setUrl, type, currentDataSource]);
+        setUrl(getUrlFromType(apiUrl, type, timeStart, timeEnd));
+    }, [setUrl, type]);
 
     const origin = useState(window.location.origin);
 
@@ -81,20 +65,19 @@ export default function useLabels(id, dataSourceURL = "") {
     const [response, setResponse] = useState([]);
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-        if (currentDataSource.type !== "flux") {
-            const apiRequest = async () => {
-                setLoading(true);
-                try {
-                    const req = await axios({ url }, options);
-                    setResponse(req || []);
-                } catch (e) {
-                    console.log(e);
-                }
-                setLoading(false);
-            };
-            apiRequest();
-        }
-    }, [options, url, currentDataSource]);
+        const apiRequest = async () => {
+            setLoading(true);
+            try {
+                const req = await axios({ url }, options);
+                setResponse(req || []);
+            } catch (e) {
+                console.log(e);
+            }
+            setLoading(false);
+        };
+
+        apiRequest();
+    }, [options, url, apiUrl]);
 
     return {
         response,

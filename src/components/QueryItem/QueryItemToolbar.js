@@ -16,6 +16,7 @@ import { themes } from "../../theme/themes";
 
 const DataSourceSelect = (props) => {
     const { value, onChange, opts, label } = props;
+
     const formattedSelect = useMemo(() => {
         if (typeof opts[0] === "string") {
             return opts.map((k) => ({ value: k, name: k }));
@@ -25,7 +26,7 @@ const DataSourceSelect = (props) => {
     return (
         <InputGroup>
             {label?.length > 0 && <Label>{label}</Label>}
-            <select defaultValue={value.value} onChange={onChange}>
+            <select defaultValue={value.toLowerCase()} onChange={onChange}>
                 {formattedSelect?.map((field, key) => (
                     <option key={key} value={field.value}>
                         {field.name}
@@ -96,24 +97,10 @@ export function QueryItemToolbar(props) {
     const {
         data: { expr },
     } = props;
-
+    const {dataSourceType} = props.data
     const panel = useSelector((store) => store[props.name]);
     const isEmbed = useSelector((store) => store.isEmbed);
-
     const dataSources = useSelector((store) => store.dataSources);
-
-    const dataSourceOptions = useMemo(() => {
-        return dataSources.map((m) => ({
-            value: m.id,
-            name: m.name,
-            type: m.type,
-            icon: m.icon,
-        }));
-    }, [dataSources]);
-
-    const [dataSourceValue, setDataSourceValue] = useState(
-        dataSourceOptions?.find((f) => f.value === props.data.dataSourceId)
-    );
 
     const panelAction = (panel, data) => {
         if (panel === "left") {
@@ -134,20 +121,18 @@ export function QueryItemToolbar(props) {
         dispatch(panelAction(props.name, cPanel));
     }
     const onDataSourceChange = (e) => {
+        // load labels
+        // load values
+        // load logs ?
+
         const value = e.target.value;
-        const dataSource = dataSources.find((f) => f.id === value);
         const panelCP = JSON.parse(JSON.stringify(panel));
-        setDataSourceValue((prev) => {
-            return dataSource;
-        });
         panelCP.forEach((panelCP) => {
             if (panelCP.id === props.data.id) {
-                panelCP.dataSourceId = dataSource.id;
-                panelCP.dataSourceType = dataSource.type;
-                panelCP.dataSourceURL = dataSource.url;
+                panelCP.dataSourceType = value;
             }
         });
-
+        console.log(props.name, panelCP)
         dispatch(panelAction(props.name, panelCP));
     };
     return (
@@ -175,9 +160,9 @@ export function QueryItemToolbar(props) {
             {!isEmbed && (
                 <div className="query-tools">
                     <DataSourceSelect
-                        value={dataSourceValue}
+                        value={dataSourceType}
                         onChange={onDataSourceChange}
-                        opts={dataSourceOptions}
+                        opts={dataSources}
                         label={""}
                     />
                     <AddOutlinedIcon

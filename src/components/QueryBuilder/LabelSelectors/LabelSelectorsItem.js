@@ -108,8 +108,8 @@ export function OperatorSelect(props) {
 
 export function LabelSelect(props) {
     const { data } = props;
-    const { dataSourceId } = data;
-    const { loading, response } = useLabels(dataSourceId);
+    const { dataSourceType } = data;
+    const { loading, response } = useLabels(dataSourceType);
     const [labels, setLabels] = useState([]);
     const [label, setLabel] = useState("");
 
@@ -144,14 +144,14 @@ export function LabelSelect(props) {
 
 export function ValueSelect(props) {
     const { data } = props;
-    const {  dataSourceId } = data;
+    const { dataSourceType } = data;
     const start = useSelector((state) => state.start);
     const stop = useSelector((state) => state.stop);
 
     const [values, setValues] = useState([]);
     const { label, operator } = props;
     const { response, loading } = useLabelValues(
-        dataSourceId,
+        dataSourceType,
         label,
         start,
         stop
