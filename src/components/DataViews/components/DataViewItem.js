@@ -58,6 +58,7 @@ export function DataViewItem(props) {
 
     const viewHeight = useViewHeight({ type, actualQuery, total, dataView});
 
+
     if (actualQuery && type === "matrix" && streamData.length > 0) {
         // return matrix type component
         const { limit } = actualQuery;
@@ -118,26 +119,19 @@ export function DataViewItem(props) {
             ...props,
         };
         return <VectorView {...vectorProps} />;
-    } 
-    
-    if(actualQuery && !streamData?.dataRows?.length && !streamData?.length ) {
-       // Empty view for the case when no view available
-       const emptyViewProps = {
-        viewRef,
-        panelSize,
-        onStreamClose,
-        onMinimize,
-        onMaximize,
-        actualQuery,
-        total,
-        ...props,
-    };
+    } else {
+        // Empty view for the case when no view available
+        const emptyViewProps = {
+            viewRef,
+            panelSize,
+            onStreamClose,
+            onMinimize,
+            onMaximize,
+            actualQuery,
+            total,
+            ...props,
+        };
 
-    return <EmptyView {...emptyViewProps} />;
-    }
-    
-    
-    else {
-        return null
+        return <EmptyView {...emptyViewProps} />;
     }
 }
