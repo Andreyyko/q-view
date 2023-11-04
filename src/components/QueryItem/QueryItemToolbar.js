@@ -147,7 +147,7 @@ export function QueryItemToolbar(props) {
                 panelCP.dataSourceURL = dataSource.url;
             }
         });
-        console.log(props.name, panelCP)
+
         dispatch(panelAction(props.name, panelCP));
     };
     return (

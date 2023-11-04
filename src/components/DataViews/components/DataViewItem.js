@@ -5,7 +5,7 @@ import { EmptyView } from "../views/EmptyView";
 import LogsView from "../views/LogsView";
 import { MatrixView } from "../views/MatrixView";
 import { VectorView } from "../views/VectorView";
-import {TraceView} from "./Traces/TraceView.jsx"
+
 export function DataViewItem(props) {
     // add a header for table view / json view
 
@@ -57,29 +57,6 @@ export function DataViewItem(props) {
     const theight = useTableHeight({ total, panelSize, dataView });
 
     const viewHeight = useViewHeight({ type, actualQuery, total, dataView});
-    if (actualQuery && type === "trace" && streamData.length > 0) {
-        // return matrix type component
-        const { limit } = actualQuery;
-        const traceProps = {
-            viewRef,
-            panelSize,
-            viewHeight,
-            onStreamClose,
-            onMaximize,
-            onMinimize,
-            actualQuery,
-            total,
-            type,
-            theight,
-            tableData,
-            viewWidth,
-            limit,
-            streamData,
-            theme: props.theme,
-            ...props,
-        };
-        return <TraceView {...traceProps}/>;
-    }
 
     if (actualQuery && type === "matrix" && streamData.length > 0) {
         // return matrix type component
