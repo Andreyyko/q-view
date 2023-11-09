@@ -3,7 +3,7 @@ import localService from "../../services/localService";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import setQueryHistory from "../../actions/setQueryHistory";
-import getData from "../../actions/getData";
+import loadLogs from "../../actions/loadLogs";
 import setHistoryOpen from "../../actions/setHistoryOpen";
 import { createAlert } from "../../actions";
 import { format } from "date-fns";
@@ -662,7 +662,6 @@ const QueryHistory = (props) => {
             panel: "left",
             queryInput: "",
             queryType: "range",
-            direction: "forward",
         };
         let logData = {};
         try {
@@ -671,26 +670,8 @@ const QueryHistory = (props) => {
             logData = { ...initialObj };
         }
 
-        const {
-            id,
-            limit,
-            panel,
-            queryInput,
-            queryType,
-            dataSourceType,
-            direction,
-        } = logData;
-        dispatch(
-            getData(
-                dataSourceType,
-                queryInput,
-                queryType,
-                limit,
-                panel,
-                id,
-                direction
-            )
-        );
+        const { id, limit, panel, queryInput, queryType } = logData;
+        dispatch(loadLogs(queryInput, queryType, limit, panel, id));
     }
 
     function handleLinkSubmit(link) {
@@ -716,7 +697,6 @@ const QueryHistory = (props) => {
     function filterLinkStarred(starred) {
         setLinksStarredFiltered(starred);
     }
-
     useEffect(() => {
         const starred = queryHistory?.filter((f) => f.starred) || [];
         const linksStarred = linksHistory?.filter((f) => f.starred) || [];
@@ -744,7 +724,6 @@ const QueryHistory = (props) => {
             );
         }
     }
-
     function handleStarLinkItem(item) {
         const updatedItem = { ...item, starred: item.starred ? false : true };
         const updated = linkService.update(updatedItem);
@@ -765,7 +744,6 @@ const QueryHistory = (props) => {
             );
         }
     }
-
     function copyQuery(item) {
         const query = JSON.parse(item)["queryInput"];
 
@@ -785,11 +763,9 @@ const QueryHistory = (props) => {
             }
         );
     }
-
     function handleClose() {
         dispatch(setHistoryOpen(false));
     }
-
     function clearHistory() {
         const historyClean = historyService.clean();
         dispatch(setQueryHistory(historyClean));

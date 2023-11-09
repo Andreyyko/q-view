@@ -3,7 +3,6 @@ import { useMediaQuery } from "react-responsive";
 import { LogRowStyled, RowLogContent, RowTimestamp, RowsCont } from "./styled";
 import { createItemData, formatDate, getRowColor } from "./helpers";
 import {ValueTagsCont} from "../ValueTags";
-import { useSelector } from "react-redux";
 
 /**
  *
@@ -11,13 +10,12 @@ import { useSelector } from "react-redux";
  * @returns Formatted log text line
  */
 
-function LogRow({ text, dateFormated, isMobile, isSplit, isShowTs }) {
-    /// add showTimestamp
+function LogRow({ text, dateFormated, isMobile }) {
     return (
         <div className="log-ts-row">
-            {isShowTs && !isMobile && !isSplit && <RowTimestamp>{dateFormated}</RowTimestamp>}
+            {!isMobile && <RowTimestamp>{dateFormated}</RowTimestamp>}
             <RowLogContent>
-                {(isMobile || isSplit) && isShowTs && <p>{dateFormated}</p>}
+                {isMobile && <p>{dateFormated}</p>}
                 <p>{text}</p>
             </RowLogContent>
         </div>
@@ -30,7 +28,7 @@ function LogRow({ text, dateFormated, isMobile, isSplit, isShowTs }) {
  * @returns Log Line With log line tags options
  */
 
-function Row({ toggleItemActive, index, log, actQuery, isMobile, isSplit }) {
+function Row({ toggleItemActive, index, log, actQuery, isMobile }) {
     const { tags, timestamp, text, showLabels } = log;
     const rowColor = useMemo(() => getRowColor(tags), [tags]);
     const dateFormated = useMemo(() => formatDate(timestamp), [timestamp]);
@@ -45,7 +43,6 @@ function Row({ toggleItemActive, index, log, actQuery, isMobile, isSplit }) {
         dateFormated,
         text,
         isMobile,
-        isSplit
     };
 
     const rowProps = {
@@ -57,7 +54,7 @@ function Row({ toggleItemActive, index, log, actQuery, isMobile, isSplit }) {
 
     return (
         <LogRowStyled {...rowProps}>
-            <LogRow {...logRowProps} isShowTs={actQuery.isShowTs}/>
+            <LogRow {...logRowProps} />
             <ValueTagsCont {...valueTagsProps} />
         </LogRowStyled>
     );
@@ -73,7 +70,7 @@ function Row({ toggleItemActive, index, log, actQuery, isMobile, isSplit }) {
 function Logs({ items, toggleItemActive, actQuery }) {
     const itemData = createItemData(items, toggleItemActive);
     const isTabletOrMobile = useMediaQuery({ query: "(max-width: 914px)" });
-    const isSplit = useSelector((store) => store.isSplit)
+
     return (
         itemData &&
         itemData.items.map((log, key) => (
@@ -82,7 +79,6 @@ function Logs({ items, toggleItemActive, actQuery }) {
                 key={key}
                 index={key}
                 log={log}
-                isSplit={isSplit}
                 isMobile={isTabletOrMobile}
                 toggleItemActive={toggleItemActive}
             />

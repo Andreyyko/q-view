@@ -9,15 +9,13 @@ import {
     ApiSelectorInput,
     ApiSelectorStyled,
 } from "../../styled";
-
+import loadLabels from "../../../../actions/loadLabels";
 import onQueryValid from "../../../LabelBrowser/helpers/onQueryValid";
 
 export function ApiSelector() {
-
     const { apiUrl, apiError, query, start, stop } = useSelector(
         (store) => store
     );
-
     const [editedUrl, setEditedUrl] = useState(apiUrl);
     const [apiSelectorOpen, setApiSelectorOpen] = useState(false);
     const dispatch = useDispatch();
@@ -29,7 +27,7 @@ export function ApiSelector() {
 
     useEffect(() => {
         setEditedUrl(apiUrl);
-     
+        dispatch(loadLabels(apiUrl, start, stop));
     }, [apiUrl]);
 
     useEffect(() => {
@@ -40,7 +38,7 @@ export function ApiSelector() {
         } else {
             setApiSelectorOpen(false);
             if (query?.length > 0 && onQueryValid(query)) {
-                //  dispatch(getData());
+                //  dispatch(loadLogs());
             }
         }
     }, [apiError]);
@@ -59,6 +57,7 @@ export function ApiSelector() {
         dispatch(setApiUrl(editedUrl));
 
         setEditedUrl(editedUrl);
+        dispatch(loadLabels(editedUrl, start, stop));
     };
 
     return (
