@@ -4,11 +4,6 @@ import { environment } from "../environment/env.dev";
 import stateFromQueryParams from "../helpers/stateFromQueryParams";
 import localService from "../services/localService";
 import localUrl from "../services/localUrl";
-import {
-    defaultDataSources,
-    defaultDatasourcesFieldTypes,
-    defaultLinkedFieldTypes,
-} from "../views/DataSources/store/defaults";
 
 export interface IsDebug {
     isActive: boolean;
@@ -72,41 +67,6 @@ export function date_fm(input: MomentInput): Moment {
 }
 
 export default function initialState() {
-    const settingsState = () => {
-        const dsSettings = localStorage.getItem("dataSources") || undefined;
-        const lfSettings = localStorage.getItem("linkedFields") || undefined;
-        let hasDsSettings = false;
-        let hasLfSettings = false;
-        let dataSourceSettings = [];
-        let linkedFieldsSettings = [];
-        if (dsSettings !== undefined) {
-            hasDsSettings = true;
-            try {
-                dataSourceSettings = JSON.parse(dsSettings);
-            } catch (e) {
-                hasDsSettings = false;
-                dataSourceSettings = [];
-            }
-        }
-
-        if (lfSettings !== undefined) {
-            hasLfSettings = true;
-            try {
-                linkedFieldsSettings = JSON.parse(lfSettings);
-            } catch (e) {
-                hasLfSettings = false;
-                linkedFieldsSettings = [];
-            }
-        }
-
-        return {
-            hasDsSettings,
-            hasLfSettings,
-            dataSourceSettings,
-            linkedFieldsSettings,
-        };
-    };
-
     const urlState: URLState = stateFromQueryParams() || initialUrlState;
     const historyService = localService().historyStore();
     const linkService = localUrl();
@@ -131,12 +91,11 @@ export default function initialState() {
                     .format("YYYY-MM-DDTHH:mm:ss.SSSZ")
             ),
         time: urlState.time || "", // for instant queries
-        stop:
-            urlState.stop ||
+        stop: urlState.stop ||
             new Date(moment(Date.now()).format("YYYY-MM-DDTHH:mm:ss.SSSZ")),
         from: urlState.from || null,
         to: urlState.to || null,
-        label: urlState.label,
+        label: urlState.label || "Last 5 minutes",
         messages: [],
         limitLoad: false,
         limit: urlState.limit || 100,
@@ -154,58 +113,43 @@ export default function initialState() {
         isSubmit: urlState.isSubmit || false,
         isEmbed: urlState.isEmbed || false,
         // dont mention queries // its obvious
-
         left: urlState["left"] || [
             {
-                id: "widYlu_fXweET5D4",
+                id: nanoid(),
                 idRef: "L-A",
                 lastIdx: 1,
                 panel: "left",
                 queryType: "range",
-                dataSourceType: "logs",
-                dataSourceId:'cHI2SqPzH_kxYRXj',
                 limit: 100,
                 step: 100,
                 tableView: false,
-                isShowTs: true,
                 browserOpen: false,
                 expr: "",
                 labels: [], // name: selected:
                 values: [], // label name selected
-                direction: "forward",
             },
         ],
 
         right: urlState["right"] || [
             {
-                id: "ndFM1zV-aow5hJ0P",
+                id: nanoid(),
                 idRef: "R-A",
                 lastIdx: 1,
                 panel: "right",
                 queryType: "range",
-                dataSourceType: "logs",
-                dataSourceId:'cHI2SqPzH_kxYRXj',
                 limit: 100,
                 step: 100,
                 tableView: false,
-                isShowTs: true,
                 browserOpen: false,
                 expr: "",
                 labels: [], // name: selected:
                 values: [], // label name selected
-                direction: "forward",
             },
         ],
 
         leftDataView: [],
         rightDataView: [],
-        dataSources: settingsState()["hasDsSettings"]
-            ? settingsState()["dataSourceSettings"]
-            : defaultDataSources,
-        linkedFieldTypes: defaultLinkedFieldTypes,
-        dataSourcesFieldTypes: defaultDatasourcesFieldTypes,
-        linkTypes: ["logs", "traces", "metrics", "flux"],
-        visTypes: ["chart", "logs", "table", "trace", "graph"],
+
         chartType: "line",
         resposeType: "",
         notifications: [],

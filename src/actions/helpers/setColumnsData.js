@@ -6,10 +6,8 @@ import { setColumnsTsValue } from "./setColumnsValue";
  * @returns the columns formatted for react-table
  */
 
-export function setColumnsData(columns, type = "logs", timeAccessor) {
-   
+export function setColumnsData(columns) {
     const columnsData = columns?.map((row) => ({ Header: row, accessor: row }));
-
-    const columnsDated = setColumnsTsValue(columnsData, type, timeAccessor);
+    const columnsDated = setColumnsTsValue(columnsData);
     return columnsDated;
 }

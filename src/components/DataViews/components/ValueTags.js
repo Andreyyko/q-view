@@ -1,13 +1,11 @@
 import { queryBuilderWithLabels } from "../../LabelBrowser/helpers/querybuilder";
 
 import { ZoomIn, ZoomOut } from "@mui/icons-material/";
-import { useSelector, useDispatch } from "react-redux";
-import { setSplitView } from "../../StatusBar/components/SplitViewButton/setSplitView";
+import { useSelector } from "react-redux";
 import { themes } from "../../../theme/themes";
 import { ThemeProvider } from "@emotion/react";
 import styled from "@emotion/styled";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { setRightPanel } from "../../../actions/setRightPanel";
+
 const ValueTagsStyled = styled.div`
     color: ${(props) => props.theme.textPrimary};
     flex: 1;
@@ -16,17 +14,7 @@ const ValueTagsStyled = styled.div`
         background: ${(props) => props.theme.widgetContainer};
     }
 `;
-const TracesButton = styled.div`
-    color: ${(props) => props.theme.textPrimary};
-    flex: 0;
-    background-color: hsl(220, 67%, 55%);
-    display: flex;
-    margin-left: 5px;
-    padding: 0 7px;
-    border-radius: 2px;
-    font-size: 12px;
-    align-items: center;
-`
+
 function alreadyExists(exp, op, k, v) {
     return exp.includes(`${k}${op}"${v}"`);
 }
@@ -74,38 +62,13 @@ export async function addLabel(e, key, value, isExcluded = false, queryObj) {
 
 
 export default function ValueTags(props) {
-    console.log(props)
     const { tags, actQuery } = props;
 
     const theme = useSelector((store) => store.theme);
     const isEmbed = useSelector((store) => store.isEmbed);
-    const dispatch = useDispatch();
-
-
-    // get the datasource used by this 'logs' dataSource 
-    const dataSources = useSelector(store => store.dataSources)
-
-
-    console.log(dataSources)
-
-
-    // match here the datasource with the one selected inside datasources
 
     // add labels should add the labels to expresion and update labels on selectors
 
-    const openTraces = (e, key, value) => {
-        e.stopPropagation();
-        if (props.actQuery.panel === 'left') {
-            dispatch(setSplitView(true));
-        }
-        const panelCP = JSON.parse(JSON.stringify(props.actQuery));
-        panelCP.dataSourceType = 'traces';
-        panelCP.expr = value
-
-        console.log(props.name, panelCP)
-        dispatch(setRightPanel([panelCP]));
-        console.log(props)
-    }
     return (
         <ThemeProvider theme={themes[theme]}>
             {Object.entries(tags).map(([key, value], k) => (
@@ -149,24 +112,7 @@ export default function ValueTags(props) {
                         )}
 
                         <span style={{ flex: 1 }}>{key}</span>
-                        <span style={{ flex: 4 }}>{value}
-                        {key === 'traceID' && (
-                            <TracesButton
-                                onClick={(e)=>{openTraces(e, key, value)}}
-                            > 
-                                <OpenInNewIcon                                         
-                                    style={{
-                                    width: "14px",
-                                    height: "14px"
-                                    }}
-                                />
-                                <span>
-                                    TRACES
-                                </span>
-                            </TracesButton>
-                        )}
-                        </span>
-                        
+                        <span style={{ flex: 4 }}>{value}</span>
                     </div>
                 </ValueTagsStyled>
             ))}
