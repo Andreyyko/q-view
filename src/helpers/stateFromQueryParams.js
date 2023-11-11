@@ -3,6 +3,9 @@ import setDebug from "./setDebug";
 import * as moment from "moment";
 import { nanoid } from "nanoid";
 
+
+const initialDataSources = localStorage.getItem('dataSources')
+
 export const initialUrlState = {
     query: "",
     queryType: "range",
@@ -18,9 +21,13 @@ export const initialUrlState = {
             lastIdx: 1,
             panel: "left",
             queryType: "range",
+            dataSourceType:'logs',
+            dataSourceURL:'',
+            dataSourceId: 'cHI2SqPzH_kxYRXj',
             limit: 100,
             step: 5,
             tableView: false,
+            isShowTs: true,
             browserOpen: false,
             expr: "",
             labels: [], // name: selected:
@@ -37,9 +44,13 @@ export const initialUrlState = {
             lastIdx: 1,
             panel: "right",
             queryType: "range",
+            dataSourceType:'logs',
+            dataSourceURL:'',
+            dataSourceId: 'cHI2SqPzH_kxYRXj',
             limit: 100,
             step: 5,
             tableView: false,
+            isShowTs: true,
             browserOpen: false,
             expr: "",
             labels: [], // name: selected:
