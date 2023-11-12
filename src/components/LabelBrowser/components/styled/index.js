@@ -87,12 +87,12 @@ export const ShowSettingsBtn = styled(BtnSmall)`
     span {
         margin-left: 5px;
     }
-
-    display: ${(props) => ((props.isMobile || props.isSplit) ? "flex" : "none")};
+    display: ${(props) => (props.isMobile || props.isSplit ? "flex" : "none")};
 `;
 
 export const MobileTopQueryMenu = styled.div`
-    display: ${props =>( props.isSplit || props.dataSourceType === 'flux') ? 'flex' : 'none'};
+    display: ${(props) =>
+        props.isSplit || props.dataSourceType === "flux" ? "flex" : "none"};
 
     @media screen and (max-width: 864px) {
         display: flex;
