@@ -10,9 +10,9 @@ import { ViewStyled } from "./styled";
             viewRef,
             panelSize,
             viewHeight,
-            setStreamClose,
-            setMaxHeight,
-            setMinimize,
+            onStreamClose,
+            onMaximize,
+            onMinimize,
             actualQuery,
             total,
             type,
@@ -24,9 +24,9 @@ import { ViewStyled } from "./styled";
         return (
             <ViewStyled ref={viewRef} size={panelSize} vheight={viewHeight}>
                 <ViewHeader
-                    onClose={setStreamClose}
-                    setMinimize={setMinimize}
-                    setMaxHeight={setMaxHeight}
+                    onClose={onStreamClose}
+                    onMinimize={onMinimize}
+                    onMaximize={onMaximize}
                     actualQuery={actualQuery}
                     total={total}
                     type={type}
@@ -43,7 +43,7 @@ import { ViewStyled } from "./styled";
                     ) : (
                         <LogRows
                             {...props}
-                            onClose={setStreamClose}
+                            onClose={onStreamClose}
                             messages={streamData}
                             actualQuery={actualQuery}
                         />

@@ -9,7 +9,7 @@ import { Dialog, Switch } from "@mui/material";
 import { useMediaQuery } from "react-responsive";
 import CloseIcon from "@mui/icons-material/Close";
 /**Actions */
-import getData from "../../../actions/getData";
+import loadLogs from "../../../actions/loadLogs";
 import setQueryHistory from "../../../actions/setQueryHistory";
 import setHistoryOpen from "../../../actions/setHistoryOpen";
 import setLinksHistory from "../../../actions/setLinksHistory";
@@ -49,7 +49,6 @@ import {
     SettingsInputContainer,
     SettingLabel,
 } from "./styled";
-import setDataSources from "../../../views/DataSources/store/setDataSources";
 export function panelAction(name, value) {
     if (name === "left") {
         return setLeftPanel(value);
@@ -60,41 +59,27 @@ export const SWITCH_OPTIONS = [
     { value: "range", label: "Range" },
     { value: "instant", label: "Instant" },
 ];
-
-export const DIRECTION_SWITCH_OPTIONS = [
-    { value: "forward", label: "Forward" },
-    { value: "backwards", label: "Backwards" },
-];
-
-export const TRACE_OPTIONS = [
-    { value: "traceId", label: "TraceId" },
-    { value: "search", label: "Search" },
-];
-
 export const QueryBar = (props) => {
     const { data, name } = props;
-    const {
-        queryType,
-        limit,
-        id,
-        dataSourceType,
-        direction,
-        dataSourceId,
-        dataSourceURL,
-    } = data;
+    const { queryType, limit, id } = data;
     const { hash } = useLocation();
     const dispatch = useDispatch();
     const historyService = localService().historyStore();
-    const { historyOpen, isEmbed, theme, queryHistory, start, stop } =
-        useSelector((store) => store);
-    const isSplit = useSelector((store) => store.isSplit);
+    const {
+        apiUrl,
+        historyOpen,
+        isEmbed,
+        theme,
+        queryHistory,
+        start,
+        stop,
+    } = useSelector((store) => store);
     const panelQuery = useSelector((store) => store[name]);
     const isTabletOrMobile = useMediaQuery({ query: "(max-width: 914px)" });
     const [queryInput, setQueryInput] = useState(data.expr);
     const [queryValid, setQueryValid] = useState(false);
     const [queryValue, setQueryValue] = useState(queryInit(data.expr));
     const [open, setOpen] = useState(false);
-    const dataSources = useSelector((store) => store.dataSources);
 
     useEffect(() => {});
     const saveUrl = localUrl();
@@ -103,81 +88,31 @@ export const QueryBar = (props) => {
     }, [data.expr]);
 
     useEffect(() => {
-        // check for url params and for datasources
-        const urlParams = new URLSearchParams(hash);
-        let currentDataSource = {};
-        const panel = JSON.parse(decodeURIComponent(urlParams.get(name)));
-        const currentPanel = panel?.find((f) => f.id === id);
+        const labels = sendLabels(apiUrl, start, stop);
+        if (isEmbed) dispatch(loadLogs(queryInput, queryType, limit, name, id));
+        if (onQueryValid(expr)) {
+            return labels.then((data) => {
+                const prevLabels = [...props.data.labels];
+                const prevMap = prevLabels.map((m) => m.name) || [];
+                const newLabels = [...data];
+                if (newLabels.length > 0) {
+                    if (prevMap.length > 0) {
+                        newLabels.forEach((l) => {
+                            const labelFound = prevMap.includes(l.name);
+                            if (labelFound) {
+                                const pl = prevLabels.find(
+                                    (f) => f.name === l.name
+                                );
+                                l = { ...pl };
+                            }
+                        });
+                    }
 
-        if (dataSources) {
-            currentDataSource = dataSources?.find((f) => f.id === dataSourceId);
-
-            if (
-                currentDataSource &&
-                currentPanel &&
-                currentPanel?.dataSourceURL !== ""
-            ) {
-                currentDataSource.url = currentPanel?.dataSourceURL;
-            }
-
-            const dsCopy = JSON.parse(JSON.stringify(dataSources));
-
-            dsCopy?.forEach((ds) => {
-                if (ds.id === currentPanel?.dataSourceId) {
-                    ds.url = currentDataSource.url;
+                    decodeQuery(expr, apiUrl, newLabels);
                 }
             });
-            // if there is a datasource url at url params, update datadources
-            dispatch(setDataSources([...dsCopy]));
-
-            const labels = sendLabels(
-                dataSourceId,
-                dataSourceType,
-                currentDataSource?.url,
-                start,
-                stop
-            );
-
-            // if is view only mode (embedded) do an auto request on init
-            if (isEmbed)
-                dispatch(
-                    getData(
-                        dataSourceType,
-                        queryInput,
-                        queryType,
-                        limit,
-                        name,
-                        id,
-                        direction,
-                        dataSourceId,
-                        currentDataSource?.url || dataSourceURL
-                    )
-                );
-
-            if (onQueryValid(expr) && currentDataSource?.type !== "flux") {
-                return labels.then((data) => {
-                    const prevLabels = [...props.data.labels];
-                    const prevMap = prevLabels.map((m) => m.name) || [];
-                    const newLabels = [...data];
-                    if (newLabels.length > 0) {
-                        if (prevMap.length > 0) {
-                            newLabels.forEach((l) => {
-                                const labelFound = prevMap.includes(l.name);
-                                if (labelFound) {
-                                    const pl = prevLabels.find(
-                                        (f) => f.name === l.name
-                                    );
-                                    l = { ...pl };
-                                }
-                            });
-                        }
-                        decodeQuery(expr, currentDataSource.url, newLabels);
-                    }
-                });
-            } else {
-                // if there is nothing to request, show empty view
-                dispatch(setIsEmptyView(true));
-            }
+        } else {
+            dispatch(setIsEmptyView(true));
         }
     }, []);
 
@@ -194,7 +129,6 @@ export const QueryBar = (props) => {
         const queryParams = new URLSearchParams(hash.replace("#", ""));
         const multiline = e.map((text) => text.children[0].text).join("\n");
         const panel = [...panelQuery];
-
         panel.forEach((query) => {
             if (query.id === id) {
                 query.expr = multiline;
@@ -216,11 +150,8 @@ export const QueryBar = (props) => {
 
         if (onQueryValid(queryInput)) {
             try {
-                // set new query into panel data history
-
                 const historyUpdated = historyService.add({
                     data: JSON.stringify({
-                        type: dataSourceType,
                         queryInput,
                         queryType,
                         limit,
@@ -232,50 +163,20 @@ export const QueryBar = (props) => {
 
                 dispatch(setQueryHistory(historyUpdated));
 
-                // Decode query to translate into labels selection
-                const currentDataSource = dataSources.find(
-                    (f) => f.id === dataSourceId
-                );
-                if (currentDataSource?.type !== "flux") {
-                    decodeQuery(
-                        queryInput,
-                        currentDataSource?.url,
-                        props.data.labels
-                    );
-                }
+                decodeQuery(queryInput, apiUrl, props.data.labels);
                 const labelsDecoded = decodeExpr(data.expr);
-                const actDataSource = dataSources.find(
-                    (f) => f.id === dataSourceId
-                );
 
                 const panel = [...panelQuery];
                 panel.forEach((query) => {
                     if (query.id === id) {
                         query.labels = [...labelsDecoded];
                         query.browserOpen = false;
-                        query.dataSourceId = actDataSource.id;
-                        query.dataSourceType = actDataSource.type;
-                        query.dataSourceURL = actDataSource.url;
                     }
                 });
 
                 dispatch(panelAction(name, panel));
 
-                dispatch(
-                    getData(
-                        dataSourceType,
-                        queryInput,
-                        queryType,
-                        limit,
-                        name,
-                        id,
-                        direction,
-                        dataSourceId,
-                        dataSourceURL
-                    )
-                );
-
-                // store into history
+                dispatch(loadLogs(queryInput, queryType, limit, name, id));
 
                 const storedUrl = saveUrl.add({
                     data: window.location.href,
@@ -288,6 +189,7 @@ export const QueryBar = (props) => {
             }
         } else {
             dispatch(setIsEmptyView(true));
+
             console.log("Please make a log query", expr);
         }
     };
@@ -307,34 +209,21 @@ export const QueryBar = (props) => {
                 className={css`
                     max-width: 100%;
                 `}
-                id={id}
             >
                 <ThemeProvider theme={themes[theme]}>
-                    <MobileTopQueryMenu
-                        isSplit={isSplit}
-                        dataSourceType={dataSourceType}
-                    >
+                    <MobileTopQueryMenu>
                         <div
                             className={css`
                                 display: flex;
                             `}
                         >
-                            {dataSourceType !== "flux" && (
-                                <>
-                                    <ShowLabelsButton
-                                        {...props}
-                                        isMobile={true}
-                                    />
+                            <ShowLabelsButton {...props} isMobile={true} />
 
-                                    <ShowQuerySettingsButton
-                                        {...props}
-                                        isSplit={isSplit}
-                                        isMobile={true}
-                                        onClick={showQuerySettings}
-                                    />
-                                </>
-                            )}
-
+                            <ShowQuerySettingsButton
+                                {...props}
+                                isMobile={true}
+                                onClick={showQuerySettings}
+                            />
                             <HistoryButton
                                 queryLength={queryHistory.length}
                                 handleHistoryClick={handleHistoryClick}
@@ -349,9 +238,7 @@ export const QueryBar = (props) => {
                         />
                     </MobileTopQueryMenu>
                     <QueryBarContainer>
-                        {!isSplit && dataSourceType !== "flux" && (
-                            <ShowLabelsButton {...props} />
-                        )}
+                        <ShowLabelsButton {...props} />
 
                         <QueryEditor
                             onQueryChange={handleQueryChange}
@@ -360,31 +247,20 @@ export const QueryBar = (props) => {
                             onKeyDown={handleInputKeyDown}
                         />
 
-                        {!isSplit && dataSourceType !== "flux" && (
-                            <>
-                                <HistoryButton
-                                    queryLength={queryHistory.length}
-                                    handleHistoryClick={handleHistoryClick}
-                                />
+                        <HistoryButton
+                            queryLength={queryHistory.length}
+                            handleHistoryClick={handleHistoryClick}
+                        />
 
-                                <ShowLogsButton
-                                    disabled={!queryValid}
-                                    onClick={onSubmit}
-                                    isMobile={false}
-                                />
-                            </>
-                        )}
+                        <ShowLogsButton
+                            disabled={!queryValid}
+                            onClick={onSubmit}
+                            isMobile={false}
+                        />
                     </QueryBarContainer>
 
-                    {!isTabletOrMobile &&
-                        !isSplit &&
-                        dataSourceType !== "flux" && (
-                            <QueryTypeBar {...props} />
-                        )}
-
-                    {(isTabletOrMobile ||
-                        isSplit ||
-                        dataSourceType !== "flux") && (
+                    {!isTabletOrMobile && <QueryTypeBar {...props} />}
+                    {isTabletOrMobile && (
                         <QuerySetting
                             {...props}
                             open={open}
@@ -400,14 +276,6 @@ export const QueryBar = (props) => {
 };
 
 export const QuerySetting = (props) => {
-    console.log(props);
-
-    const { data } = props;
-
-    const { dataSourceType } = data;
-
-    console.log(dataSourceType);
-
     const dispatch = useDispatch();
 
     const responseType = useSelector((store) => store.responseType);
@@ -416,14 +284,10 @@ export const QuerySetting = (props) => {
     const { id, idRef } = props.data;
     const { open, handleClose, actPanel, name } = props;
     const [isTableViewSet, setIsTableViewSet] = useState(props.data.tableView);
-    const [isShowTsSet, setIsShowTsSet] = useState(props.data.isShowTs);
     const [queryTypeSwitch, setQueryTypeSwitch] = useState(
         props.data.queryType
     );
-    const [queryTraceSwitch, setQueryTraceSwitch] = useState(props.data.traceQueryType || 'traceId')
-    const [directionSwitch, setDirectionSwitch] = useState(
-        props.data.direction
-    );
+
     useEffect(() => {
         const urlParams = new URLSearchParams(hash.replace("#", ""));
         const urlPanel = urlParams.get(name);
@@ -436,7 +300,6 @@ export const QuerySetting = (props) => {
                 panel.forEach((query) => {
                     if (query.idRef === idRef) {
                         query.queryType = queryMD.queryType;
-                        query.direction = queryMD.direction;
                     }
                 });
                 dispatch(panelAction(name, panel));
@@ -447,10 +310,6 @@ export const QuerySetting = (props) => {
     useEffect(() => {
         setIsTableViewSet(props.data.tableView);
     }, [setIsTableViewSet, props.data.tableView]);
-
-    useEffect(() => {
-        setIsShowTsSet(props.data.isShowTs);
-    }, [setIsShowTsSet, props.data.isShowTs]);
 
     function onSwitchChange(e) {
         // modify query type switch value
@@ -465,31 +324,6 @@ export const QuerySetting = (props) => {
         setQueryTypeSwitch(e);
     }
 
-
-    function onTraceQueryChange(e) {
-        const panel = [...actPanel];
-        panel.forEach(query => {
-            if(query.id === id) {
-                query.traceQueyType = e;
-            }
-        })
-        dispatch(panelAction(name, panel));
-        setQueryTraceSwitch(prev => e);
-
-    }
-    function onDirectionSwitchChange(e) {
-        // modify query type switch value
-        const panel = [...actPanel];
-        panel.forEach((query) => {
-            if (query.id === id) {
-                query.direction = e;
-            }
-        });
-
-        dispatch(panelAction(name, panel));
-        setDirectionSwitch(e);
-    }
-
     function handleTableViewSwitch() {
         // modify table view switch value
         const panel = [...actPanel];
@@ -498,28 +332,6 @@ export const QuerySetting = (props) => {
                 query.tableView = isTableViewSet ? false : true;
             }
         });
-        dispatch(panelAction(name, panel));
-    }
-
-    const traceOptions = () => (
-        <div className="options-input">
-            <QueryTypeSwitch
-                label={"Trace Type"}
-                options={TRACE_OPTIONS}
-                onChange={onTraceQueryChange}
-                defaultActive={queryTraceSwitch}
-            />
-        </div>
-    );
-
-    function handleTsSwitch() {
-        const panel = [...actPanel];
-        panel.forEach((query) => {
-            if (query.id === id) {
-                query.isShowTs = isShowTsSet ? false : true;
-            }
-        });
-
         dispatch(panelAction(name, panel));
     }
 
@@ -536,23 +348,10 @@ export const QuerySetting = (props) => {
 
                 <SettingsInputContainer>
                     <div className="options-input">
-                    { traceOptions()}
-                    </div>
-                    <div className="options-input">
-                        
                         <QueryTypeSwitch
-                            label={"Query Type"}
                             options={SWITCH_OPTIONS}
                             onChange={onSwitchChange}
                             defaultActive={queryTypeSwitch}
-                        />
-                    </div>
-                    <div className="options-input">
-                        <QueryTypeSwitch
-                            label={"Direction"}
-                            options={DIRECTION_SWITCH_OPTIONS}
-                            onChange={onDirectionSwitchChange}
-                            defaultActive={directionSwitch}
                         />
                     </div>
                     <div className="options-input">
@@ -568,17 +367,6 @@ export const QuerySetting = (props) => {
                                     size={"small"}
                                     onChange={handleTableViewSwitch}
                                     inputProps={{ "aria-label": "controlled" }}
-                                />
-                            </InputGroup>
-                            <InputGroup>
-                                <SettingLabel>Timestamp</SettingLabel>
-                                <Switch
-                                    checked={isShowTsSet}
-                                    size={"small"}
-                                    onChange={handleTsSwitch}
-                                    inputProps={{
-                                        "aria-label": "controlled-ts",
-                                    }}
                                 />
                             </InputGroup>
                         </div>

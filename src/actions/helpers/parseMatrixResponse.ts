@@ -108,7 +108,7 @@ export function parseMatrixResponse(responseProps: QueryResult) {
         getAsyncResponse(dispatch(setMatrixData(idResult || []))).then(() => {
             if (idResult.length === 0) {
                 if (debugMode)
-                    console.log("🚧 getData / getting no data from matrix");
+                    console.log("🚧 loadLogs / getting no data from matrix");
                 dispatch(setIsEmptyView(true));
             }
             dispatch(setIsEmptyView(false));
@@ -142,7 +142,7 @@ export function parseMatrixResponse(responseProps: QueryResult) {
     } catch (e) {
         if (debugMode)
             console.log(
-                "🚧 getData / getting an error from rendering matrix type streams"
+                "🚧 loadLogs / getting an error from rendering matrix type streams"
             );
         console.log(e);
     }

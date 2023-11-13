@@ -5,20 +5,10 @@ import { createAlert } from "./createAlert";
 function getTimeParsed(time) {
     return time.getTime() + "000000";
 }
-
-function getTimeToSec(time) {
-    return time.getTime() /1000;
-}
-export default function loadLabels( apiUrl, start, stop) {
-    const type = 'metrics'
+export default function loadLabels(apiUrl, start, stop) {
     const origin = window.location.origin;
     const url = apiUrl;
     const headers = {
-        "Access-Control-Allow-Origin": origin,
-        "Access-Control-Allow-Headers": [
-            "Access-Control-Request-Headers",
-            "Content-Type",
-        ],
         "Content-Type": "application/json",
     };
 
@@ -28,30 +18,13 @@ export default function loadLabels( apiUrl, start, stop) {
         mode: "cors",
     };
 
-    let timeStart, timeEnd, labelsUrl
-
-    if(type === 'metrics') {
-        timeStart = getTimeToSec(start)
-        timeEnd = getTimeToSec(stop)
-        labelsUrl = `/api/v1/label`
-    } 
-
-    if (type === 'logs') {
-        timeStart = getTimeParsed(start)
-        timeEnd = getTimeParsed(stop)
-        labelsUrl = `/loki/api/v1/label`
-    }
-
-    else {
-        timeStart = getTimeParsed(start)
-        timeEnd = getTimeParsed(stop)
-        labelsUrl = `/loki/api/v1/label`
-    }
+    const nanoStart = getTimeParsed(start);
+    const nanoEnd = getTimeParsed(stop);
 
     return function (dispatch) {
         axios
             .get(
-                `${url.trim()}${labelsUrl}?start=${timeStart}&end=${timeEnd}`,
+                `${url.trim()}/loki/api/v1/label?start=${nanoStart}&end=${nanoEnd}`,
                 options
             )
             ?.then((response) => {
