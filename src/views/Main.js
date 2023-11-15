@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { themes } from "../theme/themes";
 import Panel from "../components/Panel/Panel";
 import { Notification } from "../qryn-ui/notifications";
@@ -10,8 +10,8 @@ import StatusBar from "../components/StatusBar";
 import QueryHistory from "../plugins/queryhistory";
 import { useMediaQuery } from "react-responsive";
 import MainTabs from "./MainTabs.js";
-import { useEffect, useMemo } from "react";
-import { setTheme } from "../actions";
+import { useMemo } from "react";
+
 export const MainContainer = styled.div`
     position: absolute;
     display: flex;
@@ -56,11 +56,13 @@ export function MobileView({ theme, isEmbed, settingsDialogOpen }) {
         </ThemeProvider>
     );
 }
+
 /**
  *
  * @param {theme, isEmbed, isSplit, settingsDialogOpen}
  * @returns Desktop View
  */
+
 export function DesktopView({ theme, isEmbed, isSplit, settingsDialogOpen }) {
     return (
         <ThemeProvider theme={theme}>
@@ -80,20 +82,12 @@ export function DesktopView({ theme, isEmbed, isSplit, settingsDialogOpen }) {
 export default function Main() {
     UpdateStateFromQueryParams();
     const isTabletOrMobile = useMediaQuery({ query: "(max-width: 914px)" });
-    const isAutoDark = useMediaQuery({query: "(prefers-color-scheme: dark)"});
-    const dispatch = useDispatch();
     const isSplit = useSelector((store) => store.isSplit);
     const isEmbed = useSelector((store) => store.isEmbed);
     const theme = useSelector((store) => store.theme);
-    const autoTheme = useSelector((store) => store.autoTheme);
     const settingsDialogOpen = useSelector((store) => store.settingsDialogOpen);
     const themeMemo = useMemo(() => themes[theme], [theme]);
-    useEffect(()=>{
-        if (autoTheme) {
-            const theme = isAutoDark ? 'dark' : 'light';  
-            dispatch(setTheme(theme));
-        }
-    },[isAutoDark, autoTheme, dispatch])
+
     if (!isTabletOrMobile) {
         // desktop view
         return (
