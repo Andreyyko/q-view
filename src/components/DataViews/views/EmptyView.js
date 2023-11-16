@@ -6,9 +6,9 @@ export function EmptyView(props) {
     const {
         viewRef,
         panelSize,
-        setStreamClose,
-        setMinimize,
-        setMaxHeight,
+        onStreamClose,
+        onMinimize,
+        onMaximize,
         actualQuery,
         total,
     } = props;
@@ -16,9 +16,9 @@ export function EmptyView(props) {
     return (
         <ViewStyled ref={viewRef} size={panelSize} vheight={"regular"}>
             <ViewHeader
-                onClose={setStreamClose}
-                setMinimize={setMinimize}
-                setMaxHeight={setMaxHeight}
+                onClose={onStreamClose}
+                onMinimize={onMinimize}
+                onMaximize={onMaximize}
                 actualQuery={actualQuery}
                 total={total}
                 type={"empty"}

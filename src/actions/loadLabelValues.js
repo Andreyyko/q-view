@@ -1,39 +1,17 @@
 import axios from "axios";
-import store from "../store/store";
 import { errorHandler } from "./errorHandler";
 import { setApiError } from "./setApiError";
 
-export default function loadLabelValues(id,label, labelList='', url ) {
+import store from '../store/store'
+
+export default function loadLabelValues(label, labelList='', apiUrl='') {
     if (!label || (label?.length <= 0 && label.lsList.length <= 0)) {
         return () => {};
     }
 
-    const { dataSources } = store.getState();
+    const url = store.getState().apiUrl;
 
-    const actDataSource = dataSources.find((f) => f.id === id);
-
-    const basicAuth = actDataSource?.auth?.basicAuth.value;
-
-    let auth = {};
-
-    let labelHeaders = {}
-
-    if (basicAuth) {
-
-        const authfields = actDataSource?.auth?.fields?.basicAuth;
-
-        for (let field of authfields) {
-            if (field.name === "user") {
-                auth.username = field.value;
-            }
-            if (field.name === "password") {
-                auth.password = field.value;
-            }
-        }
-
-        labelHeaders.auth = auth
-    }
-
+    const origin = window.location.origin;
 
     const headers = {
         "Content-Type": "application/json",
@@ -42,13 +20,12 @@ export default function loadLabelValues(id,label, labelList='', url ) {
     const options = {
         method: "GET",
         headers: headers,
+        mode: "cors",
     };
-
-    labelHeaders.options = options
 
     return async (dispatch) => {
         await axios
-            .get(`${url}/loki/api/v1/label/${label.name}/values`, labelHeaders)
+            .get(`${url}/loki/api/v1/label/${label.name}/values`, options)
             ?.then((response) => {
                 if (response?.data?.data) {
                     const values = response?.data?.data?.map?.((value) => ({

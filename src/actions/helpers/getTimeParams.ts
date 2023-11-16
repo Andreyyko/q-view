@@ -2,28 +2,18 @@ import { findRangeByLabel } from "../../components/StatusBar/components/daterang
 import store from "../../store/store";
 import { setStartTime } from "../setStartTime";
 import { setStopTime } from "../setStopTime";
-import { getTimeParsed, getTimeSec } from "./timeParser";
+import { getTimeParsed } from "./timeParser";
 
 const getPrevTime = (lastTime: number) => {
     return lastTime || parseInt(new Date().getTime() + "000000");
 };
 
-const getRangeByLabel = (rl: string, type?: string) => {
+const getRangeByLabel = (rl: string) => {
     let r: any = findRangeByLabel(rl);
     const { dateStart, dateEnd } = r;
 
-    let pStart, pStop;
-
-    if (type === "metrics") {
-        pStart = getTimeSec(dateStart);
-        pStop = getTimeSec(dateEnd);
-    } else if (type === "logs") {
-        pStart = parseInt(getTimeParsed(dateStart));
-        pStop = parseInt(getTimeParsed(dateEnd));
-    } else {
-        pStart = parseInt(getTimeParsed(dateStart));
-        pStop = parseInt(getTimeParsed(dateEnd));
-    }
+    const pStart = parseInt(getTimeParsed(dateStart));
+    const pStop = parseInt(getTimeParsed(dateEnd));
 
     return {
         pStart,
@@ -32,9 +22,9 @@ const getRangeByLabel = (rl: string, type?: string) => {
         dateEnd,
     };
 };
-export default function getTimeParams(type: string) {
+export default function getTimeParams() {
     // actual params from store
-    // get by type
+
     const {
         start: startTs,
         stop: stopTs,
@@ -54,34 +44,26 @@ export default function getTimeParams(type: string) {
     let parsedStart = 0,
         parsedStop = 0;
     if (findRangeByLabel(rl)) {
-        const { pStart, pStop, dateStart, dateEnd } = getRangeByLabel(rl, type);
+        const { pStart, pStop, dateStart, dateEnd } = getRangeByLabel(rl);
 
         parsedStart = pStart;
         parsedStop = pStop;
 
+        // if relative time : set start and stop
+        // according to relative time
+
         store.dispatch(setStartTime(dateStart));
         store.dispatch(setStopTime(dateEnd));
     } else {
-        // get time sec if its metrics type
-
-        if (type === "metrics") {
-            parsedStart = getTimeSec(_start);
-            parsedStop = getTimeSec(_stop);
-        } else if (type === "logs") {
-            parsedStart = parseInt(getTimeParsed(_start));
-            parsedStop = parseInt(getTimeParsed(_stop));
-        } else {
-            parsedStart = parseInt(getTimeParsed(_start));
-            parsedStop = parseInt(getTimeParsed(_stop));
-        }
+        parsedStart = parseInt(getTimeParsed(_start));
+        parsedStop = parseInt(getTimeParsed(_stop));
     }
 
     const parsedTime =
         "&start=" + (from || parsedStart) + "&end=" + (to || parsedStop);
-
-    const diffSt = parseInt(from || parsedStart);
-    const diffEnd = parseInt(to || parsedStop);
-    const tDiff = (diffEnd - diffSt) / (type === "metrics" ? 1 : 1000000);
+    const diffSt = parseInt(from || parsedStart)
+    const diffEnd = parseInt(to || parsedStop)
+    const tDiff = (diffEnd - diffSt)/1000000
     return {
         tDiff,
         time: prevInstantTime,

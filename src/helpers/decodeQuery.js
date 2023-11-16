@@ -2,7 +2,7 @@ import { setLabels } from "../actions";
 import loadLabelValues from "../actions/loadLabelValues";
 import store from "../store/store";
 
-export function decodeQuery(query, apiUrl, labels = [], datasourceId = '') {
+export function decodeQuery(query, apiUrl, labels = []) {
 
    if(typeof query !== 'string'){
     return
@@ -89,8 +89,10 @@ export function decodeQuery(query, apiUrl, labels = [], datasourceId = '') {
                 return;
             }
 
+            // should load values into query label
+
             await store.dispatch(
-                loadLabelValues(datasourceId,cleanLabel, newLabels, apiUrl)
+                loadLabelValues(cleanLabel, newLabels, apiUrl)
             );
 
             const labelsWithValues = labels;

@@ -84,6 +84,9 @@ export const ApiSelectorStyled = styled.div`
         display: flex;
         align-items: center;
     }
+    @media screen and (max-width: 850px) {
+        display: none;
+    }
 `;
 
 export const ApiSelectorButton = styled(BtnSmall)`

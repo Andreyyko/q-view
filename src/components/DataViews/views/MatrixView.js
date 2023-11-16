@@ -9,9 +9,9 @@ export const MatrixView = (props) => {
         viewRef,
         panelSize,
         viewHeight,
-        setStreamClose,
-        setMaxHeight,
-        setMinimize,
+        onStreamClose,
+        onMaximize,
+        onMinimize,
         actualQuery,
         total,
         type,
@@ -24,9 +24,9 @@ export const MatrixView = (props) => {
     return (
         <ViewStyled ref={viewRef} size={panelSize} vheight={viewHeight}>
             <ViewHeader
-                onClose={setStreamClose}
-                setMinimize={setMinimize}
-                setMaxHeight={setMaxHeight}
+                onClose={onStreamClose}
+                onMinimize={onMinimize}
+                onMaximize={onMaximize}
                 actualQuery={actualQuery}
                 total={total}
                 type={type}

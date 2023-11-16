@@ -1,8 +1,5 @@
 import { sortBy } from "lodash";
-import { prepareCols, prepareFluxCols } from "./prepareCols";
-
-
-import * as moment from 'moment'
+import { prepareCols } from "./prepareCols";
 
 /**
  *
@@ -10,55 +7,32 @@ import * as moment from 'moment'
  * @returns the data parsed for react-table use
  */
 
-export function prepareVectorRows(data, type = 'logs') {
+export function prepareVectorRows(data) {
+    const cols = prepareCols(data);
+    try {
+        let rows = [];
+        const dataLength = data.length;
+        const colsLength = cols.length;
 
+        for (let i = 0; i < dataLength; i++) {
+            let dataRow = data[i];
+            let metric = dataRow.metric;
+            let [time, value] = dataRow.value;
+            let row = {};
+            for (let j = 0; j < colsLength; j++) {
+                let col = cols[j];
 
-    if(type === 'flux') {
-
-        try{
-         
-            return data;
-
-        }catch(e){console.log(e)}
- 
-
-
-    } else {
-
-        const cols = prepareCols(data);
-
-        try {
-            let rows = [];
-            const dataLength = data.length;
-            const colsLength = cols.length;
-    
-            for (let i = 0; i < dataLength; i++) {
-                let dataRow = data[i];
-                let metric = dataRow.metric;
-                let [time, value] = dataRow.value;
-                let row = {};
-                for (let j = 0; j < colsLength; j++) {
-                    let col = cols[j];
-    
-                    row[col] = metric[col] || "";
-                }
-                row.time = time;
-                row.value = value;
-                rows.push(row);
+                row[col] = metric[col] || "";
             }
-    
-            const sorted = sortBy(rows, (row) => row.time);
-
-            
-    
-            return sorted;
-
-        } catch (e) {
-            console.log(e);
+            row.time = time;
+            row.value = value;
+            rows.push(row);
         }
 
+        const sorted = sortBy(rows, (row) => row.time);
 
+        return sorted;
+    } catch (e) {
+        console.log(e);
     }
-
-
 }
