@@ -256,64 +256,7 @@ export const QueryBar = (props) => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        if (onQueryValid(queryInput)) {
-            try {
-                const historyUpdated = historyService.add({
-                    data: JSON.stringify({
-                        queryInput,
-                        queryType,
-                        limit,
-                        panel: name,
-                        id,
-                    }),
-                    url: window.location.hash,
-                });
 
-                dispatch(setQueryHistory(historyUpdated));
-
-                decodeQuery(queryInput, apiUrl, props.data.labels);
-                const labelsDecoded = decodeExpr(data.expr);
-
-                const panel = [...panelQuery];
-                panel.forEach((query) => {
-                    if (query.id === id) {
-                        query.labels = [...labelsDecoded];
-                        query.browserOpen = false;
-                    }
-                });
-                console.log(panel)
-                dispatch(panelAction(name, panel));
-
-                dispatch(loadLogs(queryInput, queryType, limit, name, id));
-
-                const storedUrl = saveUrl.add({
-                    data: window.location.href,
-                    description: "From Query Submit",
-                });
-
-                dispatch(setLinksHistory(storedUrl));
-            } catch (e) {
-                console.log(e);
-            }
-        } else {
-            dispatch(setIsEmptyView(true));
-
-            console.log("Please make a log query", expr);
-        }
-    };
-    const onSubmitRate = (e) => {
-        e.preventDefault();
-        const isRate = queryInput.startsWith(`rate(`)
-        if (!isRate) {
-            const timeDiff = stop.getTime() - start.getTime()
-            const interval = timeDiff / 1
-            const query = `rate(${queryInput}[${interval}])`
-            setQueryInput(query)
-            
-            setQueryValue([{ children: [{ text: query }] }]);
-
-            setQueryValid(onQueryValid(query));
-        }
         if (onQueryValid(queryInput)) {
             try {
                 // set new query into panel data history
@@ -393,6 +336,7 @@ export const QueryBar = (props) => {
             console.log("Please make a log query", expr);
         }
     };
+
     function handleHistoryClick(e) {
         dispatch(setHistoryOpen(!historyOpen));
     }
