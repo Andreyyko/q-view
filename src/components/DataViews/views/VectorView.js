@@ -7,9 +7,9 @@ export function VectorView(props) {
         viewRef,
         panelSize,
         viewHeight,
-        setStreamClose,
-        setMinimize,
-        setMaxHeight,
+        onStreamClose,
+        onMinimize,
+        onMaximize,
         actualQuery,
         total,
         type,
@@ -20,9 +20,9 @@ export function VectorView(props) {
     return (
         <ViewStyled ref={viewRef} size={panelSize} vheight={viewHeight}>
             <ViewHeader
-                onClose={setStreamClose}
-                setMinimize={setMinimize}
-                setMaxHeight={setMaxHeight}
+                onClose={onStreamClose}
+                onMinimize={onMinimize}
+                onMaximize={onMaximize}
                 actualQuery={actualQuery}
                 total={total}
                 type={type}

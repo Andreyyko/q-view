@@ -9,18 +9,18 @@ import ValuesListStyled from "./ValuesListStyled";
 import labelHelpers from "./helpers";
 
 export default function LabelsSelector(props) {
-    const { data } = props;
-    const { dataSourceId} = data;
-
-    //const dataSourceURL = useSelector((store)=> store.dataSources.find(f => f.id === dataSourceId)) 
-
-    const { JSONClone, updateLabel, updateLabelSelected } = labelHelpers;
-    const [labelsResponse, setLabelsResponse] = useState([]);
-    const [labelsSelected, setLabelsSelected] = useState([]);
+    const { data} = props;
+    const { 
+        JSONClone, 
+        updateLabel, 
+        updateLabelSelected 
+    } = labelHelpers;
 
     const { theme } = useSelector((store) => store);
 
-    const { response, loading } = useLabels(dataSourceId); //  set URL from props
+    const { response, loading } = useLabels();
+
+    const [labelsResponse, setLabelsResponse] = useState([]);
 
     // get previously selected labels
 
@@ -59,13 +59,14 @@ export default function LabelsSelector(props) {
     }, [labels]);
 
     const [labelsState, setLabelsState] = useState(labels);
+    const [labelsSelected, setLabelsSelected] = useState([]);
 
     // memoize currently selected labels
-
+    
     const selected = useMemo(() => labelsSelected, [labelsSelected]);
 
     // match labels from query state with new labels from request to API
-
+    
     useEffect(() => {
         if (labels && labelsFromProps) {
             let clonedLabels = JSONClone(labels);
@@ -83,17 +84,19 @@ export default function LabelsSelector(props) {
                 }
             });
 
-            let lSelected = modLabels
+            let lSElected = modLabels
                 .filter((f) => f.selected === true)
                 .map((m) => m.name);
 
-            setLabelsSelected(lSelected);
+            setLabelsSelected(lSElected);
 
             setLabelsState(modLabels);
         }
     }, [labelsFromProps, labels, setLabelsState, JSONClone]);
 
+
     const onLabelSelected = (e) => {
+    
         setLabelsState((prev) => {
             return updateLabel(prev, e);
         });
@@ -115,7 +118,9 @@ export default function LabelsSelector(props) {
                         )}
                     </div>
 
-                    <ValuesSelector {...props} labelsSelected={selected} />
+                    <ValuesSelector 
+                    {...props} 
+                    labelsSelected={selected} />
                 </div>
             </ValuesListStyled>
         </ThemeProvider>

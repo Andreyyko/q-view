@@ -5,9 +5,10 @@ import { EmptyView } from "../views/EmptyView";
 import LogsView from "../views/LogsView";
 import { MatrixView } from "../views/MatrixView";
 import { VectorView } from "../views/VectorView";
-import {TraceView} from "./Traces/TraceView.tsx"
+
 export function DataViewItem(props) {
     // add a header for table view / json view
+
     const { dataView, name, vHeight } = props;
     const { type, total } = dataView;
 
@@ -17,8 +18,7 @@ export function DataViewItem(props) {
         // panelSize: min , regular, max
     const [panelSize, setPanelSize] = useState("max");
     // get actual query from panel
-    const actualQuery = useActualQuery({ panel, dataView }); 
-    // get  actual query from panel  
+    const actualQuery = useActualQuery({ panel, dataView });
 
     const [viewWidth, setViewWidth] = useState(0);
 
@@ -39,16 +39,16 @@ export function DataViewItem(props) {
         setTableData(dataView.tableData || {});
     }, [dataView.tableData, setTableData]);
 
-    const setStreamClose = () => {
+    const onStreamClose = () => {
         setStreamData([]);
         setTableData([]);
     };
 
-    const setMinimize = () => {
+    const onMinimize = () => {
         setPanelSize((prev) => (prev !== "min" ? "min" : "regular"));
     };
 
-    const setMaxHeight = () => {
+    const onMaximize = () => {
         setPanelSize((prev) => (prev !== "max" ? "max" : "regular"));
     };
 
@@ -58,26 +58,7 @@ export function DataViewItem(props) {
 
     const viewHeight = useViewHeight({ type, actualQuery, total, dataView});
 
-    if ( type === 'traces') {
-        const traceProps = {
-            viewRef,
-            panelSize,
-            viewHeight,
-            setStreamClose,
-            setMaxHeight,
-            setMinimize,
-            actualQuery,
-            total,
-            type,
-            theight,
-            tableData,
-            viewWidth,
-            streamData,
-            theme: props.theme,
-            ...props,
-        };
-        return <TraceView {...traceProps}/>;
-    }
+
     if (actualQuery && type === "matrix" && streamData.length > 0) {
         // return matrix type component
         const { limit } = actualQuery;
@@ -85,9 +66,9 @@ export function DataViewItem(props) {
             viewRef,
             panelSize,
             viewHeight,
-            setStreamClose,
-            setMaxHeight,
-            setMinimize,
+            onStreamClose,
+            onMaximize,
+            onMinimize,
             actualQuery,
             total,
             type,
@@ -106,9 +87,9 @@ export function DataViewItem(props) {
             viewRef,
             panelSize,
             viewHeight,
-            setStreamClose,
-            setMaxHeight,
-            setMinimize,
+            onStreamClose,
+            onMaximize,
+            onMinimize,
             actualQuery,
             total,
             type,
@@ -127,9 +108,9 @@ export function DataViewItem(props) {
             viewRef,
             panelSize,
             viewHeight,
-            setStreamClose,
-            setMinimize,
-            setMaxHeight,
+            onStreamClose,
+            onMinimize,
+            onMaximize,
             actualQuery,
             total,
             type,
@@ -138,29 +119,19 @@ export function DataViewItem(props) {
             ...props,
         };
         return <VectorView {...vectorProps} />;
-    } 
-    
+    } else {
+        // Empty view for the case when no view available
+        const emptyViewProps = {
+            viewRef,
+            panelSize,
+            onStreamClose,
+            onMinimize,
+            onMaximize,
+            actualQuery,
+            total,
+            ...props,
+        };
 
-
-
-    if(actualQuery && !streamData?.dataRows?.length && !streamData?.length ) {
-       // Empty view for the case when no view available
-       const emptyViewProps = {
-        viewRef,
-        panelSize,
-        setStreamClose,
-        setMinimize,
-        setMaxHeight,
-        actualQuery,
-        total,
-        ...props,
-    };
-
-    return <EmptyView {...emptyViewProps} />;
-    }
-    
-
-    else {
-        return null
+        return <EmptyView {...emptyViewProps} />;
     }
 }

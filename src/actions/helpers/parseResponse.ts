@@ -1,4 +1,4 @@
-import { Stream, Message, QueryResultType, QueryDirection } from "../types";
+import { Stream, Message, QueryResult, QueryResultType } from "../types";
 import store from "../../store/store";
 
 import { nanoid } from "nanoid";
@@ -6,12 +6,13 @@ import { parseVectorResponse } from "./parseVectorResponse";
 import { parseMatrixResponse } from "./parseMatrixResponse";
 import { parseStreamResponse } from "./parseStreamResponse";
 import { fromNanoSec } from "./timeParser";
-import { parseTracesResponse } from "./parseTracesResponse";
+
+
 const { debugMode } = store.getState();
 
 /**
- *
- * @param cb
+ * 
+ * @param cb 
  * @returns async cb
  */
 
@@ -22,60 +23,42 @@ export async function getAsyncResponse(
 }
 
 /**
- *
- * @param messages
+ * 
+ * @param messages 
  * @returns messages sorted by timestamp
  */
 
 export function sortMessagesByTimestamp(
-    messages: Message[],
-    direction: QueryDirection
+    messages: Message[] //:array sort by timestamp
 ) {
-    return {
-        forward: sortMessagesByTimestampAsc(messages),
-        backwards: sortMessagesByTimestampDesc(messages),
-    }[direction];
-}
-
-export function sortMessagesByTimestampAsc(messages: Message[]) {
     const startTime = performance.now();
     const mess = messages?.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
     const duration = performance.now() - startTime;
     if (debugMode)
-        console.log("🚧 getData / sorting logs took: ", duration, " ms");
+        console.log("🚧 loadLogs / sorting logs took: ", duration, " ms");
     return mess;
 }
 
-export function sortMessagesByTimestampDesc(messages: Message[]) {
-    const startTime = performance.now();
-    const mess = messages?.sort((a, b) => (a.timestamp < b.timestamp ? -1 : 1));
-    const duration = performance.now() - startTime;
-    if (debugMode)
-        console.log("🚧 getData / sorting logs took: ", duration, " ms");
-    return mess;
-}
+
 
 /**
- *
- * @param streams
+ * 
+ * @param streams 
  * @returns streams parsed as message tyoe objects
  */
 
-export function mapStreams(
-    streams: any[],
-    direction: QueryDirection = "forward"
-) {
+export function mapStreams(streams: any[]) {
     const startTime = performance.now();
     let messages: Message[] = [];
 
-    streams?.forEach((stream: Stream) => {
+    streams.forEach((stream: Stream) => {
         stream.values.forEach(([ts, text], i) => {
             messages.push({
                 type: "stream",
                 timestamp: fromNanoSec(ts),
                 text,
                 tags: stream.stream || {},
-                isShowTs: true,
+                showTs: true,
                 showLabels: false,
                 id: nanoid(),
             });
@@ -85,38 +68,27 @@ export function mapStreams(
     const duration = performance.now() - startTime;
 
     if (debugMode)
-        console.log("🚧 getData / mapping logs took: ", duration, " ms");
-    return sortMessagesByTimestamp(messages, direction);
+        console.log("🚧 loadLogs / mapping logs took: ", duration, " ms");
+    return sortMessagesByTimestamp(messages);
 }
 
+
+
 /**
- *
- * @param responseProps : QueryResult props to be parsed
+ * returs response parsed by response type
+ */
+export const responseActions = {
+    streams: (props: QueryResult) => parseStreamResponse(props),
+    vector: (props: QueryResult) => parseVectorResponse(props),
+    matrix: (props: QueryResult) => parseMatrixResponse(props),
+};
+
+/**
+ * 
+ * @param responseProps : QueryResult props to be parsed 
  */
 
-export async function parseResponse(responseProps: any) {
+export async function parseResponse(responseProps: QueryResult) {
     const { type }: { type: QueryResultType } = responseProps;
-
-    switch (type) {
-        case "streams":
-            await parseStreamResponse(responseProps);
-            break;
-        case "vector":
-            await parseVectorResponse(responseProps);
-            break;
-        case "matrix":
-            await parseMatrixResponse(responseProps);
-            break;
-        case "scalar":
-            await parseMatrixResponse(responseProps);
-            break;
-        case "flux":
-            await parseVectorResponse(responseProps);
-            break;
-        case "traces":
-            await parseTracesResponse(responseProps);
-            break;
-        default:
-            await parseStreamResponse(responseProps);
-    }
+    responseActions[type](responseProps);
 }

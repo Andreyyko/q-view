@@ -23,7 +23,7 @@ function timeFormatter(props: any) {
 }
 
 export function getStreamTableRows(data: any[]) {
-    return data?.map(({ stream, values }: { stream: object; values: [] }) => ({
+    return data.map(({ stream, values }: { stream: object; values: [] }) => ({
         stream: `${JSON.stringify(stream)}`,
         rows: values?.map(([time, log]: [string, string]) => ({
             time,
@@ -31,7 +31,7 @@ export function getStreamTableRows(data: any[]) {
             log,
         })),
         get rowsLength(): number {
-            return this?.rows?.length || 0;
+            return this.rows?.length;
         },
     }));
 }
@@ -90,18 +90,10 @@ function setDataView(panel: string) {
 }
 
 export function parseStreamResponse(responseProps: QueryResult) {
-    const {
-        result,
-        time,
-        debugMode,
-        queryType,
-        panel,
-        id,
-        dispatch,
-        direction,
-    } = responseProps;
+    const { result, time, debugMode, queryType, panel, id, dispatch } =
+        responseProps;
     // get sorted messages
-    const messages = mapStreams(result, direction);
+    const messages = mapStreams(result);
     // get current dataView and update action
     const dataView = setDataView(panel);
 
@@ -109,8 +101,7 @@ export function parseStreamResponse(responseProps: QueryResult) {
 
     const tableResult = getStreamTableResult(result);
     dispatch(setTableData(tableResult));
-
-    const messSorted = sortMessagesByTimestamp(messages, direction);
+    const messSorted = sortMessagesByTimestamp(messages);
     function unite(args: any) {
         return [].concat.apply([], args).filter(function (elem, index, self) {
             return self.indexOf(elem) === index;
@@ -131,7 +122,7 @@ export function parseStreamResponse(responseProps: QueryResult) {
             getAsyncResponse(dispatch(setLogs(messSorted || []))).then(() => {
                 if (messSorted.length === 0) {
                     if (debugMode)
-                        console.log("🚧 getData / getting no messages sorted");
+                        console.log("🚧 loadLogs / getting no messages sorted");
                     dispatch(setIsEmptyView(true));
                 }
 

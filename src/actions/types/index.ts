@@ -1,6 +1,6 @@
 import { AxiosRequestHeaders, Method } from "axios";
 
-export type QueryResultType = "streams" | "vector" | "matrix" | "scalar" | "flux" | "traces";
+export type QueryResultType = "streams" | "vector" | "matrix";
 
 export type Endpoint = {
     instant: string;
@@ -15,28 +15,8 @@ export type QueryResult = {
     dispatch: Function;
     type: QueryResultType;
     panel: string;
-    id: string;
-    ts: number;
-    direction: QueryDirection
-
-};
-
-export type TracesResultType = {
-    resourceSpans: Array<any>;
-    result:Array<any>;
-    length:any;
-}
-
-export type TracesResult = {
-    result: TracesResultType;
-    time?: number;
-    debugMode?: boolean;
-    dispatch: Function;
-    type: QueryResultType;
-    panel: string;
-    id: string;
-    ts: number;
-    queryType?:QueryType;
+    id: string
+    ts: number
 };
 
 export type Message = {
@@ -44,7 +24,7 @@ export type Message = {
     timestamp: number;
     text: string;
     tags: object;
-    isShowTs: boolean;
+    showTs: boolean;
     showLabels: boolean;
     id: string;
 };
@@ -56,13 +36,12 @@ export type Stream = {
 
 export type QueryOptions = {
     method: Method;
-    mode?:string;
     headers: AxiosRequestHeaders;
     cancelToken?: any;
 };
 
-export type QueryType = "range" | "instant" | "trace-search";
-export type QueryDirection = "forward" | 'backwards'
+export type QueryType = "range" | "instant";
+
 export type QueryParams = {
     queryUrl?: string;
     encodedQuery?: string;
@@ -70,6 +49,4 @@ export type QueryParams = {
     time?: number | string;
     parsedTime?: number | string;
     queryStep: number | string;
-    direction: QueryDirection;
-    queryType: QueryType;
 };
