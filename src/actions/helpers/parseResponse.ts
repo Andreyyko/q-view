@@ -7,9 +7,7 @@ import { parseMatrixResponse } from "./parseMatrixResponse";
 import { parseStreamResponse } from "./parseStreamResponse";
 import { fromNanoSec } from "./timeParser";
 import { parseTracesResponse } from "./parseTracesResponse";
-import { parseFluxResponse } from "./parseFluxResponse";
 const { debugMode } = store.getState();
-
 
 /**
  *
@@ -113,9 +111,7 @@ export async function parseResponse(responseProps: any) {
             await parseMatrixResponse(responseProps);
             break;
         case "flux":
-            // await parseFluxResponse(responseProps);
             await parseVectorResponse(responseProps);
-
             break;
         case "traces":
             await parseTracesResponse(responseProps);
