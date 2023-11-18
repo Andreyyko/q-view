@@ -19,8 +19,8 @@ const TraceLink = (theme) => css`
     background: none;
     color: ${theme.primaryLight};
     cursor: pointer;
-    &:hover{
-        text-decoration:underline;
+    &:hover {
+        text-decoration: underline;
     }
 `;
 
@@ -44,12 +44,10 @@ function traceStartTimeFormatter(props) {
 
 function traceRequest(data, value) {
     const dispatch = store.dispatch;
-    console.log(data)
-    const actPanel = store.getState()[data.panel]
-    const rightPanel = store.getState()['right']
+    const actPanel = store.getState()[data.panel];
+    const rightPanel = store.getState()["right"];
 
-    const actQuery = actPanel.find(f => f.id === data.id)
-
+    const actQuery = actPanel.find((f) => f.id === data.id);
 
     if (data.panel === "left") {
         dispatch(setSplitView(true));
@@ -63,10 +61,10 @@ function traceRequest(data, value) {
         const newRight = {
             ...previousRight[0],
             id: previousRight[0].id,
-            idRef:  "Trace " + value,
+            idRef: "Trace " + value,
             panel: "right",
             queryType: "range",
-            dataSourceType: 'traces',
+            dataSourceType: "traces",
             dataSourceId: data.dataSourceId,
             dataSourceURL: data.url,
             expr: value,
@@ -81,10 +79,9 @@ function traceRequest(data, value) {
         };
 
         dispatch(setRightPanel([newRight]));
-
         dispatch(
             getData(
-                'traces',
+                "traces",
                 value,
                 "range",
                 panelCP.limit || 100,
@@ -92,31 +89,12 @@ function traceRequest(data, value) {
                 newRight.id,
                 "forward",
                 data.dataSourceId, // datasourceid
-            data.url,
+                data.url
             )
         );
     } catch (e) {
         console.log(e);
     }
-
-
-
-
-    // const { panel, id, dataSourceId, url } = data;
-
-    // dispatch(
-    //     getData(
-    //         "traces",
-    //         value,
-    //         "range",
-    //         100,
-    //         panel,
-    //         id,
-    //         "forward",
-    //         dataSourceId,
-    //         url
-    //     )
-    // );
 }
 
 function fluxTimeFormatter(props) {
@@ -129,7 +107,7 @@ export function setColumnsTsValue(
     timeAccessor,
     data = {}
 ) {
-    const query = store.getState()?.[data.panel]?.find((f) => f.id === data.id);
+    const query = store.getState()?.[data.panel].find((f) => f.id === data.id);
 
     if (query) {
         data.dataSourceId = query.dataSourceId;
