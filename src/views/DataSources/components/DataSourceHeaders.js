@@ -113,7 +113,7 @@ export const DataSourceHeaders = (props) => {
                                 />
                                 <DeleteOutlineOutlinedIcon
                                     onClick={(e) => onRemove(e, val.id)}
-                                    style={{ cursor: "pointer" , marginLeft:'10px'}}
+                                    style={{ cursor: "pointer" }}
                                     fontSize={"small"}
                                 />
                             </InputGroup>

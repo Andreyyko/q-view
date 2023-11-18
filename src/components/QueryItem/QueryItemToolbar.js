@@ -9,9 +9,10 @@ import {
     ShowQueryButton,
 } from "./style";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { useEffect, useMemo,useState } from "react";
+import { useMemo, useState } from "react";
 import { QueryId } from "./QueryId";
 import { DataSourceSelect } from "./DataSourceSelect";
+
 export function QueryItemToolbar(props) {
     const dispatch = useDispatch();
     // update panel on id change
@@ -24,36 +25,22 @@ export function QueryItemToolbar(props) {
 
     const dataSources = useSelector((store) => store.dataSources);
 
-    const [extValue, setExtValue] = useState(props.data.dataSourceId);
-
-    useEffect(() => {
-        setExtValue(props.data.dataSourceId);
-    }, [props.data.dataSourceId]);
-
     const dataSourceOptions = useMemo(() => {
-        if (dataSources.length > 0) {
-            return dataSources.map((m) => ({
-                value: m.id,
-                name: m.name,
-                type: m.type,
-                icon: m.icon,
-            }));
-        }
-        return null;
+        return dataSources.map((m) => ({
+            value: m.id,
+            name: m.name,
+            type: m.type,
+            icon: m.icon,
+        }));
     }, [dataSources]);
-
-    const [dataSourceValue, setDataSourceValue] = useState({
-        value: props.data.dataSourceId,
-        name:
-            dataSources.find((f) => f.id === props?.data?.dataSourceId)?.[
-                "name"
-            ] || props.data.dataSourceId,
-        type: props.data.dataSourceType,
-        icon:
-            dataSources.find((f) => f.id === props?.data?.dataSourceId)?.[
-                "icon"
-            ] || props.data.dataSourceId,
-    });
+    const valueMemo = useMemo(() => {
+        return (
+            dataSourceOptions?.find(
+                (f) => f.value === props.data.dataSourceId
+            ) || ""
+        );
+    }, [props.data.dataSourceId, dataSourceOptions]);
+    const [dataSourceValue, setDataSourceValue] = useState(valueMemo || "");
 
     const panelAction = (panel, data) => {
         if (panel === "left") {
@@ -77,10 +64,9 @@ export function QueryItemToolbar(props) {
         const value = e.target.value;
         const dataSource = dataSources.find((f) => f.id === value);
         const panelCP = JSON.parse(JSON.stringify(panel));
-        const optSelected = dataSourceOptions.find((f) => f.value === value);
-
-        setDataSourceValue((_) => optSelected);
-
+        setDataSourceValue((prev) => {
+            return dataSource;
+        });
         panelCP.forEach((panelCP) => {
             if (panelCP.id === props.data.id) {
                 panelCP.dataSourceId = dataSource.id;
@@ -116,7 +102,6 @@ export function QueryItemToolbar(props) {
             {!isEmbed && (
                 <div className="query-tools">
                     <DataSourceSelect
-                        extValue={extValue}
                         value={dataSourceValue}
                         onChange={onDataSourceChange}
                         opts={dataSourceOptions}
@@ -127,7 +112,6 @@ export function QueryItemToolbar(props) {
                             fontSize: "15px",
                             cursor: "pointer",
                             padding: "3px",
-                            marginLeft:'10px'
                         }}
                         onClick={props.onAddQuery}
                     />

@@ -9,7 +9,9 @@ export const LinkedField = (props) => {
     const {
         id,
         name,
+        query,
         regex,
+        url,
         urlLabel,
         internalLink,
         linkType,
@@ -116,7 +118,6 @@ export const LinkedField = (props) => {
                     onClick={onLinkedFieldRemove}
                     fontSize={"small"}
                     style={{
-                        marginLeft:'10px',
                         cursor: "pointer",
                         display: locked ? "none" : "inline-block",
                     }}

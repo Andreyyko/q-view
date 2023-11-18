@@ -9,8 +9,6 @@ import styled from "@emotion/styled";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { setRightPanel } from "../../../actions/setRightPanel";
 import getData from "../../../actions/getData";
-import { useMediaQuery } from "react-responsive";
-
 const ValueTagsStyled = styled.div`
     color: ${(props) => props.theme.textPrimary};
     flex: 1;
@@ -47,10 +45,6 @@ function alreadyExists(exp, op, k, v) {
 
 export function ValueTagsCont(props) {
     const { showLabels, tags, actQuery } = props;
-
-
-   
-
     if (showLabels) {
         return (
             <div className="value-tags-container">
@@ -94,7 +88,6 @@ export class Panel {
 
 export default function ValueTags(props) {
     const { tags, actQuery, dataSourceData, linkedFieldTags } = props;
-    const isTabletOrMobile = useMediaQuery({ query: "(max-width: 914px)" });
     const dataSources = useSelector((store) => store.dataSources);
     const theme = useSelector((store) => store.theme);
     const isEmbed = useSelector((store) => store.isEmbed);
@@ -103,7 +96,7 @@ export default function ValueTags(props) {
 
     const openTraces = (e, key, value, linkID, currentUrl, linkType) => {
         e.stopPropagation();
-        if (props?.actQuery?.panel === "left" && !isTabletOrMobile ) {
+        if (props?.actQuery?.panel === "left") {
             dispatch(setSplitView(true));
         }
 

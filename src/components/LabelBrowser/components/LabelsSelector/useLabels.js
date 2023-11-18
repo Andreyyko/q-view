@@ -1,3 +1,4 @@
+import { VolunteerActivismOutlined } from "@mui/icons-material";
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -47,6 +48,8 @@ export default function useLabels(id, dataSourceURL = "") {
     timeStart = getTimestamp(start, type);
     timeEnd = getTimestamp(stop, type);
 
+    const controller = new AbortController();
+
     const [url, setUrl] = useState(
         getUrlFromType(currentDataSource.url, type, timeStart, timeEnd)
     );
@@ -59,11 +62,7 @@ export default function useLabels(id, dataSourceURL = "") {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (
-            currentDataSource.type !== "flux" &&
-            currentDataSource.url &&
-            currentDataSource.url !== ""
-        ) {
+        if (currentDataSource.type !== "flux") {
             const options = {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
@@ -109,6 +108,7 @@ export default function useLabels(id, dataSourceURL = "") {
 
     return {
         response,
+        //  controller: options.controller,
         loading,
     };
 }

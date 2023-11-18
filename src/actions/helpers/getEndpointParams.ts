@@ -12,13 +12,14 @@ export function getEndpointParams(
     queryType: QueryType,
     customUrl: string
 ): QueryParams {
+    // in here should add the apiUrl from settings
 
     const localStore = store.getState();
-    const {isSplit } = localStore;
+    const { apiUrl, isSplit } = localStore;
     const splitVal = isSplit ? 2 : 1;
     const wWidth = window.innerWidth;
     const { parsedTime, time } = getTimeParams(type);
-    const url = settingUrl;
+    const url = settingUrl !== "" ? settingUrl : apiUrl;
     let stepCalc = 0;
     stepCalc = wWidth / Math.round(((wWidth / tSpan) * 10) / splitVal);
 
