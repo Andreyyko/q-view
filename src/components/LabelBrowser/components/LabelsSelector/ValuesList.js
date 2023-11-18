@@ -75,6 +75,7 @@ export const LabelValue = (props) => {
         const valueUpdated = { ...value, selected: isSelected };
 
         onValueClick(valueUpdated);
+
     };
 
     return (
@@ -84,6 +85,7 @@ export const LabelValue = (props) => {
             onClick={onValueSelected}
         >
             {value.name}
+            
         </small>
     );
 };
@@ -91,8 +93,7 @@ export const LabelValue = (props) => {
 export default function ValuesList(props) {
     const dispatch = useDispatch();
     const { name, data } = props;
-
-    const { dataSourceId, dataSourceType } = data;
+    const { dataSourceId } = data;
     const { start, stop } = useSelector((store) => store);
     const panelQuery = useSelector((store) => store[name]);
 
@@ -140,10 +141,7 @@ export default function ValuesList(props) {
                 name: val,
                 selected: false,
                 inverted: false,
-                type:
-                    props.label === "__name__" && dataSourceType === "metrics"
-                        ? "metrics"
-                        : "value",
+                type: props.label === "__name__" ? "metrics" : "value",
                 id: nanoid(),
             }));
         } else {
@@ -205,7 +203,6 @@ export default function ValuesList(props) {
 
         if (valsSelection.length > 0) {
             initialValues = onValueFilter(val, valsSelection);
-
             if (val.type === "metrics") {
                 setValuesState((prev) => {
                     const found = prev.some((s) => s.id === val.id);
@@ -219,9 +216,7 @@ export default function ValuesList(props) {
                         });
                     }
                 });
-
             }
-
         } else {
             initialValues = [...initialValues, { ...val }];
         }

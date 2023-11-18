@@ -135,23 +135,19 @@ export default function TracesSearch(props: any) {
 
 
     const onSubmit = () => {
-     
-        if(dataSourceURL && dataSourceURL !=='') {
-            dispatch(
-                getData(
-                    dataSourceType,
-                    expr,
-                    "trace-search",
-                    urlState.limit,
-                    name,
-                    id,
-                    "forward",
-                    dataSourceId,
-                    dataSourceURL + "/api/" + urlString
-                )
-            );
-        }
-    
+        dispatch(
+            getData(
+                dataSourceType,
+                expr,
+                "trace-search",
+                urlState.limit,
+                name,
+                id,
+                "forward",
+                dataSourceId,
+                dataSourceURL + "/api/" + urlString
+            )
+        );
     };
 
     return (

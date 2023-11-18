@@ -4,7 +4,7 @@
         "type": "logs",
         "value": "logs",
         "name": "Logs",
-        "url": "",
+        "url": "http://qryn:3000",
         "icon": "logs_icon",
         "visType": "logs",
         "headers": [

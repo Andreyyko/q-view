@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { getHeaders } from "./helpers";
 
 export function useTraceServiceName({ id }) {
+
     const dataSources = useSelector((store) => store.dataSources);
     const [serviceNames, setserviceNames] = useState(
         { data: { tagValues: [] } } || {}
@@ -13,13 +14,10 @@ export function useTraceServiceName({ id }) {
     }, [dataSources, id]);
 
     useEffect(() => {
-        if (
-            dataSource.type === "traces" &&
-            dataSource?.url &&
-            dataSource?.url !== ""
-        ) {
+        if (dataSource.type === "traces") {
             const traceHeaders = getHeaders(dataSource);
 
+            
             const url = `${dataSource.url}/api/search/tag/service.name/values`;
             const apiRequest = async () => {
                 try {
@@ -36,13 +34,12 @@ export function useTraceServiceName({ id }) {
 
     return useMemo(() => {
         if (serviceNames?.["data"]?.["tagValues"]) {
-            return [{ name: "Select Service Name", value: "" }].concat(
-                serviceNames["data"]["tagValues"].map((m) => ({
-                    name: m,
-                    value: m,
-                }))
-            );
+            return [{name:'Select Service Name',value:''}].concat(serviceNames["data"]["tagValues"].map((m) => ({
+                name: m,
+                value: m,
+            })));
         }
         return [{ name: "", value: "" }];
     }, [serviceNames]);
 }
+

@@ -36,7 +36,6 @@ export default function getData(
     dataSourceId = "",
     url = ""
 ) {
-
     let dsSettings = {
         url: "",
         requestHeaders: {},
@@ -87,9 +86,10 @@ export default function getData(
         if (!!dsSettings?.auth?.basicAuth?.value) {
             const reqHeaders = dsSettings?.auth?.fields?.basicAuth;
 
-
+            let authHeader = {};
             let auth = { username: "", password: "" };
 
+            let str = "";
             for (let header of reqHeaders) {
                 if (header?.name === "user") {
                     // str += `${header?.value}:`;
@@ -127,12 +127,9 @@ export default function getData(
     const endpoint = getEndpoint(type, queryType, params);
 
     return async function (dispatch: Function) {
-
         await resetParams(dispatch, panel);
 
         let cancelToken: any;
-
-        if(url === '') return 
 
         if (typeof cancelToken != typeof undefined) {
             cancelToken.cancel("Cancelling the previous request");
@@ -143,7 +140,6 @@ export default function getData(
 
         try {
             if (options?.method === "POST") {
-                
                 await axios
                     ?.post(endpoint, queryInput, options)
                     ?.then((response) => {
@@ -169,7 +165,6 @@ export default function getData(
                         dispatch(setLoading(false));
                     });
             } else if (options?.method === "GET") {
-
                 await axios
                     ?.get(endpoint, {
                         auth: { username: user, password: pass },

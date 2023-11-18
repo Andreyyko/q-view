@@ -12,10 +12,7 @@ export default function ValuesSelector(props) {
             return labels.filter((f) => f.name !== "__name__");
         }
         return labels;
-
     }, [labels, dataSourceType]);
-
-
     const metricsSelection = useMemo(() => {
         if (dataSourceType === "metrics") {
             return labels.filter((f) => f.name === "__name__");
@@ -35,7 +32,7 @@ export default function ValuesSelector(props) {
                 )}
                 {labels &&
                     labelsFiltered?.map((label, key) => (
-                        <ValuesList {...props} label={label} key={key} type={'logs'} />
+                        <ValuesList {...props} label={label} key={key} />
                     ))}
             </div>
         </div>
