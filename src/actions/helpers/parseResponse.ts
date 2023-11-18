@@ -1,4 +1,11 @@
-import { Stream, Message, QueryResultType, QueryDirection } from "../types";
+import {
+    Stream,
+    Message,
+    QueryResult,
+    QueryResultType,
+    QueryDirection,
+    TracesResult,
+} from "../types";
 import store from "../../store/store";
 
 import { nanoid } from "nanoid";
@@ -7,7 +14,9 @@ import { parseMatrixResponse } from "./parseMatrixResponse";
 import { parseStreamResponse } from "./parseStreamResponse";
 import { fromNanoSec } from "./timeParser";
 import { parseTracesResponse } from "./parseTracesResponse";
+import { parseFluxResponse } from "./parseFluxResponse";
 const { debugMode } = store.getState();
+
 
 /**
  *
@@ -26,6 +35,17 @@ export async function getAsyncResponse(
  * @param messages
  * @returns messages sorted by timestamp
  */
+
+// export function sortMessagesByTimestamp(
+//     messages: Message[], //:array sort by timestamp,
+//     direction = "forward"
+// ) {
+//     if (direction === "forward") {
+//         return sortMessagesByTimestampAsc(messages);
+//     } else {
+//         return sortMessagesByTimestampDesc(messages);
+//     }
+// }
 
 export function sortMessagesByTimestamp(
     messages: Message[],
@@ -68,7 +88,7 @@ export function mapStreams(
     const startTime = performance.now();
     let messages: Message[] = [];
 
-    streams?.forEach((stream: Stream) => {
+    streams.forEach((stream: Stream) => {
         stream.values.forEach(([ts, text], i) => {
             messages.push({
                 type: "stream",
@@ -88,6 +108,7 @@ export function mapStreams(
         console.log("🚧 getData / mapping logs took: ", duration, " ms");
     return sortMessagesByTimestamp(messages, direction);
 }
+
 
 /**
  *
@@ -111,7 +132,7 @@ export async function parseResponse(responseProps: any) {
             await parseMatrixResponse(responseProps);
             break;
         case "flux":
-            await parseVectorResponse(responseProps);
+            await parseFluxResponse(responseProps);
             break;
         case "traces":
             await parseTracesResponse(responseProps);
@@ -119,4 +140,5 @@ export async function parseResponse(responseProps: any) {
         default:
             await parseStreamResponse(responseProps);
     }
+
 }

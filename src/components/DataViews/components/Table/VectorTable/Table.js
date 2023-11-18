@@ -54,7 +54,7 @@ export const AddLabels = (props) => {
 export function Table(props) {
     // modify height from props in here
 
-    const { columns, data, actQuery,height, size } = props;
+    const { columns, data, actQuery,height } = props;
 
     const { responseType } = actQuery;
 
@@ -156,9 +156,9 @@ export function Table(props) {
 
             <div {...getTableBodyProps()}>
                 <FixedSizeList
-                    height={parseInt(size) || 600}
+                    height={parseInt(height) || 200}
                     itemCount={rows.length}
-                    itemSize={26}
+                    itemSize={25}
                     width={totalColumnsWidth + scrollbarWidth}
                 >
                     {RenderRow}

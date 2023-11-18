@@ -22,9 +22,7 @@ export type QueryResult = {
 };
 
 export type TracesResultType = {
-    resourceSpans: Array<any>;
-    result:Array<any>;
-    length:any;
+    resourceSpans: Array<any>
 }
 
 export type TracesResult = {
@@ -36,7 +34,6 @@ export type TracesResult = {
     panel: string;
     id: string;
     ts: number;
-    queryType?:QueryType;
 };
 
 export type Message = {
@@ -61,7 +58,7 @@ export type QueryOptions = {
     cancelToken?: any;
 };
 
-export type QueryType = "range" | "instant" | "trace-search";
+export type QueryType = "range" | "instant";
 export type QueryDirection = "forward" | 'backwards'
 export type QueryParams = {
     queryUrl?: string;
@@ -71,5 +68,4 @@ export type QueryParams = {
     parsedTime?: number | string;
     queryStep: number | string;
     direction: QueryDirection;
-    queryType: QueryType;
 };
