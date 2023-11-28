@@ -1,4 +1,3 @@
-import { cloneDeep } from "lodash";
 import moment, { Moment, MomentInput } from "moment";
 import { nanoid } from "nanoid";
 import { environment } from "../environment/env.dev";
@@ -46,11 +45,10 @@ export interface URLState {
     isSubmit: boolean;
     isEmbed: boolean;
     theme: string;
-    autoTheme: boolean;
     isSplit: boolean;
 }
 
-export const initialUrlState: URLState = {
+export const initialUrlState = {
     queryType: "range",
     start: "",
     time: "",
@@ -65,7 +63,6 @@ export const initialUrlState: URLState = {
     apiUrl: "",
     isSubmit: false,
     isEmbed: false,
-    autoTheme: true,
     theme: "",
     isSplit: false,
 };
@@ -222,12 +219,11 @@ export default function initialState() {
         notifications: [],
         tableData: {},
         isTableView: false,
-        autoTheme: urlState.autoTheme || true,
         theme: urlState.theme || "light",
         isEmptyView: false,
         isSplit: false,
     };
-    
+
     const debug = state.debugMode;
     if (debug) console.log("🚧 LOGIC/ INITIAL STATE ::: ", state);
 
