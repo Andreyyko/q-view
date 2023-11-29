@@ -20,7 +20,7 @@ export const HistoryButtonStyled = styled(BtnSmall)`
         margin-left: 5px;
     }
     @media screen and (max-width: 864px) {
-        display: flex;
+        display: ${(props) => (props.isMobile ? "flex" : "none")};
     }
 `;
 
@@ -53,14 +53,13 @@ export const QueryBarContainer = styled.div`
     border-radius: 3px;
 `;
 export const ShowLogsBtn = styled(BtnSmall)`
-    background: ${(props) => props.loading ? '#44bcd8' : props.theme.primaryDark};
+    background: ${(props) => props.theme.primaryDark};
     border: 1px solid ${(props) => props.theme.buttonBorder};
     color: ${(props) => props.theme.buttonText};
     margin-left: 5px;
     transition: 0.25s all;
     justify-content: center;
     padding: 3px 12px;
-    
     height: 28px;
     &:hover {
         background: ${(props) => props.theme.primaryLight};
@@ -72,7 +71,7 @@ export const ShowLogsBtn = styled(BtnSmall)`
         color: ${(props) => props.theme.textColor};
     }
     @media screen and (max-width: 864px) {
-        display: flex;
+        display: ${(props) => (props.isMobile ? "flex" : "none")};
 
         margin: 0;
         margin-left: 5px;
@@ -95,10 +94,10 @@ export const ShowSettingsBtn = styled(BtnSmall)`
 export const MobileTopQueryMenu = styled.div`
     display: ${(props:any) =>
         props.isSplit || props.dataSourceType === "flux" ? "flex" : "none"};
-    flex-wrap: wrap;
 
     @media screen and (max-width: 864px) {
         display: flex;
+        justify-content: space-between;
     }
 `;
 

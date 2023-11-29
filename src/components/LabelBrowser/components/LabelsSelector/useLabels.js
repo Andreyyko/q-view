@@ -98,7 +98,7 @@ export default function useLabels(id, dataSourceURL = "") {
                     const req = await axios.get(url, labelHeaders);
                     setResponse(req || []);
                 } catch (e) {
-                    console.log("Error fetching labels");
+                    console.log("ERROR AT USELABELS");
                     console.log(e);
                 }
                 setLoading(false);

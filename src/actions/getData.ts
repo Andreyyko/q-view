@@ -11,8 +11,6 @@ import { processResponse } from "./helpers/processResponse";
 import { QueryType, QueryDirection } from "./types";
 import { getTimeSpan } from "./helpers/getTimeSpan";
 import { boscoSend } from "./helpers/boscoRequest";
-import { setLeftPanel } from "./setLeftPanel";
-import { setRightPanel } from "./setRightPanel";
 
 /**
  *
@@ -27,25 +25,6 @@ import { setRightPanel } from "./setRightPanel";
 // this one should load logs and metrics data
 // just change endpoint
 
-function panelDispatch(panel: string, dispatch: Function, data: any) {
-    if (panel === "left") {
-        return dispatch(setLeftPanel(data));
-    }
-
-    if (panel === "right") {
-        return dispatch(setRightPanel(data));
-    }
-}
-
-function changeLoadingState(panel: any[], id: string, state: boolean) {
-    return [...panel].map((m) => {
-        if (m.id === id) {
-            return { ...m, loading: state };
-        } 
-        return m
-    });
-}
-
 export default function getData(
     type: string,
     queryInput: string,
@@ -58,6 +37,7 @@ export default function getData(
     url = "",
     customStep = 0
 ) {
+
     let dsSettings = {
         url: "",
         requestHeaders: {},
@@ -75,7 +55,7 @@ export default function getData(
         },
         hasSettings: false,
     };
-    const panelData = store.getState()[panel]
+
     let user = "";
     let pass = "";
     if (dataSourceId !== "") {
@@ -108,6 +88,7 @@ export default function getData(
         if (!!dsSettings?.auth?.basicAuth?.value) {
             const reqHeaders = dsSettings?.auth?.fields?.basicAuth;
 
+
             let auth = { username: "", password: "" };
 
             for (let header of reqHeaders) {
@@ -130,10 +111,6 @@ export default function getData(
         }
     }
 
-    const loadingState = (dispatch:any, state:boolean) => {
-        panelDispatch(panel,dispatch, changeLoadingState(panelData,id,state))
-    } 
-
     const { debugMode } = store.getState();
     const options = getQueryOptions(type, dsSettings.requestHeaders);
     const tSpan = getTimeSpan(queryInput);
@@ -145,23 +122,19 @@ export default function getData(
         direction,
         dsSettings.url || "",
         queryType,
-        url,
+        url, 
         customStep
     );
 
     const endpoint = getEndpoint(type, queryType, params);
 
     return async function (dispatch: Function) {
+
         await resetParams(dispatch, panel);
-        dispatch(setLoading(true));
-        loadingState(dispatch, true)
+
         let cancelToken: any;
 
-        if (url === "") {
-            loadingState(dispatch, false)
-            return;
-
-        }
+        if(url === '') return 
 
         if (typeof cancelToken != typeof undefined) {
             cancelToken.cancel("Cancelling the previous request");
@@ -172,6 +145,7 @@ export default function getData(
 
         try {
             if (options?.method === "POST") {
+                
                 await axios
                     ?.post(endpoint, queryInput, options)
                     ?.then((response) => {
@@ -195,38 +169,37 @@ export default function getData(
                     })
                     .finally(() => {
                         dispatch(setLoading(false));
-                        loadingState(dispatch, false)
                     });
             } else if (options?.method === "GET") {
+
                 await axios
                     ?.get(endpoint, {
                         auth: { username: user, password: pass },
                         ...options,
                     })
                     ?.then((response) => {
-                        processResponse(
-                            type,
-                            response || { data: { data: [] } },
-                            dispatch,
-                            panel,
-                            id,
-                            direction,
-                            queryType
-                        );
-
-                        if (debugMode) {
-                            boscoSend(
-                                { level: "info", id, type, direction },
-                                id
+                            processResponse(
+                                type,
+                                response || {data:{data:[]}},
+                                dispatch,
+                                panel,
+                                id,
+                                direction,
+                                queryType
                             );
-                        }
-                        loadingState(dispatch, false)
+    
+                            if (debugMode) {
+                                boscoSend(
+                                    { level: "info", id, type, direction },
+                                    id
+                                );
+                        } 
+                    
                     })
                     .catch((error) => {
                         resetNoData(dispatch);
                         dispatch(setIsEmptyView(true));
                         dispatch(setLoading(false));
-                        loadingState(dispatch, false)
                         if (debugMode) {
                             boscoSend(
                                 { level: "error", id, type, direction },
@@ -240,12 +213,10 @@ export default function getData(
                         }
                     })
                     .finally(() => {
-                        loadingState(dispatch, false)
                         dispatch(setLoading(false));
                     });
             }
         } catch (e) {
-            loadingState(dispatch, false)
             console.log(e);
         }
     };

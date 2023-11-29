@@ -85,7 +85,6 @@ export const QueryBar = (props) => {
         dataSourceId,
         //  dataSourceURL,
     } = data;
-    const {data:{loading}} = props
     const { hash } = useLocation();
     const dispatch = useDispatch();
     const historyService = localService().historyStore();
@@ -98,7 +97,7 @@ export const QueryBar = (props) => {
     const [queryValid, setQueryValid] = useState(false);
     const [queryValue, setQueryValue] = useState(queryInit(data.expr));
     const [traceQueryType, setTraceQueryType] = useState("traceId");
-    const [labels, setLabels] = useState([]);
+    const [labels, setLabels] = useState([])
     const [traceSearch, setTraceSearch] = useState({});
     const [open, setOpen] = useState(false);
     // const [currentDataSource,setCurrentDatasource] = useState({})
@@ -286,9 +285,10 @@ export const QueryBar = (props) => {
         setQueryValue([{ children: [{ text: expr }] }]);
         setQueryValid(onQueryValid(expr));
         decodeQueryAndUpdatePanel(queryInput, false);
-        saveQuery();
+        saveQuery()
         setLocalStorage();
     }, [expr]);
+
 
     useEffect(() => {
         setQueryInput(actLocalQuery.expr);
@@ -424,7 +424,8 @@ export const QueryBar = (props) => {
 
                 updateLinksHistory();
 
-                setLocalStorage();
+                setLocalStorage()
+                
             } catch (e) {
                 console.error(e);
             }
@@ -434,7 +435,7 @@ export const QueryBar = (props) => {
             console.log("Please make a log query", expr);
         }
     };
-    const getLocalStorage = () => {
+    const getLocalStorage = () => {                
         // 1- if has previous id with data => modify data
         // 2- if no previous data => create entry
         try {
@@ -465,11 +466,15 @@ export const QueryBar = (props) => {
             prevData.length > 0 &&
             Array.isArray(prevData) &&
             prevData.some(
-                (s) => s.dataSourceId === dataSourceId && s.queryId === id
+                (s) =>
+                    s.dataSourceId === dataSourceId && s.queryId === id
             )
         ) {
             newData = prevData.map((m) => {
-                if (m.queryId === id && m.dataSourceId === dataSourceId) {
+                if (
+                    m.queryId === id &&
+                    m.dataSourceId === dataSourceId
+                ) {
                     return { ...queryData };
                 } else {
                     return m;
@@ -479,7 +484,7 @@ export const QueryBar = (props) => {
             newData = [...prevData, queryData];
         }
         localStorage.setItem("queryData", JSON.stringify(newData));
-    };
+    }
     const saveQuery = (e = []) => {
         const queryParams = new URLSearchParams(hash.replace("#", ""));
         const multiline = e?.map((text) => text.children[0].text).join("\n");
@@ -488,24 +493,25 @@ export const QueryBar = (props) => {
             if (query.id === id) {
                 if (multiline) {
                     query.expr = multiline;
-                }
+                };
             }
         });
         dispatch(panelAction(name, panel));
         queryParams.set(name, encodeURIComponent(JSON.stringify(panel)));
         setLocalStorage();
-    };
-    const onSubmitRate = (e, type = "logs") => {
+    }
+    const onSubmitRate = (e, type="logs") => {
         e.preventDefault();
         const isEmptyQuery = queryInput.length === 0;
         let query = "";
         if (!isEmptyQuery) {
+
             const isRate = queryInput.startsWith(`rate(`);
 
             if (type === "metrics") {
                 if (isRate) {
                     query = queryInput.replace(/{([^}]+)}/g, "{}");
-                    query = query.replace(/\[\d+ms\]/, "[$__interval]");
+                    query = query.replace(/\[\d+ms\]/, "[$__interval]")
                 } else {
                     query = `rate(${queryInput.replace(
                         /{([^}]+)}/g,
@@ -556,9 +562,9 @@ export const QueryBar = (props) => {
         });
 
         dispatch(setQueryHistory(historyUpdated));
-    };
+
+    }
     const decodeQueryAndUpdatePanel = (queryExpr, isSearch) => {
-       
         const currentDataSource = dataSources.find(
             (f) => f.id === dataSourceId
         );
@@ -579,7 +585,7 @@ export const QueryBar = (props) => {
                     query.expr = queryExpr;
                 }
                 query.labels = [...labelsDecoded];
-                query.browserOpen = !isSearch && dataSourceType === "logs";
+                query.browserOpen = !isSearch && dataSourceType === 'logs';
                 query.dataSourceId = currentDataSource.id;
                 query.dataSourceType = currentDataSource.type;
                 query.dataSourceURL = currentDataSource.url;
@@ -587,34 +593,30 @@ export const QueryBar = (props) => {
         });
 
         dispatch(panelAction(name, panel));
-        let querySubmit = "";
+        let querySubmit = ''
+        
+        let customStep = 0
 
-        let customStep = 0;
+        if(queryExpr.includes(`$__interval`)) {
 
-        if (queryExpr.includes(`$__interval`)) {
-            const timeDiff = (stop.getTime() - start.getTime()) / 1000;
 
-            const timeProportion = timeDiff / 30;
+            const timeDiff = (stop.getTime() - start.getTime())/1000;
+         
+            const timeProportion = (timeDiff / 30)
 
-            const screenProportion = (width / window.innerWidth).toFixed(1);
+            const screenProportion =  (width / window.innerWidth).toFixed(1)
 
-            const intval = timeProportion / screenProportion;
+            const intval = (timeProportion / screenProportion) 
 
-            const ratiointval = Math.round(
-                intval * window.devicePixelRatio.toFixed(2)
-            );
-            querySubmit = queryExpr.replace(
-                "[$__interval]",
-                `[${ratiointval}s]`
-            );
-            customStep = ratiointval;
+            const ratiointval = (Math.round(intval * (window.devicePixelRatio).toFixed(2)))
+            querySubmit = queryExpr.replace('[$__interval]', `[${ratiointval}s]`)
+            customStep = ratiointval
         } else {
-            querySubmit = queryExpr;
+            querySubmit = queryExpr
         }
 
-        if (isSearch) {
-     
-         dispatch(
+        if(isSearch) {
+            dispatch(
                 getData(
                     dataSourceType,
                     querySubmit,
@@ -628,9 +630,8 @@ export const QueryBar = (props) => {
                     customStep
                 )
             );
-           
         }
-     
+
     };
     const updateLinksHistory = () => {
         const storedUrl = saveUrl.add({
@@ -693,26 +694,15 @@ export const QueryBar = (props) => {
         type,
         traceSearch,
         querySearch,
-        metricsSearch,
-        showResultButton
+        metricsSearch
     ) => {
         if (type === "traces") {
             return (
                 <>
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            paddingRight: "15px",
-                        }}
-                    >
-                        <TracesSwitch
-                            value="traceId"
-                            onChange={switchTraceQueryType}
-                        />
-                        {traceQueryType === "traceId" && showResultButton}
-                    </div>
+                    <TracesSwitch
+                        value="traceId"
+                        onChange={switchTraceQueryType}
+                    />
                     {traceQueryType === "traceId" && querySearch}
                     {traceQueryType === "search" && traceSearch}
                 </>
@@ -731,6 +721,12 @@ export const QueryBar = (props) => {
         return querySearch;
     };
 
+    const showFullQueryBar = (type, isSplit, isMobile) => {
+        if (!isMobile && !isSplit && type !== "flux" && type !== "traces")
+            return <QueryTypeBar {...props} />;
+        return null;
+    };
+
     if (isEmbed) {
         return null;
     }
@@ -738,8 +734,8 @@ export const QueryBar = (props) => {
     return (
         <div className={cx(maxWidth)} id={id}>
             <ThemeProvider theme={themes[theme]}>
-                {dataSourceType !== "metrics" &&
-                    dataSourceType !== "traces" && (
+                {dataSourceType !== "traces" &&
+                    dataSourceType !== "metrics" && (
                         <MobileTopQueryMenuCont
                             {...props}
                             isSplit={isSplit}
@@ -751,7 +747,6 @@ export const QueryBar = (props) => {
                             onSubmit={onSubmit}
                             onSubmitRate={onSubmitRate}
                             labels={labels}
-                            loading={loading}
                         />
                     )}
 
@@ -774,16 +769,13 @@ export const QueryBar = (props) => {
                         queryValid={queryValid}
                         onSubmit={onSubmit}
                         onSubmitRate={onSubmitRate}
-                        isTabletOrMobile={isTabletOrMobile}
                         labels={labels}
-                        loading={loading}
                     />,
                     <MetricsSearch
                         {...props}
                         searchButton={
                             <ShowLogsButton
                                 disabled={!queryValid}
-                                loading={loading}
                                 onClick={onSubmit}
                                 isMobile={false}
                                 alterText={"Use Query"}
@@ -798,13 +790,6 @@ export const QueryBar = (props) => {
                             />
                         }
                         handleMetricValueChange={onMetricChange}
-                    />,
-                    <ShowLogsButton
-                        disabled={!queryValid}
-                        onClick={onSubmit}
-                        loading={loading}
-                        isMobile={false}
-                        alterText={"Search Trace"}
                     />
                 )}
 
@@ -835,7 +820,6 @@ export const QueryBar = (props) => {
 export const QueryBarCont = (props) => {
     const {
         isSplit,
-        isTabletOrMobile,
         dataSourceType,
         handleQueryChange,
         expr,
@@ -845,17 +829,12 @@ export const QueryBarCont = (props) => {
         handleHistoryClick,
         queryValid,
         onSubmit,
-        onSubmitRate,
-        loading
+        onSubmitRate
     } = props;
-    const buttonsHidden = () =>
-        !isSplit &&
-        !isTabletOrMobile &&
-        dataSourceType !== "flux" &&
-        dataSourceType !== "traces";
+    const buttonsHidden = () => !isSplit && dataSourceType !== "flux";
     return (
         <QueryBarContainer>
-            {buttonsHidden() && dataSourceType === "logs" && (
+            {buttonsHidden() && dataSourceType === "logs" && dataSourceType !== 'metrics' && (
                 <ShowLabelsButton {...props} />
             )}
 
@@ -883,7 +862,6 @@ export const QueryBarCont = (props) => {
                         disabled={!queryValid}
                         onClick={onSubmit}
                         isMobile={false}
-                        loading={loading}
                     />
                 </>
             )}
@@ -895,7 +873,6 @@ export const QueryBarCont = (props) => {
                             disabled={!queryValid}
                             onClick={onSubmit}
                             isMobile={false}
-                            loading={loading}
                         />
                     </>
                 )}
@@ -915,7 +892,6 @@ export const MobileTopQueryMenuCont = (props) => {
         onSubmitRate,
         data,
         name,
-        loading
     } = props;
     const { id, dataSourceType } = data;
     const [isChartViewSet, setIsChartViewSet] = useState(props.data.chartView);
@@ -923,11 +899,10 @@ export const MobileTopQueryMenuCont = (props) => {
     useEffect(() => {
         setIsChartViewSet(props.data.chartView);
     }, [setIsChartViewSet, props.data.chartView]);
-
     const panelQuery = useSelector((store) => store[name]);
-
+    // conditionally show labels
     const withLabels = (type) => {
-        if (type !== "flux" && type !== "metrics" && type !== "traces") {
+        if (type !== "flux" && type !== "traces" && type !== "metrics") {
             return (
                 <>
                     <ShowLabelsButton {...props} isMobile={true} />
@@ -978,7 +953,6 @@ export const MobileTopQueryMenuCont = (props) => {
                 disabled={!queryValid}
                 onClick={onSubmit}
                 isMobile={true}
-                loading={loading}
             />
             {dataSourceType === "flux" && (
                 <div className="options-input">
