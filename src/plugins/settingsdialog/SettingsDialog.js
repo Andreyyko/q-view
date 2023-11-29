@@ -1,6 +1,7 @@
 import { Dialog, Switch, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    setApiUrl,
     setTheme,
     setAutoTheme
 } from "../../actions";
@@ -22,18 +23,14 @@ import {
 } from "./styled";
 
 import setDebugMode from "../../actions/setDebugMode";
-import { css } from "@emotion/css";
 
-export const DialogStyles = css`
-    background-color: transparent !important;
-`
 export default function SettingsDialog({ open, onClose }) {
     const dispatch = useDispatch();
     const theme = useSelector((store) => store.theme);
     const autoTheme = useSelector((store) => store.autoTheme)
     const debugMode = useSelector((store) => store.debugMode);
-
-  
+    const apiUrl = useSelector((store)=> store.apiUrl)
+    const [apiEdited, setApiEdited] = useState(apiUrl);
 
     const [embedEdited, setEmbedEdited] = useState(
         getEmbed(window.location.href)
@@ -83,11 +80,7 @@ export default function SettingsDialog({ open, onClose }) {
     }
 
     return (
-        <Dialog open={open} onClose={handleClose} PaperProps={{
-            classes: {
-                root: DialogStyles
-            }
-          }}>
+        <Dialog open={open} onClose={handleClose}>
             <SettingCont>
                 <SettingHeader>
                     <h3>Settings</h3>

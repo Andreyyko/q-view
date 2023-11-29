@@ -92,9 +92,8 @@ export default function stateFromQueryParams() {
                     moment(croppedTime).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
                 );
             } else if (key === "left" || key === "right") {
-                const queries = JSON.parse(decodeURIComponent(value)); // queries inside panel
-
-                startParams[key] = queries;
+                const parsedQuery = JSON.parse(decodeURIComponent(value));
+                startParams[key] = parsedQuery;
             } else if (BOOLEAN_VALUES.includes(key)) {
                 try {
 
