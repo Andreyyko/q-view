@@ -30,7 +30,6 @@ export const ARRAY_VALUES = ["left", "right"];
 export const TIME_VALUES = ["start", "stop"];
 
 export const BOOLEAN_VALUES = ["isSubmit", "isSplit", "autoTheme", "isEmbed"];
-
 export function UpdateStateFromQueryParams() {
     const isLightTheme = useMemo(() => {
         return window.matchMedia("(prefers-color-scheme: light)").matches;
@@ -155,7 +154,7 @@ export function UpdateStateFromQueryParams() {
                 .concat(ARRAY_VALUES);
             allParams.forEach((param) => {
                 if (STRING_VALUES.includes(param)) {
-                    urlFromHash.set(param, STORE_KEYS[param].toString());
+                    urlFromHash.set(param, STORE_KEYS[param]?.toString());
                 } else if (param === "theme") {
                     urlFromHash.set(param, themeSet.toString());
                 } else if (TIME_VALUES.includes(param)) {
