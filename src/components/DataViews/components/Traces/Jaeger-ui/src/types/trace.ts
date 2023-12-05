@@ -73,7 +73,6 @@ export type TraceSpan = TraceSpanData & {
   relativeStartTime: number;
   tags: NonNullable<TraceSpanData['tags']>;
   references: NonNullable<TraceSpanData['references']>;
-  events:any;
   warnings: NonNullable<TraceSpanData['warnings']>;
   subsidiarilyReferencedBy: TraceSpanReference[];
 };

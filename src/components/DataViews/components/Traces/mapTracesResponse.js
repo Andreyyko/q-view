@@ -202,7 +202,6 @@ export function mapTracesResponse(data) {
                 startTime,
                 duration,
                 relativeStartTime: 0,
-                events:m?.events || [],
                 logs: [],
                 references: [],
                 tags,

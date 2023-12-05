@@ -87,7 +87,6 @@ export function TraceView(props: any) {
         toggleDetail,
         detailLogItemToggle,
         detailLogsToggle,
-        detailEventsToggle,
         detailProcessToggle,
         detailReferencesToggle,
         detailReferenceItemToggle,
@@ -177,7 +176,6 @@ export function TraceView(props: any) {
                             clearShouldScrollToFirstUiFindMatch={noop}
                             detailLogItemToggle={detailLogItemToggle}
                             detailLogsToggle={detailLogsToggle}
-                            detailEventsToggle={detailEventsToggle}
                             detailWarningsToggle={detailWarningsToggle}
                             detailStackTracesToggle={detailStackTracesToggle}
                             detailReferencesToggle={detailReferencesToggle}

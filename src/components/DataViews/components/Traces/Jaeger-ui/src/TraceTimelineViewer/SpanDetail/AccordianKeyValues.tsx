@@ -27,14 +27,14 @@ import styled from "@emotion/styled";
 const header = css`
     cursor: pointer;
     overflow: hidden;
-    display: flex;
-    align-items: center;
+    display:flex;
+    align-items:center;
     padding: 0.25em 0.1em;
-    font-size: 12px;
+    font-size:12px;
     text-overflow: ellipsis;
     white-space: nowrap;
     &:hover {
-        //   background: #e8e8e8;
+     //   background: #e8e8e8;
     }
 `;
 const headerEmpty = css`
@@ -43,11 +43,11 @@ const headerEmpty = css`
 `;
 const headerHighContrast = css`
     &:hover {
-        //     background: #ddd;
+   //     background: #ddd;
     }
 `;
 export const emptyIcon = css`
-    //  color: #aaa;
+  //  color: #aaa;
 `;
 const Summary = styled.ul`
     display: inline;
@@ -110,7 +110,10 @@ KeyValuesSummary.defaultProps = {
     data: null,
 };
 
-export default function AccordianKeyValues(props: any) {
+export default function AccordianKeyValues(props:any) {
+
+  
+
     const {
         className,
         data,
@@ -127,15 +130,9 @@ export default function AccordianKeyValues(props: any) {
     let headerProps: {} | null = null;
     if (interactive) {
         arrow = isOpen ? (
-            <KeyboardArrowDown
-                fontSize={"small"}
-                style={{ height: "13px", width: "13px" }}
-            />
+            <KeyboardArrowDown className={iconCls} />
         ) : (
-            <KeyboardArrowRight
-                fontSize={"small"}
-                style={{ height: "13px", width: "13px" }}
-            />
+            <KeyboardArrowRight className={iconCls} />
         );
         headerProps = {
             "aria-checked": isOpen,
@@ -161,13 +158,7 @@ export default function AccordianKeyValues(props: any) {
                 </strong>
                 {!isOpen && <KeyValuesSummary data={data} />}
             </div>
-            {isOpen && (
-                <KeyValuesTable
-                    theme={props.theme}
-                    data={data}
-                    linksGetter={linksGetter}
-                />
-            )}
+            {isOpen && <KeyValuesTable theme={props.theme} data={data} linksGetter={linksGetter} />}
         </div>
     );
 }

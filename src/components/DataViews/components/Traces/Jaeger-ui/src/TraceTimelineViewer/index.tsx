@@ -97,7 +97,6 @@ type TProps = TExtractUiFindFromStateReturn & {
 
     childrenToggle: (spanID: string) => void;
     clearShouldScrollToFirstUiFindMatch: () => void;
-    detailEventsToggle: (spanID: string) => void;
     detailLogItemToggle: (spanID: string, log: TraceLog) => void;
     detailLogsToggle: (spanID: string) => void;
     detailWarningsToggle: (spanID: string) => void;

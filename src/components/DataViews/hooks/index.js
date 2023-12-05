@@ -30,7 +30,7 @@ export const useViewHeight = ({ type, actualQuery, total, dataView }) => {
 
         if (type === "stream" && !actualQuery?.tableView) {
             const regRows = total * 25;
-            const regCalc = regRows < 350 ? "fit-content" : "inherit";
+            const regCalc = regRows < 350 ? "fit-content" : "350px";
             regularCont = regCalc;
             regularView = regCalc;
             maxCont = "fit-content";

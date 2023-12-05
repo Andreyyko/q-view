@@ -91,7 +91,6 @@ type SpanDetailProps = {
     logItemToggle: (spanID: string, log: TraceLog) => void;
     logsToggle: (spanID: string) => void;
     processToggle: (spanID: string) => void;
-    eventsToggle: (spanID:string) => void;
     span: TraceSpan;
     //   timeZone: TimeZone;
     tagsToggle: (spanID: string) => void;
@@ -210,19 +209,6 @@ export default function SpanDetail(props: SpanDetailProps) {
                         />
                     )}
                 </div>
-                {span?.events?.length > 0 &&  (
-                    <AccordianLogs
-                        linksGetter={linksGetter}
-                        logs={span.events}
-                        isOpen={logsState.isOpen}
-                        openedItems={logsState.openedItems}
-                        onToggle={() => logsToggle(spanID)}
-                        onItemToggle={(logItem) =>
-                            logItemToggle(spanID, logItem)
-                        }
-                        timestamp={traceStartTime}
-                    />
-                )}
                 {logs && logs.length > 0 && (
                     <AccordianLogs
                         linksGetter={linksGetter}
