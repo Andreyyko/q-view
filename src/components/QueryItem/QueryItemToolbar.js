@@ -12,7 +12,6 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { useEffect, useMemo, useState } from "react";
 import { QueryId } from "./QueryId";
 import { DataSourceSelect } from "./DataSourceSelect";
-import { Tooltip } from "@mui/material";
 export function QueryItemToolbar(props) {
     const dispatch = useDispatch();
     // update panel on id change
@@ -171,8 +170,6 @@ export function QueryItemToolbar(props) {
                         opts={dataSourceOptions}
                         label={""}
                     />
-                    <Tooltip title={"Add query"}>
-                        
                     <AddOutlinedIcon
                         style={{
                             fontSize: "15px",
@@ -182,9 +179,6 @@ export function QueryItemToolbar(props) {
                         }}
                         onClick={props.onAddQuery}
                     />
-                    </Tooltip>
-                    <Tooltip title={"Delete query"}>
-
                     <DeleteOutlineIcon
                         style={{
                             fontSize: "15px",
@@ -193,7 +187,6 @@ export function QueryItemToolbar(props) {
                         }}
                         onClick={props.onDeleteQuery}
                     />
-                    </Tooltip>
                 </div>
             )}
         </QueryItemToolbarStyled>
