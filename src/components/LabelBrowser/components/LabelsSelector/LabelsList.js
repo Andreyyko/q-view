@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import styled from "@emotion/styled";
 import ShowLogsButton from "../Buttons/ShowLogsButton";
 import { queryBuilder } from "../../helpers/querybuilder";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setLeftPanel } from "../../../../actions/setLeftPanel";
 import { setRightPanel } from "../../../../actions/setRightPanel";
 import store from "../../../../store/store";
@@ -54,7 +54,6 @@ export default function LabelsList(props) {
     const dispatch = useDispatch();
     const { labels, data, name } = props;
     const { dataSourceType } = data;
-    const panelQuery = useSelector((store) => store[name]);
 
     const onClick = (e) => {
         if (e === "Select Metric") {
@@ -78,7 +77,7 @@ export default function LabelsList(props) {
 
     const useQuery = () => {
         const qu = queryBuilder(data.labels, data.expr)
-        const panel = [...panelQuery];
+        const panel = [data];
         panel.forEach((query) => {
             if (query.id === props.data.id) {
                 query.expr = qu;
