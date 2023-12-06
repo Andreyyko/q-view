@@ -230,7 +230,6 @@ export default function initialState() {
         theme: urlState.theme || "light",
         isEmptyView: false,
         isSplit: false,
-        showDataSourceSetting: true,
     };
     
     const debug = state.debugMode;

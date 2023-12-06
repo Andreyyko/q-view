@@ -114,7 +114,6 @@ export default function LabelsList(props) {
                         onClick={useQuery}
                         isMobile={false}
                         alterText={"Use Query"}
-                        loading={false}
                     />
                 </>
             }

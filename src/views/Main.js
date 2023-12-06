@@ -15,8 +15,6 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
 import { useLocation } from "react-router-dom";
 import setDataSources from "./DataSources/store/setDataSources";
-import { setShowDataSourceSetting } from "./Main/setShowDataSourceSetting";
-
 
 export const MainContainer = styled.div`
     position: absolute;
@@ -257,23 +255,7 @@ export function updateDataSourcesWithUrl(
     }
 
     if (haveCookies) {
-        let [auth, dsData] = cookies.split("@");
-        let cookieDsData = "";
-        if (dsData !== "") {
-            cookieDsData = atob(dsData);
-            try {
-                cookieDsData = JSON.parse(cookieDsData);
-                if (typeof cookieDsData === "object" && cookieDsData["url"]) {
-                    apiUrl = cookieDsData["url"];
-                    haveUrl = true;
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        }
-
-        let [user, pass] = auth.split(":");
-
+        let [user, pass] = cookies.split(":");
         if (user !== "" && pass !== "") {
             cookieAuth = { user, password: pass };
             basicAuth = true;
@@ -312,12 +294,6 @@ export function updateDataSourcesWithUrl(
             },
         },
     }));
-
-    if(cookies && cookieAuth) {
-    
-        dispatch(setShowDataSourceSetting(false))
-    }
-
     dispatch(setDataSources(newDs));
 }
 
