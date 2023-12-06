@@ -16,7 +16,7 @@ import { QueryItemToolbar } from "./QueryItemToolbar";
 
 const QueryContainer = styled.div``;
 
-const panelAction = (panel: any, data: any) => {
+const panelAction = (panel, data) => {
     if (panel === "left") {
         return setLeftPanel(data);
     } else {
@@ -24,7 +24,7 @@ const panelAction = (panel: any, data: any) => {
     }
 };
 
-const dataViewAction = (panel: any, data: any) => {
+const dataViewAction = (panel, data) => {
     if (panel === "left") {
         return setLeftDataView(data);
     } else {
@@ -32,7 +32,7 @@ const dataViewAction = (panel: any, data: any) => {
     }
 };
 
-export default function QueryItem(props: any) {
+export default function QueryItem(props) {
     const { name } = props;
     const {
         expr,
@@ -72,14 +72,14 @@ export default function QueryItem(props: any) {
     }, []);
 
     const dispatch = useDispatch();
-    const theme = useSelector((store: any) => store.theme);
-    const dataView = useSelector((store: any) => store[`${name}DataView`]);
-    const panelSelected = useSelector((store: any) => store[name]);
+    const theme = useSelector((store) => store.theme);
+    const dataView = useSelector((store) => store[`${name}DataView`]);
+    const panelSelected = useSelector((store) => store[name]);
     const isQueryOpen = useState(true);
     
-    function filterPanel(panel: any) {
+    function filterPanel(panel) {
         if (panel?.length > 1) {
-            return panel?.filter((query: any) => query?.id !== props?.data?.id);
+            return panel?.filter((query) => query?.id !== props?.data?.id);
         } else {
             return panel;
         }
@@ -106,7 +106,7 @@ export default function QueryItem(props: any) {
     };
 
     const onAddQuery = () => {
-        const getIdref = (lastIdx: any) => {
+        const getIdref = (lastIdx) => {
             if (lastIdx > idRefs.length - 1) {
                 return `${idRefs[0]}${lastIdx}`;
             } else {
@@ -114,11 +114,11 @@ export default function QueryItem(props: any) {
             }
         };
 
-        const getLastIndex = (panel: any) => {
+        const getLastIndex = (panel) => {
             return panel[panel.length - 1].lastIdx;
         };
 
-        const setNewPanel = (lastIdx: any, panel: any, idRef: any) => {
+        const setNewPanel = (lastIdx, panel, idRef) => {
             const newQuery = {
                 ...props.data,
                 id: nanoid(),
@@ -131,7 +131,7 @@ export default function QueryItem(props: any) {
             return [...panel, newQuery];
         };
 
-        const setNewPanelData = (panel: any) => {
+        const setNewPanelData = (panel) => {
             const lastIdx = getLastIndex(panel);
             const idRef = getIdref(lastIdx);
             return setNewPanel(lastIdx, panel, idRef);
@@ -141,11 +141,9 @@ export default function QueryItem(props: any) {
 
         dispatch(panelAction(name, panelData));
     };
-    
-    const _themes: any = themes;
-    
+
     return (
-        <ThemeProvider theme={_themes[theme]}>
+        <ThemeProvider theme={themes[theme]}>
             <QueryContainer>
                 <QueryItemToolbar
                     {...props}

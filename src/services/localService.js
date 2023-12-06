@@ -1,31 +1,31 @@
 import { nanoid } from "nanoid";
 
-function localService(item: any = null) {
+function localService(item = null) {
 
     const _APP = "qryn-query";
     const _HISTORY_ITEM = _APP + "-history-item";
     const _LABELS_ITEM = _APP + '-labels-item';
-    const cleanup: any[] = [];
+    const cleanup = [];
 
 
-    const getStorageItem = (name: string): string => {
-        return localStorage.getItem(name) || 'null';
+    const getStorageItem = (name) => {
+        return localStorage.getItem(name);
     };
 
-    const setStorageItem = (name: string, data: string) => {
+    const setStorageItem = (name, data) => {
         localStorage.setItem(name, data);
     };
     
-    const j_parse = (item: string) => JSON.parse(item)
-    const j_string = (item: any) => JSON.stringify(item)
-    const l_set = (item: string, value: string) => { localStorage.setItem(item,value) }
-    const l_get = (item: string) =>  localStorage.getItem(item)
+    const j_parse = (item) => JSON.parse(item)
+    const j_string = (item) => JSON.stringify(item)
+    const l_set = (item,value) => { localStorage.setItem(item,value) }
+    const l_get = (item) =>  localStorage.getItem(item)
     const historyStore = () => {
         const get = () => {
             return JSON.parse(getStorageItem(_HISTORY_ITEM));
         };
 
-        const set = (data: any) => {
+        const set = (data) => {
             setStorageItem(_HISTORY_ITEM, JSON.stringify(data));
         };
 
@@ -36,20 +36,20 @@ function localService(item: any = null) {
 
         const historyStorage = get();
 
-        const findById = () => historyStorage.find(({ id }: any) => item.id === id);
+        const findById = () => historyStorage.find(({ id }) => item.id === id);
 
         const getById = () => {
             const historyItem = findById();
             return historyItem || {};
         };
 
-        const update = (item: any) => {
+        const update = (item) => {
             const { id } = item;
 
             let newStorage = [];
 
             try {
-                newStorage = historyStorage.map((m: any) =>
+                newStorage = historyStorage.map((m) =>
                     m.id === id ? { ...m, ...item } : m
                 );
                 set(newStorage);
@@ -59,7 +59,7 @@ function localService(item: any = null) {
             }
         };
 
-        const add = (item: any) => {
+        const add = (item) => {
             let previousData = get() || [];
             try {
                 const newItem = {
@@ -78,18 +78,18 @@ function localService(item: any = null) {
         };
 
        function getAll() {
-           const actualStorage = JSON.parse(localStorage.getItem(_HISTORY_ITEM) || 'null')||[]
+           const actualStorage = JSON.parse(localStorage.getItem(_HISTORY_ITEM))||[]
 
             return (
-                actualStorage?.map((m: any) => ({
+                actualStorage?.map((m) => ({
                     ...m,
                     data: decodeURI(m.data),
                 })) || []
             );
         };
 
-        const remove = (item: any) => {
-            const filtered = historyStorage.filter(({ id }: any) => id !== item.id);
+        const remove = (item) => {
+            const filtered = historyStorage.filter(({ id }) => id !== item.id);
 
             set(filtered);
             return getAll()
@@ -100,7 +100,7 @@ function localService(item: any = null) {
 
     const labelsStore = () => {
         return function getAll(){
-            const actualStorage = JSON.parse(localStorage.getItem(_LABELS_ITEM) || 'null')||[]
+            const actualStorage = JSON.parse(localStorage.getItem(_LABELS_ITEM))||[]
             return actualStorage;
         }
 

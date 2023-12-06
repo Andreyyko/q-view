@@ -2,26 +2,25 @@ import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { themes } from "../../theme/themes";
 
-export function QueryId(props: any) {
+export function QueryId(props) {
     const [isEditing, setIsEditing] = useState(false);
     const [idText, setIdText] = useState(props.data.idRef);
-    const storeTheme = useSelector(({ theme }: any) => theme);
+    const storeTheme = useSelector(({ theme }) => theme);
     const theme = useMemo(() => {
-        const _themes: any = themes
-        return _themes[storeTheme];
+        return themes[storeTheme];
     }, [storeTheme]);
-    function onIdTextChange(e: any) {
+    function onIdTextChange(e) {
         e.preventDefault();
         const txt = e.target.value;
         setIdText(txt);
     }
 
-    function closeInput(e: any) {
+    function closeInput(e) {
         props.onIdRefUpdate(idText);
         setIsEditing(false);
     }
 
-    function handleKeydown(e: any) {
+    function handleKeydown(e) {
         if (e.key === "Enter") {
             props.onIdRefUpdate(idText);
             setIsEditing(false);

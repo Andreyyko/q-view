@@ -1,14 +1,12 @@
 import { nanoid } from "nanoid";
 import { _LABELS_ITEM } from "./consts";
-import localService from "./localService";
-
-const { l_get, l_set, j_string, j_parse, cleanup } = localService();
+import { l_get, l_set, j_string, j_parse, cleanup } from "./localService";
 
 const localLabels = () => {
     const get = () => {
         return l_get(_LABELS_ITEM);
     };
-    const set = (item: any) => {
+    const set = (item) => {
         l_set(_LABELS_ITEM, item);
     };
 
@@ -17,13 +15,13 @@ const localLabels = () => {
         return getAll() || [];
     };
 
-    const labelsStorage: any = get();
+    const labelsStorage = get();
 
-    const findById = (item: any) =>
-        labelsStorage.find(({ id }: any) => item.id === id) || {};
+    const findById = (item) =>
+        labelsStorage.find(({ id }) => item.id === id) || {};
     // add
-    const add = (item: any) => {
-        let previousData: any = get() || [];
+    const add = (item) => {
+        let previousData = get() || [];
         try {
             const newItem = {
                 id: item.id || nanoid(),
@@ -38,13 +36,13 @@ const localLabels = () => {
         }
     };
     // update
-    const update = (item: any) => {
+    const update = (item) => {
         const { id } = item;
 
         let newStorage = [];
 
         try {
-            newStorage = labelsStorage.map((m: any) =>
+            newStorage = labelsStorage.map((m) =>
                 m.id === id ? { ...m, ...item } : m
             );
             set(newStorage);
@@ -55,7 +53,7 @@ const localLabels = () => {
     };
     // remove
     function getAll() {
-        const actualStorage = j_parse(l_get(_LABELS_ITEM) || 'null') || [];
+        const actualStorage = j_parse(l_get(_LABELS_ITEM)) || [];
         return actualStorage;
     }
     return { get, set, clean, add, update, findById, getAll };

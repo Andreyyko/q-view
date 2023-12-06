@@ -3,10 +3,10 @@ import { InputGroup } from "../../views/DataSources/styles";
 
 import { Label } from "./style";
 
-export const DataSourceSelect = (props: any) => {
+export const DataSourceSelect = (props) => {
     const { value, onChange, opts, label, extValue } = props;
 
-    const selectRef: any = useRef(null);
+    const selectRef = useRef(null);
 
     useEffect(() => {
         if (value.value !== extValue) {
@@ -22,7 +22,7 @@ export const DataSourceSelect = (props: any) => {
 
     const formattedSelect = useMemo(() => {
         if (typeof opts[0] === "string") {
-            return opts.map((k: any) => ({ value: k, name: k }));
+            return opts.map((k) => ({ value: k, name: k }));
         } else return opts;
     }, [opts]);
 
@@ -35,7 +35,7 @@ export const DataSourceSelect = (props: any) => {
                     defaultValue={extValue}
                     onChange={onChange}
                 >
-                    {formattedSelect?.map((field: any, key: number) => (
+                    {formattedSelect?.map((field, key) => (
                         <option key={key} value={field?.value}>
                             {field?.name}
                         </option>
