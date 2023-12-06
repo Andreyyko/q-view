@@ -1,4 +1,4 @@
-export function getHeaders(dataSource: any) {
+export function getHeaders(dataSource) {
     const options = {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -6,9 +6,9 @@ export function getHeaders(dataSource: any) {
 
     const basicAuth = dataSource?.auth?.basicAuth.value;
 
-    let reqHeaders: any = {};
+    let reqHeaders = {};
 
-    let auth: any = {};
+    let auth = {};
 
     if (basicAuth) {
         const authfields = dataSource?.auth?.fields?.basicAuth;

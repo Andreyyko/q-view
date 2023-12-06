@@ -5,7 +5,7 @@ const QUERY_TYPE_SELECTOR_OPTIONS = [
     { value: "search", label: "Search" },
 ];
 
-export function TraceQueryTypeSelector(props: any) {
+export function TraceQueryTypeSelector(props) {
     const { onQueryTypeSelectorChange, queryTypeSelectorSelected } = props;
     return (
         <QueryTypeSwitch
