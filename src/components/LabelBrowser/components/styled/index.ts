@@ -134,7 +134,6 @@ export const SettingsInputContainer = styled.div`
     .options-input {
         margin: 10px;
         display: flex;
-        justify-content: space-between;
     }
 `;
 
