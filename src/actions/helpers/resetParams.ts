@@ -8,6 +8,7 @@ import { setVectorData } from "../setVectorData";
 
 
 export async function resetParams(dispatch: Function,panel:string) {
+    dispatch(setLoading(true));
     dispatch(setIsEmptyView(false));
     dispatch(setLogs([]));
 

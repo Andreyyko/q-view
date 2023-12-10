@@ -7,7 +7,7 @@ const localUrl = () => {
     const { l_set, l_get, j_parse, j_string } = localService();
 
     const get = () => {
-        return j_parse(l_get(_URL_ITEM) || "null");
+        return j_parse(l_get(_URL_ITEM) || 'null');
     };
 
     const set = (item: any) => {
@@ -40,8 +40,6 @@ const localUrl = () => {
 
     const add = (item: any) => {
         let previousData = get() || [];
-        const { href, url, type, queryInput, queryType, limit, panel } =
-            item.data;
 
         const { hash } = window.location;
         const origin = window.location.origin;
@@ -62,13 +60,6 @@ const localUrl = () => {
 
         try {
             const newItem = {
-                url,
-                href,
-                type,
-                queryInput,
-                queryType,
-                limit,
-                panel,
                 id: item.id || nanoid(),
                 timestamp: item.timestamp || Date.now(),
                 starred: false,
@@ -98,8 +89,7 @@ const localUrl = () => {
     };
 
     function getAll() {
-        const actualStorage =
-            JSON.parse(localStorage.getItem(_URL_ITEM) || "null") || [];
+        const actualStorage = JSON.parse(localStorage.getItem(_URL_ITEM) || 'null') || [];
         return actualStorage;
     }
 
