@@ -10,8 +10,8 @@ import store from "./store/store";
 import DataSources from "./views/DataSources/DataSources";
 
 import { CookiesProvider } from "react-cookie";
-import ProtectedRoute from "./providers/ProtectedRoute";
 errorInterceptor(axios);
+const showDs = store.getState()["showDataSourceSetting"] || false;
 ReactDOM.render(
     <React.StrictMode>
         <CookiesProvider>
@@ -20,10 +20,12 @@ ReactDOM.render(
                     <Routes>
                         <Route path="/" element={<App />} />
                         <Route path="/search" element={<App />} />
+                        {showDs && (
                             <Route
                                 path="/datasources/*"
-                                element={<ProtectedRoute> <DataSources /></ProtectedRoute>}
+                                element={showDs ? <DataSources /> : <App />}
                             />
+                        )}
                     </Routes>
                 </BrowserRouter>
             </Provider>

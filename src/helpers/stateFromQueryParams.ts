@@ -85,6 +85,7 @@ export default function stateFromQueryParams() {
             console.log("🚧 LOGIC/startParams/BeforeURLFromHash", startParams);
         for (let [key, value] of urlFromHash.entries()) {
             if (debug) console.log("🚧 LOGIC/startParams/", key, value);
+
             if (key === "stop" || key === "start") {
                 const croppedTime = parseInt(value) / 1000000;
                 startParams[key] = new Date(
@@ -102,9 +103,6 @@ export default function stateFromQueryParams() {
                 }
             } else {
                 startParams[key] = value;
-            }
-            if (startParams.theme) {
-                localStorage.setItem("theme", JSON.stringify({ theme: startParams.theme, auto: !!startParams.autoTheme }));
             }
         }
 
