@@ -13,13 +13,13 @@ export const TableStyles = styled.div`
       }
     &::-webkit-scrollbar-thumb {
         border-radius: 5px;
-        background: ${({theme}) => theme.scrollbarThumb};
+        background: ${(props) => props.theme.scrollbarThumb};
     }
     .table {
         border-spacing: 0;
         border-radius: 4px;
         font-size: 12px;
-        color: ${({theme}) => theme.textColor};
+        color: ${(props) => props.theme.textColor};
     &::-webkit-scrollbar {
         width: 5px;
     }
@@ -28,7 +28,7 @@ export const TableStyles = styled.div`
       }
     &::-webkit-scrollbar-thumb {
         border-radius: 5px;
-        background: ${({theme}) => theme.scrollbarThumb};
+        background: ${(props) => props.theme.scrollbarThumb};
     }
         .tr {
             display: block;
@@ -39,7 +39,7 @@ export const TableStyles = styled.div`
             }
         }
         .th {
-            background: ${({theme}) => theme.buttonHover};
+            background: ${(props) => props.theme.buttonHover};
             border-bottom: none;
             padding:3px;
             :last-child {
@@ -52,8 +52,8 @@ export const TableStyles = styled.div`
             flex: 1;
             margin: 0;
             justify-content: space-between;
-            border-bottom: 1px solid ${({theme}) => theme.buttonBorder};
-            border-right: 1px solid ${({theme}) => theme.buttonBorder};
+            border-bottom: 1px solid ${(props) => props.theme.buttonBorder};
+            border-right: 1px solid ${(props) => props.theme.buttonBorder};
             padding:3px;
             position:relative;
             white-space: nowrap;
@@ -75,7 +75,7 @@ export const TableStyles = styled.div`
 
             .resizer {
                 display: inline-block;
-                background: ${({theme}) => theme.buttonBorder};
+                background: ${(props) => props.theme.buttonBorder};
                 width: 3px;
                 height: 100%;
                 position: absolute;
