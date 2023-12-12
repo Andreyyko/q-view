@@ -32,7 +32,7 @@ function setDataView(panel: string) {
 }
 
 export function parseVectorResponse(responseProps: QueryResult | TracesResult) {
-    const { result, debugMode, dispatch, panel, id, type, raw } = responseProps;
+    const { result, debugMode, dispatch, panel, id, type } = responseProps;
     let data = {
         panel,
         id,
@@ -86,7 +86,6 @@ export function parseVectorResponse(responseProps: QueryResult | TracesResult) {
                     const panelResult = {
                         id,
                         type: "vector",
-                        raw,
                         data: { tableData: vectorTableData},
                         tableData: vectorTableData,
                         total: vectorTableData?.dataRows?.length || 0
@@ -151,7 +150,6 @@ export function parseVectorResponse(responseProps: QueryResult | TracesResult) {
                         id,
                         type: "vector",
                         data: { tableData: vectorTableData},
-                        raw,
                         tableData: vectorTableData,
                         total: vectorTableData?.dataRows?.length || 0
                     };
@@ -209,7 +207,6 @@ export function parseVectorResponse(responseProps: QueryResult | TracesResult) {
                         id,
                         type: "vector",
                         data: { tableData: vectorTableData} || {},
-                        raw,
                         tableData: vectorTableData||{},
                         total: vectorTableData?.dataRows?.length || 0,
                     };

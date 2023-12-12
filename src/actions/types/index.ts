@@ -20,7 +20,6 @@ export type QueryResult = {
     direction: QueryDirection;
     hasStats?: boolean;
     statsData?:any;
-    raw?:any;
 
 };
 
@@ -40,7 +39,6 @@ export type TracesResult = {
     id: string;
     ts: number;
     queryType?:QueryType;
-    raw?:any;
 };
 
 export type Message = {

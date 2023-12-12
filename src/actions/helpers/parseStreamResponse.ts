@@ -95,7 +95,6 @@ function setDataView(panel: string) {
 export function parseStreamResponse(responseProps: QueryResult) {
     const {
         result,
-        raw,
         time,
         debugMode,
         queryType,
@@ -126,7 +125,6 @@ export function parseStreamResponse(responseProps: QueryResult) {
         type: "stream",
         tableData: {},
         data: [{}],
-        raw:'[]',
         labels: [],
         total: 0,
     };
@@ -151,7 +149,6 @@ export function parseStreamResponse(responseProps: QueryResult) {
                 type: "stream",
                 tableData: tableResult,
                 data: messSorted,
-                raw,
                 labels: [...labels],
                 total: messSorted?.length || 0,
             };
