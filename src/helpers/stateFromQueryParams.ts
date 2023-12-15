@@ -26,7 +26,6 @@ export const initialUrlState = {
             tableView: false,
             chartView: false,
             isShowTs: true,
-            isBuilder: false,
             browserOpen: false,
             expr: "",
             labels: [], // name: selected:
@@ -50,7 +49,6 @@ export const initialUrlState = {
             tableView: false,
             chartView: false,
             isShowTs: true,
-            isBuilder: false,
             browserOpen: false,
             expr: "",
             labels: [], // name: selected:

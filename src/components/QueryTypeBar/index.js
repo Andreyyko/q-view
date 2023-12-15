@@ -50,7 +50,6 @@ export default function QueryTypeBar(props) {
         tableView,
         idRef,
         isShowTs,
-        isBuilder,
         direction,
         dataSourceType,
         isShowStats,
@@ -59,7 +58,6 @@ export default function QueryTypeBar(props) {
 
     const [isTableViewSet, setIsTableViewSet] = useState(tableView);
     const [isShowTsSet, setIsShowTsSet] = useState(isShowTs || false);
-    const [isBuilderSet, setIsBuilderSet] = useState(isBuilder || false);
     const [isShowStatsSet, setIsShowStatsSet] = useState(isShowStats || false);
     const [queryTypeSwitch, setQueryTypeSwitch] = useState(queryType);
     const [directionSwitch, setDirectionSwitch] = useState(
@@ -94,10 +92,6 @@ export default function QueryTypeBar(props) {
     useEffect(() => {
         setIsShowTsSet(props.data.isShowTs);
     }, [setIsShowTsSet, props.data.isShowTs]);
-
-    useEffect(() => {
-        setIsBuilderSet(props.data.isBuilder);
-    }, [setIsBuilderSet, props.data.isBuilder]);
 
     function onSwitchChange(e) {
         // modify query type switch value
@@ -151,18 +145,6 @@ export default function QueryTypeBar(props) {
         panel.forEach((query) => {
             if (query.id === id) {
                 query.isShowTs = isShowTsSet ? false : true;
-            }
-        });
-
-        dispatch(panelAction(name, panel));
-    }
-
-    function handleBuilderSwitch() {
-        // modify table view switch value
-        const panel = [...panelQuery];
-        panel.forEach((query) => {
-            if (query.id === id) {
-                query.isBuilder = isBuilderSet ? false : true;
             }
         });
 
@@ -228,28 +210,16 @@ export default function QueryTypeBar(props) {
                                 inputProps={{ "aria-label": "controlled-ts" }}
                             />
                         </InputGroup>
-                        <InputGroup>
-                            <SettingLabel>Query Builder</SettingLabel>
+                        {hasStats && (     <InputGroup>
+                            <SettingLabel>Stats Info</SettingLabel>
                             <Switch
-                                checked={isBuilderSet}
+                                checked={isShowStatsSet}
                                 size={"small"}
-                                onChange={handleBuilderSwitch}
+                                onChange={handleStatsInfoSwitch}
                                 inputProps={{ "aria-label": "controlled-ts" }}
                             />
-                        </InputGroup>
-                        {hasStats && (
-                            <InputGroup>
-                                <SettingLabel>Stats Info</SettingLabel>
-                                <Switch
-                                    checked={isShowStatsSet}
-                                    size={"small"}
-                                    onChange={handleStatsInfoSwitch}
-                                    inputProps={{
-                                        "aria-label": "controlled-ts",
-                                    }}
-                                />
-                            </InputGroup>
-                        )}
+                        </InputGroup>)}
+                   
                     </>
                 )}
             </QueryTypeCont>

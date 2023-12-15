@@ -3,18 +3,16 @@ import { ThemeProvider } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { InitialLabelValueState, NewLabel } from "./consts";
 import { metricsToString } from "./helpers";
-import { useLabelOpts, useTheme, useValueSelectOpts } from "./hooks";
+import { useLabelOpts, useTheme } from "./hooks";
 import { useMetricsList } from "./hooks/useMetricsList";
 import { InitialAddButton } from "./InitialAddButton";
 import { LabelValueForm } from "./LabelValueForm";
 import { FlexWrap } from "./styles";
 import {Label} from './types';
 
-// here inject the label selector
+
 export function MetricsLabelValueSelectors(props: any) {
-
-
-    const { dataSourceId, type, value, metricValueChange, onChange } = props;
+    const { dataSourceId, value, metricValueChange, onChange } = props;
     const valuesOpts = useMetricsList(dataSourceId, value);
 
     const [labelValuesState, setLabelValuesState] = useState<Label[]>(
@@ -28,7 +26,6 @@ export function MetricsLabelValueSelectors(props: any) {
     const labelOpts = useLabelOpts(valuesOpts);
 
     const onRemove = (id: any) => {
-
         setLabelValuesState((prev: Label[]) => {
             const prevValue = JSON.parse(JSON.stringify(prev)) || [];
             const newState = prevValue?.filter((f: any) => f.id !== id);
@@ -77,7 +74,7 @@ export function MetricsLabelValueSelectors(props: any) {
     useEffect(() => {
         const labValue = labelValueString || JSON.stringify("");
         const metricString = metricsToString(value, JSON.parse(labValue));
-        metricValueChange(metricString); // pass the processing function from parent
+        metricValueChange(metricString);
     }, [labelValueString, value]);
 
     const resetLabelsState = (e: any) => {
@@ -112,7 +109,6 @@ export function MetricsLabelValueSelectors(props: any) {
                             labelRemove={onRemove}
                             onChange={onLabelChange}
                             currentState={labelValuesState}
-                            useValueSelectOpts={useValueSelectOpts}
                             labelValuesLength={labelValuesState.length || 0}
                         />
                     ))}

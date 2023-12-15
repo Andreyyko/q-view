@@ -50,7 +50,6 @@ import { setSplitView } from "../../StatusBar/components/SplitViewButton/setSpli
 import { Switch } from "@mui/material";
 import { SettingLabel } from "./styled";
 import MetricsSearch from "../../DataViews/components/Metrics/MetricsSearch";
-import LogsSearch from "../../DataViews/components/Logs/LogsSearch/LogsSearch";
 export function panelAction(name, value) {
     if (name === "left") {
         return setLeftPanel(value);
@@ -87,7 +86,7 @@ export const QueryBar = (props) => {
         //  dataSourceURL,
     } = data;
     const {
-        data: { loading, hasStats, isShowStats, isBuilder },
+        data: { loading, hasStats, isShowStats },
     } = props;
     const { hash } = useLocation();
     const dispatch = useDispatch();
@@ -109,6 +108,7 @@ export const QueryBar = (props) => {
     // const [currentDataSource,setCurrentDatasource] = useState({})
     const dataSources = useSelector((store) => store.dataSources);
     const panelData = useSelector((store) => store[name]);
+
     const actLocalQuery = useMemo(() => {
         let exprQuery = { expr: "", dataSourceId, queryId: id };
         try {
@@ -368,11 +368,6 @@ export const QueryBar = (props) => {
     };
 
     const onMetricChange = (e) => {
-        const query = [{ children: [{ text: e }] }];
-        handleQueryChange(query);
-    };
-
-    const onLogChange = (e) => {
         const query = [{ children: [{ text: e }] }];
         handleQueryChange(query);
     };
@@ -718,7 +713,6 @@ export const QueryBar = (props) => {
         traceSearch,
         querySearch,
         metricsSearch,
-        logsSearch,
         showResultButton
     ) => {
         if (type === "traces") {
@@ -751,15 +745,6 @@ export const QueryBar = (props) => {
                     {querySearch}
                 </>
             );
-        }
-
-        if(type === 'logs') {
-            return (
-                <>
-                {isBuilder && logsSearch}
-                {querySearch}
-                </>
-            )
         }
 
         return querySearch;
@@ -803,7 +788,6 @@ export const QueryBar = (props) => {
                     <QueryBarCont
                         {...props}
                         isSplit={isSplit}
-                        isBuilder={isBuilder}
                         dataSourceType={dataSourceType}
                         handleQueryChange={handleQueryChange}
                         expr={expr}
@@ -850,40 +834,6 @@ export const QueryBar = (props) => {
                         }
                         handleMetricValueChange={onMetricChange}
                     />,
-                    <LogsSearch
-                    {...props}
-                    searchButton={
-                        <ShowLogsButton
-                            disabled={!queryValid}
-                            loading={loading || false}
-                            onClick={onSubmit}
-                            isMobile={false}
-                            alterText={"Use Query"}
-                        />
-                    }
-                    logsRateButton={
-                        <ShowLogsRateButton
-                            disabled={!queryValid}
-                            onClick={onSubmitRate}
-                            isMobile={false}
-                            alterText={"Use as Rate Query"}
-                        />
-                    }
-                    statsSwitch={
-                        <div className="options-input">
-                            <SettingLabel>Show Stats</SettingLabel>
-                            <Switch
-                                checked={showStatsOpen}
-                                size={"small"}
-                                onChange={handleStatsOpen}
-                                inputProps={{ "aria-label": "controlled" }}
-                            />
-                        </div>
-                    }
-                    handleLogValueChange={onLogChange}
-              
-
-                    />,
                     <ShowLogsButton
                         disabled={!queryValid}
                         onClick={onSubmit}
@@ -923,7 +873,6 @@ export const QueryBarCont = (props) => {
     const {
         isSplit,
         isTabletOrMobile,
-        isBuilder,
         dataSourceType,
         handleQueryChange,
         expr,
@@ -943,7 +892,7 @@ export const QueryBarCont = (props) => {
         dataSourceType !== "traces";
     return (
         <QueryBarContainer>
-            {buttonsHidden() && dataSourceType === "logs" && !isBuilder && (
+            {buttonsHidden() && dataSourceType === "logs" && (
                 <ShowLabelsButton {...props} />
             )}
 
