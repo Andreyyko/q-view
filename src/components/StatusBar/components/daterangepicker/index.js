@@ -296,10 +296,10 @@ export function DateRangePickerMain(props) {
     const [anchorElRight, setAnchorElRight] = useState(null);
     const openRight = Boolean(anchorElRight);
     const handleClick = (event) => {
-        setAnchorEl( prev => event.currentTarget);
+        setAnchorEl(event.currentTarget);
     };
     const handleClickRight = (event) => {
-        setAnchorElRight(prev => event.currentTarget)
+        setAnchorElRight(event.currentTarget)
     }
     const handleClose = (e, direction,  option) => {
         setAnchorEl(null);
@@ -314,7 +314,7 @@ export function DateRangePickerMain(props) {
                 onClick={() => {
                     adjustTimeRange("backward");
                 }}
-                attachedside={'r'}
+                attachedSide={'r'}
                 emptySide={'l'}
                 className={"date-time-selector"}
             >
@@ -322,7 +322,7 @@ export function DateRangePickerMain(props) {
             </DatePickerButton>
             <DatePickerButton
                 onClick={handleClick}
-                attachedside={'both'}
+                attachedSide={'both'}
                 size={'small'}
                 className={"date-time-selector"}
                 aria-controls={open ? 'backward-menu' : undefined}
@@ -351,7 +351,7 @@ export function DateRangePickerMain(props) {
                 <DatePickerButton
                     onClick={openButtonHandler}
                     className={"date-time-selector"}
-                    attachedside={"both"}
+                    attachedSide={"both"}
                 >
                     <AccessTimeOutlinedIcon />
 
@@ -378,7 +378,7 @@ export function DateRangePickerMain(props) {
             </Tooltip>
             <DatePickerButton
                 onClick={handleClickRight}
-                attachedside={'both'}
+                attachedSide={'both'}
                 size={'small'}
                 className={"date-time-selector"}
                 aria-controls={openRight ? 'forward-menu' : undefined}
@@ -406,7 +406,7 @@ export function DateRangePickerMain(props) {
                 onClick={() => {
                     adjustTimeRange("forward");
                 }}
-                attachedside={'l'}
+                attachedSide={'l'}
                 className={"date-time-selector"}
             >
                 <KeyboardArrowRight />
