@@ -98,7 +98,7 @@ const row = (theme: any) => css`
     }
 `;
 const rowClippingLeft = css`
-    & .nameColumn::before {
+    & .${nameColumnClassName}::before {
         content: " ";
         height: 100%;
         position: absolute;
@@ -113,7 +113,7 @@ const rowClippingLeft = css`
     }
 `;
 const rowClippingRight = css`
-    & .jaegerView::before {
+    & .${viewClassName}::before {
         content: " ";
         height: 100%;
         position: absolute;
@@ -397,7 +397,7 @@ export class UnthemedSpanBarRow extends React.PureComponent<SpanBarRowProps> {
                         [rowFocused(this.props.theme)]: isFocused,
                         [rowClippingLeft]: clippingLeft,
                         [rowClippingRight]: clippingRight,
-                    } as any, 
+                    },
                     className
                 )}
             >
