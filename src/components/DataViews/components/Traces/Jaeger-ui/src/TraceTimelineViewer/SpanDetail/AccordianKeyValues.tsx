@@ -17,8 +17,9 @@ import cx from "classnames";
 import * as React from "react";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { TraceKeyValuePair } from "../../types/trace";
-import { uTxEllipsis } from "../../uberUtilityStyles";
+import { TNil } from "../../types";
+import { TraceKeyValuePair, TraceLink } from "../../types/trace";
+import { uAlignIcon, uTxEllipsis } from "../../uberUtilityStyles";
 
 import * as markers from "./AccordianKeyValues.markers";
 import KeyValuesTable from "./KeyValuesTable";
@@ -71,6 +72,19 @@ const SummaryDelim = styled.span`
     padding: 0 0.2em;
 `;
 
+type AccordianKeyValuesProps = {
+    className?: string | TNil;
+    data: TraceKeyValuePair[];
+    highContrast?: boolean;
+    interactive?: boolean;
+    isOpen: boolean;
+    label: string;
+    linksGetter:
+        | ((pairs: TraceKeyValuePair[], index: number) => TraceLink[])
+        | TNil;
+    onToggle?: null | (() => void);
+};
+
 export function KeyValuesSummary(props: { data?: TraceKeyValuePair[] }) {
     const { data } = props;
 
@@ -108,6 +122,7 @@ export default function AccordianKeyValues(props: any) {
         onToggle,
     } = props;
     const isEmpty = !Array.isArray(data) || !data.length;
+    const iconCls = cx(uAlignIcon, { [emptyIcon]: isEmpty });
     let arrow: React.ReactNode | null = null;
     let headerProps: {} | null = null;
     if (interactive) {

@@ -47,11 +47,6 @@ export const cStyles = (theme: any, minWidth: number) => ({
         marginTop: "4px",
         color: theme.textColor,
     }),
-    valueContainer: (base:any)=> ({
-        ...base,
-        display:'flex'
-
-    })
 });
 
 export const LabelValueContStyles = css`

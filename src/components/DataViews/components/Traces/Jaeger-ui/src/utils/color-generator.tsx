@@ -184,3 +184,4 @@ export function getFilteredColors(colorsHex: string[], theme: any) {
 
     return filteredColors;
 }
+export default null;

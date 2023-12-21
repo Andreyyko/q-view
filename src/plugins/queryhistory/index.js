@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, FormGroup, MenuItem, ThemeProvider, Tooltip } from "@mui/material";
 import localService from "../../services/localService";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import setQueryHistory from "../../actions/setQueryHistory";
 import getData from "../../actions/getData";
@@ -54,8 +54,9 @@ import EmptyHistoryDisplay from "./components/EmptyHistoryDisplay/EmptyHistoryDi
 import CloseButton from "./components/CloseButton/CloseButton";
 import { themes } from "../../theme/themes";
 import { notificationTypes } from "../../qryn-ui/notifications/consts";
+import { DatePickerButton, UrlCopyButton } from "../../components/StatusBar/styled";
 import { StyledMenu } from "../../components/StatusBar/components/daterangepicker";
-
+import { useLocation } from "react-router-dom";
 function QueryHistoryTabs(props) {
     const {
         historyTabHeader,
@@ -257,15 +258,15 @@ function HistoryLinkTools(props) {
     const [isRelative, setIsRelative] = useState(false);
     
     const handleClick = (event) => {
-        setAnchorEl(prev => event.currentTarget);
-        setIsRelative(prev => isRelative );
+        setAnchorEl(event.currentTarget);
+        setIsRelative(isRelative && label);
     };
     const handleClose = (e, direction,  option) => {
         setAnchorEl(null);
     };
 
     const handleChange = (event) => {
-        setIsRelative(prev => Boolean(event.target.checked));
+        setIsRelative(event.target.checked);
     };
 
     return (
@@ -286,12 +287,12 @@ function HistoryLinkTools(props) {
                             isActive={true}
                             style={{ flex: 1 }}
                             className={"URL-COPY"}
-                            attachedside={"r"}
+                            attachedSide={"r"}
                         >
                             <LinkIcon fontSize={"14px"} />
                         </HistoryButton>
                         <HistoryButton
-                            attachedside={"l"}
+                            attachedSide={"l"}
                             onClick={handleClick}
                             size={"small"}
                             className={"date-time-selector"}

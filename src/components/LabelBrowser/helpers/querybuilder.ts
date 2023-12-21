@@ -1,5 +1,6 @@
 import { setLeftPanel } from "../../../actions/setLeftPanel";
 import { setRightPanel } from "../../../actions/setRightPanel";
+import { useQueryParams } from "../../../helpers/useQueryParams";
 import store from "../../../store/store";
 
 export const PIPE_PARSE = [
@@ -52,10 +53,10 @@ const parseLog = {
 
         if (filtered?.length > 1) {
             const lvalues = filtered?.join("|")?.trim();
-            return lb?.trim() + '=~"' + lvalues + '"';
+            return lb?.trim() + "=~" + '"' + lvalues + '"';
         }
         const lvalues = filtered?.join("")?.trim();
-        return lb?.trim() + '="' + lvalues + '"';
+        return lb?.trim() + "=" + '"' + lvalues + '"';
     },
     rmNonEqValueFromLabel: (label: any, value: any) => {
         const [lb, val] = label?.split("!~");
@@ -65,10 +66,10 @@ const parseLog = {
 
         if (filtered?.length > 1) {
             const lvalues = filtered?.join("|")?.trim();
-            return lb?.trim() + '!~"' + lvalues + '"';
+            return lb?.trim() + "!~" + '"' + lvalues + '"';
         }
         const lvalues = filtered?.join("")?.trim();
-        return lb?.trim() + '!="' + lvalues + '"';
+        return lb?.trim() + "!=" + '"' + lvalues + '"';
     },
     addValueToLabel: (label: string, value: string, isEquals: boolean) => {
         let sign = isEquals ? "=" : "=~";

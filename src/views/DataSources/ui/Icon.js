@@ -8,12 +8,11 @@ const Icons = {
     traces_icon,
 };
 
-export const Icon = ({ icon, style }) => {
+export const Icon = ({ icon }) => {
     return (
         <img
             height="40px"
             className="logo"
-            style={style}
             src={Icons[icon] || logs_icon}
             alt={icon}
         />
