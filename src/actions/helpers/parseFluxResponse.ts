@@ -5,11 +5,12 @@ import { addNanoId } from "./addNanoId";
 import { getAsyncResponse } from "./parseResponse";
 import { setTableData } from "../setTableData";
 import moment from "moment";
-import { sortBy } from "lodash";
+import { result, sortBy } from "lodash";
 import { setLeftDataView } from "../setLeftDataView";
 import { setRightDataView } from "../setRightDataView";
 import store from "../../store/store";
-
+import { type } from "@testing-library/user-event/dist/type";
+import { id } from "date-fns/locale";
 import { setVectorData } from "../setVectorData";
 import { prepareVectorRows } from "./prepareVectorRows";
 import { setColumnsData } from "./setColumnsData";
@@ -31,24 +32,25 @@ function timeFormatter(props: any) {
     return moment(props.value).format("YYYY-MM-DDTHH:mm:ss.SSZ");
 }
 function fluxDataToMetricData(data: any[]) {
-    const out: any[] = [
-        {
-            metric: { __name__: "Flux" },
-            values: data.map((item: any) =>
+    const out: any[] = [{
+        metric: {__name__: 'Flux'},
+        values: data.map(
+            (item: any) =>
                 Object.values(item)
-                    .map((i: any, k: number) =>
-                        isNaN(+i)
-                            ? null
-                            : (i instanceof Date ? i.getTime() / 1000 : i) +
-                              (k === 0 ? 0 : "")
+                    .map((i: any, k: number) => (
+                        isNaN(+i) ?
+                            null :
+                            (i instanceof Date ? (i.getTime() / 1000) : i)
+                            + (k === 0 ? 0 : "")
+                    ) 
                     )
-                    .filter((item) => !!item)
-            ),
-        },
-    ];
+                    .filter(item => !!item)
+        ),
+    }]
     return out;
 }
 export function getFluxTableRows(data: any[]) {
+    
     return data.map(({ metric, values }: { metric: object; values: [] }) => ({
         metric: JSON.stringify(metric),
         rows: values.map(([time, value]: [string, string]) => ({
@@ -93,11 +95,11 @@ export function getFluxTableResult(data: any[]) {
         dataRows.push(row.rows);
     }
 
-    const dr = sortBy(dataRows.flat(), (row) => row.time);
+    const dr = sortBy(dataRows.flat(), (row) => row.time)
     return {
         columnsData: headers,
         dataRows: dr,
-        total: dr.length,
+        total: dr.length
     };
 }
 
@@ -115,7 +117,7 @@ function setDataView(panel: string) {
     }
 }
 function getTableData(responseProps: QueryResult) {
-    const { result,  dispatch, panel, id, type } = responseProps;
+    const { result, debugMode, dispatch, panel, id, type } = responseProps;
     const data = {
         panel,
         id,
@@ -153,6 +155,7 @@ function getTableData(responseProps: QueryResult) {
     }
 }
 export function parseFluxResponse(responseProps: QueryResult) {
+
     let { result, debugMode, dispatch, panel, id, raw } = responseProps;
     result = fluxDataToMetricData(result);
     // here should set the table response
@@ -172,13 +175,13 @@ export function parseFluxResponse(responseProps: QueryResult) {
             }
             dispatch(setIsEmptyView(false));
         });
-        const tableData = getTableData(responseProps);
+        const tableData = getTableData(responseProps)
         // get table total as chart total is less that table total rows
 
         const data = {
             chartData: idResult,
-            tableData,
-        };
+            tableData
+        }
         const panelResult = {
             id,
             type: "vector",
@@ -187,6 +190,7 @@ export function parseFluxResponse(responseProps: QueryResult) {
             raw,
             total: idResult?.length || 0,
         };
+
 
         // add this data to previous
         const { action, state } = dataView;

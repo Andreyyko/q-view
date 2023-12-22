@@ -79,6 +79,10 @@ export function AuthFields(props) {
         }, 800);
     };
 
+    const onSave = () => {
+        setSaved(true)
+    }
+
     const onCertValueChange = (e, name, cert) => {
         setIsEditing((_) => true);
         const value = e.target.value;

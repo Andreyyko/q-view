@@ -8,22 +8,24 @@ import { VectorView } from "../views/VectorView";
 import { TraceView } from "./Traces/TraceView";
 export function DataViewItem(props: any) {
     // add a header for table view / json view
-    const { dataView, name } = props;
-    const { type, total, loading } = dataView;
-    const viewRef = useRef<any>(null);
-    const isSplit = useSelector((store: any) => store.isSplit);
-    const panel = useSelector((store: any) => store[name]);
+    const { dataView, name, vHeight }: any = props;
+
+    const { type, total, loading }: any = dataView;
+    const viewRef: any = useRef(null);
+    const isSplit: any = useSelector((store: any) => store.isSplit);
+    const panel: any = useSelector((store: any) => store[name]);
+    
     // panelSize: min , regular, max
     const [panelSize, setPanelSize] = useState("max");
     // get actual query from panel
-    const actualQuery: any = useActualQuery({ panel, dataView });
+    const actualQuery = useActualQuery({ panel, dataView });
     // get  actual query from panel
 
     const [viewWidth, setViewWidth] = useState(0);
 
     useEffect(() => {
         if (viewRef?.current?.clientWidth) {
-            setViewWidth(viewRef.current?.clientWidth);
+            setViewWidth(viewRef.current.clientWidth);
         }
     }, [viewRef?.current?.clientWidth]);
 
@@ -77,7 +79,7 @@ export function DataViewItem(props: any) {
     }
     if (actualQuery && type === "matrix" && streamData.length > 0) {
         // return matrix type component
-        const { limit } = actualQuery;
+        const { limit }: any = actualQuery;
         const matrixProps = {
             viewRef,
             panelSize,
@@ -118,16 +120,11 @@ export function DataViewItem(props: any) {
         return <LogsView {...logsProps} />;
     }
 
-    if (
-        (actualQuery &&
-            type === "vector" &&
-            streamData?.chartData?.length > 0) ||
-        (actualQuery &&
-            type === "vector" &&
-            streamData?.tableData?.dataRows?.length > 0)
-    ) {
+    if ((actualQuery && type === "vector" && streamData?.chartData?.length > 0) ||  (actualQuery && type === "vector"&& streamData?.tableData?.dataRows?.length > 0)) {
+        
+        
         // return vector type (table) component
-        const { limit } = actualQuery;
+       const { limit }: any = actualQuery;
         const vectorProps = {
             viewRef,
             panelSize,
@@ -140,7 +137,7 @@ export function DataViewItem(props: any) {
             type,
             theight,
             streamData,
-            viewWidth,
+           viewWidth,
             limit,
             ...props,
         };

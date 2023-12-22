@@ -3,20 +3,19 @@ import ChartLabelsList from "./ChartLabelList";
 import ChartTools from "./ChartTools";
 import { ChartCont } from "./styled";
 
-export function FlotChart(props: any) {
-    const {
-        theme,
-        matrixData,
-        chartType,
-        handleLimitData,
-        handleNoLimitData,
-        isSpliced,
-        onSetChartType,
-        chartRef,
-        onLabelClick,
-        labels,
-    } = props;
 
+export function FlotChart({
+    theme,
+    matrixData,
+    chartType,
+    handleLimitData,
+    handleNoLimitData,
+    isSpliced,
+    onSetChartType,
+    chartRef,
+    onLabelClick,
+    labels,
+}: any): any {
     return (
         <ThemeProvider theme={theme}>
             <ChartCont>
@@ -29,17 +28,17 @@ export function FlotChart(props: any) {
                     onSetChartType={onSetChartType}
                 />
                 <div className="chart-cont">
-                    <div
-                        ref={chartRef}
-                        id={"chart-container"}
-                        style={{
-                            flex: "1",
-                            minHeight: "180px",
-                            height: "100%",
-                            display: "block",
-                            position: "relative",
-                        }}
-                    ></div>
+                <div
+                    ref={chartRef}
+                    id={"chart-container"}
+                    style={{
+                        flex: "1",
+                        minHeight:'180px',
+                        height:'100%',
+                        display: "block",
+                        position: "relative",
+                    }}
+                ></div>
                 </div>
                 <ChartLabelsList onLabelClick={onLabelClick} labels={labels} />
             </ChartCont>

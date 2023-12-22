@@ -1,4 +1,6 @@
+import { cloneDeep } from "lodash";
 import moment, { Moment, MomentInput } from "moment";
+import { nanoid } from "nanoid";
 import { environment } from "../environment/env.dev";
 import stateFromQueryParams from "../helpers/stateFromQueryParams";
 import localService from "../services/localService";
@@ -175,7 +177,6 @@ export default function initialState() {
                 tableView: false,
                 chartView: false,
                 isShowTs: true,
-                isBuilder: false,
                 hasStats:false,
                 statsData:{},
                 browserOpen: false,
@@ -202,7 +203,6 @@ export default function initialState() {
                 tableView: false,
                 chartView: false,
                 isShowTs: true,
-                isBuilder: false,
                 browserOpen: false,
                 expr: "",
                 labels: [], // name: selected:

@@ -1,11 +1,11 @@
 import { StyledInfoContent } from "../styled";
 
-const InfoLabels = ({ labels }: { labels: any }) => {
+const InfoLabels = ({ labels }: any) => {
     if (labels?.length > 0)
         return (
             <p>
                 Labels:
-                {labels.map((val: any, key: any) => (
+                {labels.map((val: string, key: number) => (
                     <span className={"label"} key={key}>
                         {val}
                     </span>
@@ -15,13 +15,7 @@ const InfoLabels = ({ labels }: { labels: any }) => {
     return null;
 };
 
-interface InfoTitleProps {
-    idRef: string;
-    expr: string;
-    queryType: string;
-}
-
-const InfoTitle = ({ idRef, expr, queryType }: InfoTitleProps) => (
+const InfoTitle = ({ idRef, expr, queryType }: any) => (
     <>
         <h4>{idRef}</h4>
         <div>
@@ -31,15 +25,6 @@ const InfoTitle = ({ idRef, expr, queryType }: InfoTitleProps) => (
     </>
 );
 
-interface InfoContentProps {
-    expr: string;
-    idRef: string;
-    labels: any;
-    limit: any;
-    queryType: any;
-    total: any;
-}
-
 export const InfoContent = ({
     expr,
     idRef,
@@ -47,7 +32,7 @@ export const InfoContent = ({
     limit,
     queryType,
     total,
-}: InfoContentProps) => {
+}: any) => {
     const titleProps = {
         idRef,
         expr,

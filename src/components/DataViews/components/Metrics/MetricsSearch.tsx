@@ -9,13 +9,12 @@ import { InputSelect } from "../QueryBuilder/InputSelect";
 
 export default function MetricsSearch(props: any) {
     const {
-        handleMetricValueChange, // goes to process AT query bar
-        data: { dataSourceId, dataSourceType, hasStats },
+        handleMetricValueChange,
+        data: { dataSourceId, hasStats },
         searchButton,
         logsRateButton,
         statsSwitch,
     } = props;
-
     // get the options for metrics selector
     const metricsOpts = useValuesFromMetrics(dataSourceId);
 
@@ -25,9 +24,6 @@ export default function MetricsSearch(props: any) {
 
     const [labelFilters, setLabelFilters] = useState([] as any); // check label filters
 
-    //console.log(labelFilters)
-    //  this one  should go upstairs and be stored as default value
-    
     const storeTheme = useSelector(
         (store: { theme: "light" | "dark" }) => store.theme
     );
@@ -37,7 +33,7 @@ export default function MetricsSearch(props: any) {
     }, [storeTheme]);
 
     const onMetricChange = (e: any) => {
-        const { value } = e;
+        const { value, id } = e;
         setMetricValue((prev: any) => {
             return { value: value?.value, label: value?.value };
         });
@@ -78,7 +74,6 @@ export default function MetricsSearch(props: any) {
                     />
                 </div>
                 <MetricsLabelValueSelectors
-                type={dataSourceType}
                     onChange={onLabelValueChange}
                     dataSourceId={dataSourceId}
                     value={metricValue.value}

@@ -1,4 +1,4 @@
-import { useMemo, memo } from "react";
+import { useMemo, memo, useEffect, useState } from "react";
 
 import { TableStyles } from "./styles";
 import { Table } from "./Table";
