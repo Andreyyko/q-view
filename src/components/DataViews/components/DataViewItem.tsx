@@ -25,7 +25,7 @@ export function DataViewItem(props: any) {
 
     useEffect(() => {
         if (viewRef?.current?.clientWidth) {
-            setViewWidth(viewRef.current.clientWidth);
+            setViewWidth(viewRef.current?.clientWidth);
         }
     }, [viewRef?.current?.clientWidth]);
 
@@ -120,9 +120,14 @@ export function DataViewItem(props: any) {
         return <LogsView {...logsProps} />;
     }
 
-    if ((actualQuery && type === "vector" && streamData?.chartData?.length > 0) ||  (actualQuery && type === "vector"&& streamData?.tableData?.dataRows?.length > 0)) {
-        
-        
+    if (
+        (actualQuery &&
+            type === "vector" &&
+            streamData?.chartData?.length > 0) ||
+        (actualQuery &&
+            type === "vector" &&
+            streamData?.tableData?.dataRows?.length > 0)
+    ) {
         // return vector type (table) component
        const { limit }: any = actualQuery;
         const vectorProps = {
@@ -137,7 +142,7 @@ export function DataViewItem(props: any) {
             type,
             theight,
             streamData,
-           viewWidth,
+            viewWidth,
             limit,
             ...props,
         };

@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { themes } from "../../../../theme/themes";
-import { CHART_OPTIONS } from "./consts";
-import { formatTs, formatLabel } from "./helpers";
+import { themes } from "../../../../../theme/themes";
+import { CHART_OPTIONS } from "../consts";
+import { formatTs, formatLabel, getLabelsFromLocal } from "../helpers";
 
 export const useMatrixData = (spliced: any, data: any) => {
     return useMemo(() => {
-        let parsed: any[] = [
+        let parsed: any = [
             {
                 data: [],
                 label: [],
@@ -35,11 +35,12 @@ export const useMatrixData = (spliced: any, data: any) => {
     }, [spliced, data]);
 };
 
-export const useChartOptions = ({ tWidth }: any) => {
+export const useChartOptions = ({ tWidth }: { tWidth: number }) => {
     return useMemo(() => {
         if (tWidth) {
             const chartOp: any = { ...CHART_OPTIONS };
-            chartOp.xaxis.ticks = Math.round(tWidth / 125);
+            chartOp["xaxis"]["ticks"] = Math.round(tWidth / 125);
+
             return chartOp;
         } else {
             return CHART_OPTIONS;
@@ -47,11 +48,12 @@ export const useChartOptions = ({ tWidth }: any) => {
     }, [tWidth]);
 };
 
-export const useTheme = ( name: string ) => {
-    return useMemo(() => (themes as any)[name], [name]);
+export const useTheme = (name: "dark" | "light") => {
+    return useMemo(() => themes[name], [name]);
 };
 
-export const useMatchHeight = ({ length }: any) => {
+export const useMatchHeight = ({ length }: { length: number }) => {
+
     return useMemo(() => {
         if (length <= 12) {
             return 140;
@@ -64,3 +66,9 @@ export const useMatchHeight = ({ length }: any) => {
         }
     }, [length]);
 };
+
+export function useLabelList() {
+    return useMemo(() => {
+        return getLabelsFromLocal();
+    }, []);
+}
