@@ -3,7 +3,7 @@ import {
     CHART_LINE_SERIES,
     CHART_POINT_SERIES,
     LOCAL_CHART_TYPE,
-} from "../consts";
+} from "./consts";
 
 export function highlightItems(list: any) {
     list.forEach((item: any) => {
@@ -15,24 +15,17 @@ export function isFloat(x: number) {
     return !!(x % 1);
 }
 
-export function getSortedItems(list: []) {
-    if (list?.length > 0) {
-        return (
-            list?.filter(
-                (f: any) =>
-                    parseFloat(f.value) === parseFloat(f.item.datapoint[1])
-            ) || []
-        );
-    }
-    return [];
+export function getSortedItems(list: any) {
+    return list?.filter(
+        (f: any) => parseFloat(f.value) === parseFloat(f.item.datapoint[1])
+    );
 }
 
 export function getLabelTemplate(sortedList: any) {
-    return (
-        sortedList
-            ?.map(
-                (template: any) =>
-                    ` <div style="display:flex;justify-content:space-between">
+    return sortedList
+        ?.map(
+            (template: any) =>
+                ` <div style="display:flex;justify-content:space-between">
                            <div style="display:flex;margin-right:10px;">
                                <span style="background:${template.color};
                                height:6px;width:24px;pading:3px;
@@ -44,38 +37,29 @@ export function getLabelTemplate(sortedList: any) {
                     </div>
                 </div>
     `
-            )
+        )
 
-            .join("") || []
-    );
+        .join("");
 }
 
-export function makeTolltipItems(list: []) {
+export function makeTolltipItems(list: any) {
     const sorted = getSortedItems(list);
     return getLabelTemplate(sorted);
 }
 
-export function getItemsLength(list: any): number {
+export function getItemsLength(list: any) {
     const sList = getSortedItems(list);
 
     if (sList?.length > 0) {
-        const sorted: any = sList?.sort((a: any, b: any) =>
+        return sList?.sort((a: any, b: any) =>
             a.label.length > b.label.length ? 0 : 1
-        );
-
-        if (sorted && sorted.length > 0) {
-            return sorted[0]?.label?.length;
-        }
-        return 0;
+        )[0].label.length;
     }
-    return 0;
 }
 
 export function getTimeSpan(data: any) {
     const tsArray = data
-        .map((tsItem: any) =>
-            tsItem?.data?.map(([t, v]: [t: any, v: any]) => t)
-        )
+        .map((tsItem: any) => tsItem?.data?.map(([t, v]: any) => t))
         .flat()
         .sort();
     const first = tsArray[0];
@@ -88,7 +72,7 @@ export function getTimeSpan(data: any) {
     return { first, last, timeSpan };
 }
 
-export function formatDateRange(data: any) {
+export function formatDateRange(data: any): any {
     const { timeSpan, first, last } = getTimeSpan(data);
     const formatted =
         timeSpan > 1
@@ -104,9 +88,7 @@ export function formatDateRange(data: any) {
 }
 
 export function formatTs(values: any) {
-    return (
-        values?.map(([ts, val]: [ts: any, val: any]) => [ts * 1000, val]) || []
-    );
+    return values?.map(([ts, val]: any) => [ts * 1000, val]) || [];
 }
 
 export function getSeriesFromChartType(type: any) {
@@ -182,30 +164,17 @@ export function showSeries(series: any, type: any) {
     };
 }
 
-export function mapIds(arr: []) {
+export function mapIds(arr: any) {
     return arr?.map((m: any) => m.id);
 }
 
 export function getLabelsSelected() {
-    let labelSelected = [];
-    try {
-        const itemFromStorage = localStorage.getItem("labelsSelected");
-        if (typeof itemFromStorage === "string") {
-            labelSelected = JSON.parse(itemFromStorage);
-        }
-        return labelSelected;
-    } catch (e) {
-        console.log(e);
-        return labelSelected;
-    }
+    return JSON.parse(localStorage.getItem("labelsSelected") || 'null') || [];
 }
 
-export function isLAbelSelected({ label: { id } }: { label: any }) {
-    let labelsSelected = getLabelsSelected();
-    if (labelsSelected?.length > 0) {
-        return labelsSelected.some((l: any) => l.id === id);
-    }
-    return false;
+export function isLAbelSelected(label: any) {
+    const labelsSelected = JSON.parse(localStorage.getItem("labelsSelected") || 'null');
+    return labelsSelected.some((l: any) => l.id === label.id);
 }
 
 export function getNewData(data: any, type: any) {
@@ -227,23 +196,23 @@ export function getNewData(data: any, type: any) {
     }
 }
 
-export function floatNum(val: number, suffix: string) {
-    let num = 0;
-    if (suffix === "M") {
-        num = 1_000_000;
-    }
-
-    if (suffix === "K") {
-        num = 1_000;
-    }
-
-    if (val % num === 0) {
-        return 0;
-    }
-    return 1;
-}
-
 export function yAxisTickFormatter(val: any, axis: any) {
+    const floatNum = (val: any, suffix: string) => {
+        let num = 0;
+        if (suffix === "M") {
+            num = 1_000_000;
+        }
+
+        if (suffix === "K") {
+            num = 1_000;
+        }
+
+        if (val % num === 0) {
+            return 0;
+        }
+        return 1;
+    };
+
     if (val > 999999) {
         return (val / 1000000).toFixed(floatNum(val, "M")) + " M";
     }
@@ -253,16 +222,4 @@ export function yAxisTickFormatter(val: any, axis: any) {
     }
 
     return val.toFixed(axis.tickDecimals);
-}
-
-export function getLabelsFromLocal() {
-    try {
-        const labelsFromLocal = localStorage.getItem("labelsSelected");
-        if (typeof labelsFromLocal === "string") {
-            return JSON.parse(labelsFromLocal);
-        }
-    } catch (e) {
-        console.log(e);
-        return [];
-    }
 }
