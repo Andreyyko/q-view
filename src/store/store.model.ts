@@ -125,6 +125,7 @@ export interface Datum {
     text: string;
     tags: Tags;
     isShowTs: boolean;
+    isBuilder: boolean;
     showLabels: boolean;
     id: string;
 }
