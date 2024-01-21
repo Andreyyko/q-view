@@ -16,19 +16,18 @@ import {
     SettingHeader,
     SettingLabel,
     SettingsInputContainer,
-} from "./styled";
-import CloseIcon from "@mui/icons-material/Close";
-import QueryLimit from "../../QueryTypeBar/components/QueryLimit";
-import { DialogStyles } from "../../../plugins/settingsdialog/SettingsDialog";
-export const QuerySetting = (props:any) => {
-    const dispatch = useDispatch();
-    const responseType = useSelector((store:any) => store.responseType);
-    const { hash } = useLocation();
-    const { id, idRef, dataSourceType, isBuilder } = props.data;
-    const { open, handleClose, actPanel, name } = props;
-    const [isTableViewSet, setIsTableViewSet] = useState(props.data.tableView);
-    const [isShowTsSet, setIsShowTsSet] = useState(props.data.isShowTs);
-    const [isBuilderSet, setIsBuilderSet] = useState(isBuilder || false);
+} from "./styled"
+import CloseIcon from "@mui/icons-material/Close"
+import QueryLimit from "../../QueryTypeBar/components/QueryLimit"
+import { DialogStyles } from "../../../plugins/settingsdialog/SettingsDialog"
+export const QuerySetting: any = (props: any) => {
+    const dispatch = useDispatch()
+    const responseType = useSelector((store: any) => store.responseType)
+    const { hash } = useLocation()
+    const { id, idRef, dataSourceType } = props.data
+    const { open, handleClose, actPanel, name } = props
+    const [isTableViewSet, setIsTableViewSet] = useState(props.data.tableView)
+    const [isShowTsSet, setIsShowTsSet] = useState(props.data.isShowTs)
     const [queryTypeSwitch, setQueryTypeSwitch] = useState(
         props.data.queryType
     )
@@ -73,11 +72,7 @@ export const QuerySetting = (props:any) => {
         setIsShowTsSet(props.data.isShowTs)
     }, [setIsShowTsSet, props.data.isShowTs])
 
-    useEffect(() => {
-        setIsBuilderSet(props.data.isBuilder);
-    }, [setIsBuilderSet, props.data.isBuilder]);
-
-    function onSwitchChange(e:any) {
+    function onSwitchChange(e: any) {
         // modify query type switch value
         const panel = [...actPanel]
         const query = getPanelQueryByID(panel, id)
@@ -140,17 +135,6 @@ export const QuerySetting = (props:any) => {
         })
 
         dispatch(panelAction(name, panel))
-    }
-    
-    function handleBuilderSwitch() {
-        const panel = [...actPanel];
-        panel.forEach((query) => {
-            if (query.id === id) {
-                query.isBuilder = isBuilderSet ? false : true;
-            }
-        });
-
-        dispatch(panelAction(name, panel));
     }
 
     return (
@@ -221,17 +205,6 @@ export const QuerySetting = (props:any) => {
                                     checked={isShowTsSet}
                                     size={"small"}
                                     onChange={handleTsSwitch}
-                                    inputProps={{
-                                        "aria-label": "controlled-ts",
-                                    }}
-                                />
-                            </InputGroup>
-                            <InputGroup>
-                                <SettingLabel>Query Builder</SettingLabel>
-                                <Switch
-                                    checked={isBuilderSet}
-                                    size={"small"}
-                                    onChange={handleBuilderSwitch}
                                     inputProps={{
                                         "aria-label": "controlled-ts",
                                     }}

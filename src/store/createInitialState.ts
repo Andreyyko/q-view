@@ -175,7 +175,6 @@ export default function initialState() {
                 tableView: false,
                 chartView: false,
                 isShowTs: true,
-                isBuilder: false,
                 hasStats:false,
                 statsData:{},
                 browserOpen: false,
@@ -202,7 +201,6 @@ export default function initialState() {
                 tableView: false,
                 chartView: false,
                 isShowTs: true,
-                isBuilder: false,
                 browserOpen: false,
                 expr: "",
                 labels: [], // name: selected:

@@ -2,6 +2,7 @@ import { ThemeProvider } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { themes } from "../../theme/themes";
 import { InputGroup, SettingLabel } from "../styles";
 import QueryLimit from "./components/QueryLimit";
 import QueryTypeSwitch from "./components/QueryTypeSwitch";
@@ -9,16 +10,15 @@ import { Switch } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import { setLeftPanel } from "../../actions/setLeftPanel";
 import { setRightPanel } from "../../actions/setRightPanel";
-import { useTheme } from "../DataViews/components/QueryBuilder/hooks";
 
 const QueryTypeCont = styled.div`
     display: flex;
     padding: 4px;
-    background: ${(props:any) => props.theme.widgetContainer};
-    color: ${(props:any) => props.color};
+    background: ${(props: any) => props.theme.widgetContainer};
+    color: ${(props: any) => props.color};
     height: 26px;
 `;
-export function panelAction(name:any, value:any) {
+export function panelAction(name: any, value: any) {
     if (name === "left") {
         return setLeftPanel(value);
     }
@@ -35,14 +35,13 @@ export const DIRECTION_SWITCH_OPTIONS = [
     { value: "backwards", label: "Backwards" },
 ];
 
-export default function QueryTypeBar(props:any) {
+export default function QueryTypeBar(props: any) {
     const dispatch = useDispatch();
-    const { name, data } = props;
+    const { name, data }: any = props;
+    const theme = useSelector((store: any) => store.theme);
+    const panelQuery = useSelector((store: any) => store[name]);
 
-  const theme = useTheme()
-    const panelQuery = useSelector((store:any) => store[name]);
-
-    const responseType = useSelector((store:any) => store.responseType);
+    const responseType = useSelector((store: any) => store.responseType);
 
     const { hash } = useLocation();
     const {
@@ -51,7 +50,6 @@ export default function QueryTypeBar(props:any) {
         tableView,
         idRef,
         isShowTs,
-        isBuilder,
         direction,
         dataSourceType,
         isShowStats,
@@ -60,7 +58,6 @@ export default function QueryTypeBar(props:any) {
 
     const [isTableViewSet, setIsTableViewSet] = useState(tableView);
     const [isShowTsSet, setIsShowTsSet] = useState(isShowTs || false);
-    const [isBuilderSet, setIsBuilderSet] = useState(isBuilder || false);
     const [isShowStatsSet, setIsShowStatsSet] = useState(isShowStats || false);
     const [queryTypeSwitch, setQueryTypeSwitch] = useState(queryType);
     const [directionSwitch, setDirectionSwitch] = useState(
@@ -68,13 +65,13 @@ export default function QueryTypeBar(props:any) {
     );
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(hash.replace("#", ""));
-        const urlPanel:any = urlParams.get(name);
+        const urlParams: any = new URLSearchParams(hash.replace("#", ""));
+        const urlPanel: any = urlParams.get(name);
 
-        const parsedPanel = JSON.parse(decodeURIComponent(urlPanel)||'[]');
+        const parsedPanel = JSON.parse(decodeURIComponent(urlPanel));
 
         if (parsedPanel?.length > 0) {
-            const queryMD = parsedPanel.find((f:any) => f.idRef === idRef);
+            const queryMD = parsedPanel.find((f: any) => f.idRef === idRef);
 
             if (queryMD) {
                 const panel = [...panelQuery];
@@ -96,11 +93,7 @@ export default function QueryTypeBar(props:any) {
         setIsShowTsSet(props.data.isShowTs);
     }, [setIsShowTsSet, props.data.isShowTs]);
 
-    useEffect(() => {
-        setIsBuilderSet(props.data.isBuilder);
-    }, [setIsBuilderSet, props.data.isBuilder]);
-
-    function onSwitchChange(e:any) {
+    function onSwitchChange(e: any) {
         // modify query type switch value
         const panel = [...panelQuery];
         panel.forEach((query) => {
@@ -112,7 +105,7 @@ export default function QueryTypeBar(props:any) {
         setQueryTypeSwitch(e);
     }
 
-    function onDirectionSwitchChange(e:any) {
+    function onDirectionSwitchChange(e: any) {
         // modify query type switch value
         const panel = [...panelQuery];
         panel.forEach((query) => {
@@ -147,21 +140,9 @@ export default function QueryTypeBar(props:any) {
         dispatch(panelAction(name, panel));
     }
 
-    function handleBuilderSwitch() {
-        // modify table view switch value
-        const panel = [...panelQuery];
-        panel.forEach((query) => {
-            if (query.id === id) {
-                query.isBuilder = isBuilderSet ? false : true;
-            }
-        });
-
-        dispatch(panelAction(name, panel));
-    }
-
-    function handleStatsInfoSwitch(e:any) {
+    function handleStatsInfoSwitch(e: any) {
         const value = e.target.checked;
-        setIsShowStatsSet((_:any) => value);
+        setIsShowStatsSet((_: any) => value);
         const panel = [...panelQuery];
         panel.forEach((query) => {
             if (query.id === id) {
@@ -172,7 +153,7 @@ export default function QueryTypeBar(props:any) {
     }
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={(themes as any)[theme]}>
             <QueryTypeCont>
                 <QueryTypeSwitch
                     label={"Query Type"}
@@ -218,28 +199,16 @@ export default function QueryTypeBar(props:any) {
                                 inputProps={{ "aria-label": "controlled-ts" }}
                             />
                         </InputGroup>
-                        <InputGroup>
-                            <SettingLabel>Query Builder</SettingLabel>
+                        {hasStats && (     <InputGroup>
+                            <SettingLabel>Stats Info</SettingLabel>
                             <Switch
-                                checked={isBuilderSet}
+                                checked={isShowStatsSet}
                                 size={"small"}
-                                onChange={handleBuilderSwitch}
+                                onChange={handleStatsInfoSwitch}
                                 inputProps={{ "aria-label": "controlled-ts" }}
                             />
-                        </InputGroup>
-                        {hasStats && (
-                            <InputGroup>
-                                <SettingLabel>Stats Info</SettingLabel>
-                                <Switch
-                                    checked={isShowStatsSet}
-                                    size={"small"}
-                                    onChange={handleStatsInfoSwitch}
-                                    inputProps={{
-                                        "aria-label": "controlled-ts",
-                                    }}
-                                />
-                            </InputGroup>
-                        )}
+                        </InputGroup>)}
+                   
                     </>
                 )}
             </QueryTypeCont>

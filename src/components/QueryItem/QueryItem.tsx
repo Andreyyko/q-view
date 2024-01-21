@@ -196,7 +196,7 @@ export default function QueryItem(props: any) {
                     onDeleteQuery={onDeleteQuery}
                     onAddQuery={onAddQuery}
                 />
-                {isQueryOpen[0] &&  <LabelBrowser {...props} />}
+                {isQueryOpen[0] && <LabelBrowser {...props} />}
             </QueryContainer>
         </ThemeProvider>
     );

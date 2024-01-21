@@ -51,7 +51,6 @@ export type Message = {
     text: string;
     tags: object;
     isShowTs: boolean;
-    isBuilder:boolean;
     showLabels: boolean;
     id: string;
 };
