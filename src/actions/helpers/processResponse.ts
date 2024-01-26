@@ -39,7 +39,6 @@ export async function processResponse(
                 time,
                 debugMode,
                 dispatch,
-                dsType: type,
                 type,
                 panel,
                 id,
@@ -57,7 +56,6 @@ export async function processResponse(
                 debugMode,
                 dispatch,
                 type,
-                dsType: type,
                 panel,
                 id,
                 ts: Date.now(),
@@ -76,7 +74,6 @@ export async function processResponse(
                     debugMode,
                     queryType,
                     dispatch,
-                    dsType:type,
                     type,
                     panel,
                     id,
@@ -98,7 +95,6 @@ export async function processResponse(
             queryType,
             dispatch,
             type: "streams",
-            dsType:type,
             panel,
             id,
             ts: Date.now(),
@@ -112,7 +108,7 @@ export async function processResponse(
     // empty response would respond as data.data = {streams:[]}
     if (response?.data?.data) {
         const result = response?.data?.data?.result;
-        const rtype = response?.data?.data?.resultType;
+        const type = response?.data?.data?.resultType;
         let statsInfo = { hasStats: false, statsData: {} };
         if (
             response?.data?.data?.stats &&
@@ -147,8 +143,7 @@ export async function processResponse(
             debugMode,
             queryType,
             dispatch,
-            type:rtype,
-            dsType: type,
+            type,
             panel,
             id,
             ts: Date.now(),

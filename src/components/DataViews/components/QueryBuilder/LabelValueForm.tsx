@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { OPERATOR_OPTIONS } from "./consts";
 import {  LabelValueContStyles, FlexCenter, IconStyle } from "./styles";
@@ -148,14 +148,14 @@ export const LabelValueForm = (props: any) => {
                         minWidth={250}
                         labelsLength={labelValuesLength}
                     />
-                    <RemoveOutlinedIcon
+                    <DeleteOutlineOutlinedIcon
                         className={cx(IconStyle(mainTheme))}
-                        style={{height:'14px', width:'14px'}}
+                        fontSize="small"
                         onClick={cleanAndRemove}
                     />
                     <AddOutlinedIcon
                         className={cx(IconStyle(mainTheme))}
-                        style={{height:'14px', width:'14px'}}
+                        fontSize="small"
                         onClick={labelAdd}
                     />
                 </div>

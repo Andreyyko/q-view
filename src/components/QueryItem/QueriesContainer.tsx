@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { useMemo } from "react";
 import QueryItem from "./QueryItem";
 
 const QueriesContainerStyled = styled.div`
@@ -11,11 +10,11 @@ const QueriesContainerStyled = styled.div`
 `;
 export default function QueriesContainer(props: any) {
     const { queries } = props;
-    const queriesLoad = useMemo(()=>queries,[queries])
+
     return (
         <QueriesContainerStyled>
-            {queriesLoad &&
-                queriesLoad.map((query: any, idx: number) => (
+            {queries &&
+                queries.map((query: any, idx: number) => (
                     <QueryItem 
                     {...props} 
                     data={query} 

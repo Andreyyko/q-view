@@ -15,18 +15,12 @@ import moment from "moment";
 import { setLeftDataView } from "../setLeftDataView";
 import { setRightDataView } from "../setRightDataView";
 import store from "../../store/store";
-import {
-    ColumnDef,
-} from "@tanstack/react-table";
-import { fuzzyFilter, fuzzySort } from "../../qryn-ui/Table/models/tableModels";
 
 function timeFormatter(props: any) {
-    return moment(parseInt(props.getValue()) / 1000000).format(
+    return moment(parseInt(props.value) / 1000000).format(
         "YYYY-MM-DDTHH:mm:ss.SSZ"
     );
 }
-
-
 
 export function getStreamTableRows(data: any[]) {
     return data?.map(({ stream, values }: { stream: object; values: [] }) => ({
@@ -42,35 +36,24 @@ export function getStreamTableRows(data: any[]) {
     }));
 }
 
-export function formattedWhiteSpaceCell(info: any) {
-    return (
-        <span title={info.getValue()}>
-            {info.getValue()}
-        </span>
-    );
-}
-
 export function getStreamTableResult(data: any[]) {
-    const headers: ColumnDef<any>[] = [
+    const headers = [
         {
-            id: "time",
-            header: "Time",
-            accessorKey: "time",
-            cell: (info: any) => timeFormatter(info),
+            Header: "Time",
+            accessor: "time",
+            Cell: (props: any) => timeFormatter(props),
+            width: 20,
+            minWidth: 20,
+            maxWidth: 20,
         },
         {
-            id: "stream",
-            header: "Stream",
-            accessorKey: "stream",
-            cell: (info: any) => formattedWhiteSpaceCell(info),
+            Header: "Stream",
+            accessor: "stream",
+            width: 30,
+            minWidth: 30,
+            maxWidth: 30,
         },
-        {
-            id: "log",
-            accessorKey: "log",
-            header: "Log",
-            cell: (info: any) => formattedWhiteSpaceCell(info),
-            
-        },
+        { Header: "Log", accessor: "log" },
     ];
 
     const rows = getStreamTableRows(data);
@@ -78,10 +61,11 @@ export function getStreamTableResult(data: any[]) {
     const length = rows?.length || 0;
     let dataRows = [];
 
-    if (length > 0) {
+    if(length > 0) {
         for (let row of rows) {
             dataRows.push(row.rows);
         }
+    
     }
 
     return {
@@ -118,7 +102,6 @@ export function parseStreamResponse(responseProps: QueryResult) {
         panel,
         id,
         dispatch,
-        dsType,
         direction,
     } = responseProps;
     // get sorted messages
@@ -143,10 +126,9 @@ export function parseStreamResponse(responseProps: QueryResult) {
         type: "stream",
         tableData: {},
         data: [{}],
-        raw: "[]",
+        raw:'[]',
         labels: [],
         total: 0,
-        dsType
     };
 
     if (messSorted) {
@@ -167,7 +149,6 @@ export function parseStreamResponse(responseProps: QueryResult) {
             panelResult = {
                 id,
                 type: "stream",
-                dsType,
                 tableData: tableResult,
                 data: messSorted,
                 raw,

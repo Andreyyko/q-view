@@ -18,7 +18,6 @@ export const LogRowStyled = styled.div`
     p {
         display: inline-block;
         overflow-wrap: anywhere;
-        margin-left: 3px;
     }
     border-left: 4px solid ${({rowColor}: any) => rowColor};
     .log-ts-row {

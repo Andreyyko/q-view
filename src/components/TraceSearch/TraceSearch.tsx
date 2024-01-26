@@ -21,6 +21,7 @@ const SearchRow = css`
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
+    max-width: 500px;
 `;
 
 const TraceButton = (theme: any) => css`
@@ -36,8 +37,6 @@ const TraceButton = (theme: any) => css`
     height: 30px;
     display: flex;
     align-items: center;
-    align-self: flex-end;
-    max-width:200px;
     cursor: pointer;
     &:hover {
         background: ${theme.primaryLight};
@@ -45,8 +44,6 @@ const TraceButton = (theme: any) => css`
 `;
 
 // }
-
-export const TRACE_SEARCH_LABEL_WIDTH = 75
 
 export default function TracesSearch(props: any) {
     const {
@@ -129,8 +126,6 @@ export default function TracesSearch(props: any) {
         onSearchChange(emit());
     };
 
-    
-
     const onSubmit = () => {
         if (dataSourceURL && dataSourceURL !== "") {
             dispatch(
@@ -159,7 +154,7 @@ export default function TracesSearch(props: any) {
                     onChange={onServiceChange}
                     value={searchValue}
                     opts={serviceNameOpts}
-                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                    labelWidth={80}
                 />
 
                 <Select
@@ -169,7 +164,7 @@ export default function TracesSearch(props: any) {
                     onChange={onSpanChange}
                     value={spanValue}
                     opts={traceNameOpts}
-                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                    labelWidth={80}
                 />
 
                 <Field
@@ -177,14 +172,14 @@ export default function TracesSearch(props: any) {
                     placeholder={"http.status_code=200 error=true"}
                     onChange={(e: any) => onChange(e, "tags")}
                     value={urlState.tags}
-                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                    labelWidth={80}
                 />
                 <Field
                     label={"Limit"}
                     placeholder={"Set limit, default 20"}
                     onChange={(e: any) => onChange(e, "limit")}
                     value={urlState.limit}
-                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                    labelWidth={80}
                 />
 
                 <Field
@@ -192,14 +187,14 @@ export default function TracesSearch(props: any) {
                     placeholder={"e.g. 1.2s, 100ms"}
                     onChange={(e: any) => onChange(e, "minDuration")}
                     value={urlState.minDuration}
-                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                    labelWidth={80}
                 />
                 <Field
                     label={"Max Duration"}
                     placeholder={"e.g. 1.2s, 100ms"}
                     onChange={(e: any) => onChange(e, "maxDuration")}
                     value={urlState.maxDuration}
-                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                    labelWidth={80}
                 />
 
                 <button className={cx(TraceButton(theme))} onClick={onSubmit}>

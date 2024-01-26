@@ -1,6 +1,8 @@
-import { useMemo } from "react";
-import Table from "../../../../../qryn-ui/Table/Table";
+import { useMemo, memo, forwardRef } from "react";
+
 import { TableStyles } from "./styles";
+import { Table } from "./Table";
+
 export const VectorTable = (props: any) => {
     const {
         data: { columnsData, dataRows },
@@ -15,7 +17,7 @@ export const VectorTable = (props: any) => {
     return (
         <TableStyles>
             {columnsData && dataRows && (
-                <Table 
+                <Table
                     actQuery={actualQuery}
                     columns={cols}
                     width={width}

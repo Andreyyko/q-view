@@ -12,7 +12,6 @@ export const InitialAddButton = (props: any) => {
             <AddOutlinedIcon
                 className={cx(AddIconStyle(mainTheme))}
                 fontSize="small"
-                style={{height:'14px',width:'14px'}}
             />{" "}
             <small>Add Labels</small>
         </div>
