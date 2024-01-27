@@ -79,7 +79,6 @@ function traceRequest(data: any, value: any) {
             tableView: false,
             chartView: false,
             isShowTs: false,
-            isBuilder: false,
             browserOpen: false,
             labels: [],
             values: [],

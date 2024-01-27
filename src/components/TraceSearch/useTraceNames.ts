@@ -42,14 +42,13 @@ export function useTraceNames({ id }: any) {
 
     return useMemo(() => {
         if (traceNames?.["data"]?.["tagValues"]) {
-            return [{ name: "Search Span Name", value: "" , label:"Search Span Name"}].concat(
+            return [{ name: "Search Span Name", value: "" }].concat(
                 traceNames["data"]["tagValues"].map((m) => ({
                     name: m,
                     value: m,
-                    label:m
                 }))
             );
         }
-        return [{ name: "", value: "",label:"" }];
+        return [{ name: "", value: "" }];
     }, [traceNames]);
 }

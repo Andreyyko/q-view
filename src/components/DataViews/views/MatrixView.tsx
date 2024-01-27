@@ -35,7 +35,7 @@ export const MatrixView = (props: any) => {
     }, [theme]);
 
     const [tabsState, setTabsState] = useState<number>(
-        localTabsState(actualQuery)[actualQuery.id] || 0
+        localTabsState(actualQuery)[actualQuery.id]
     );
 
     const rawData = useMemo(() => {
