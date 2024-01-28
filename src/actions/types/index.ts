@@ -22,6 +22,7 @@ export type QueryResult = {
     hasStats?: boolean;
     statsData?:any;
     raw?:any;
+    isLogsVolume?:boolean
 
 };
 
@@ -51,6 +52,7 @@ export type Message = {
     text: string;
     tags: object;
     isShowTs: boolean;
+    isBuilder:boolean;
     showLabels: boolean;
     id: string;
 };
