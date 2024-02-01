@@ -6,9 +6,7 @@ import { TabsList, Tab, TabPanel, ViewStyled } from "./styled";
 
 import ReactJSON from "react-json-view";
 import { useSelector } from "react-redux";
-import { useMemo, useState, SyntheticEvent } from "react";
-import { localTabsState } from "../helpers";
-
+import { useMemo } from "react";
 export const MatrixView = (props: any) => {
     const {
         viewRef,
@@ -33,29 +31,6 @@ export const MatrixView = (props: any) => {
         }
         return "tomorrow";
     }, [theme]);
-
-    const [tabsState, setTabsState] = useState<number>(
-        localTabsState(actualQuery)[actualQuery.id] || 0
-    );
-
-    const rawData = useMemo(() => {
-        return JSON.parse(JSON.stringify(props?.dataView?.raw)) || [];
-    }, [props?.dataView?.raw]);
-
-    const onTabChange = (
-        e: SyntheticEvent<Element, Event>,
-        value: number | string | boolean
-    ) => {
-        const newState = {
-            ...localTabsState(actualQuery),
-            [actualQuery.id]: value,
-        };
-        localStorage.setItem("tabsState", JSON.stringify(newState));
-        if (typeof value === "number") {
-            setTabsState((_: any) => value);
-        }
-    };
-
     return (
         <ViewStyled ref={viewRef} size={panelSize} vheight={viewHeight}>
             <ViewHeader
@@ -69,9 +44,7 @@ export const MatrixView = (props: any) => {
             />
             <TabsUnstyled
                 style={{ display: "flex", flex: 1, flexDirection: "column" }}
-                defaultValue={localTabsState(actualQuery)[actualQuery.id] || 0}
-                value={tabsState}
-                onChange={onTabChange}
+                defaultValue={0}
             >
                 <TabsList panelsize={props.panelSize}>
                     <Tab>Chart</Tab>
@@ -79,34 +52,54 @@ export const MatrixView = (props: any) => {
                     <Tab>Raw</Tab>
                 </TabsList>
                 <TabPanel value={0}>
-                    <div className="view-content" style={{ height: "100%" }}>
-                        <QrynChart
-                            {...props}
-                            tWidth={viewWidth}
-                            chartLimit={limit}
-                            matrixData={streamData}
-                            actualQuery={actualQuery}
-                        />
-                    </div>
+                    <QrynChart
+                        {...props}
+                        tWidth={viewWidth}
+                        chartLimit={limit}
+                        matrixData={streamData}
+                        actualQuery={actualQuery}
+                    />
                 </TabPanel>
                 <TabPanel value={1}>
-                    <div className={"view-content"}>
-                        <VectorTable
-                            {...props}
-                            height={theight}
-                            data={tableData}
-                            actualQuery={actualQuery}
-                        />
-                    </div>
+                    <VectorTable
+                        {...props}
+                        height={theight}
+                        data={tableData}
+                        actualQuery={actualQuery}
+                    />
                 </TabPanel>
                 <TabPanel value={2}>
                     <div className="view-content">
                         <div style={{ padding: "20px" }}>
-                            <ReactJSON theme={jsonTheme} src={rawData} />
+                            <ReactJSON
+                                theme={jsonTheme}
+                                src={JSON.parse(
+                                    JSON.stringify(props?.dataView?.raw)
+                                )}
+                            />
                         </div>
                     </div>
                 </TabPanel>
             </TabsUnstyled>
+
+            {/* <div className="view-content">
+                {actualQuery?.tableView ? (
+                    <VectorTable
+                        {...props}
+                        height={theight}
+                        data={tableData}
+                        actualQuery={actualQuery}
+                    />
+                ) : (
+                    <QrynChart
+                        {...props}
+                        tWidth={viewWidth}
+                        chartLimit={limit}
+                        matrixData={streamData}
+                        actualQuery={actualQuery}
+                    />
+                )}
+            </div> */}
         </ViewStyled>
     );
 };

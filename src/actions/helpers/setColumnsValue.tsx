@@ -14,7 +14,7 @@ import getData from "../getData";
 import { cx, css } from "@emotion/css";
 import { setSplitView } from "../../components/StatusBar/components/SplitViewButton/setSplitView";
 import { setRightPanel } from "../setRightPanel";
-import { ColumnDef } from "@tanstack/react-table";
+
 const moment: any = _moment;
 
 const TraceLink = (theme: any) => css`
@@ -30,20 +30,20 @@ const TraceLink = (theme: any) => css`
 TimeAgo.addDefaultLocale(en);
 // format time colum
 function timeFormatter(props: any) {
-    return moment(parseInt(props.getValue() + "000")).format(
+    return moment(parseInt(props.value + "000")).format(
         "YYYY-MM-DDTHH:mm:ss.SSZ"
     );
 }
 
 function traceTimeFormatter(props: any) {
-    return props.getValue() + " ms";
+    return props.value + " ms";
 }
 
 function traceStartTimeFormatter(props: any) {
 
     const timeAgo = new TimeAgo("en-US");
 
-    return timeAgo.format(props.getValue() / 1_000_000);
+    return timeAgo.format(props.value / 1_000_000);
 }
 
 function traceRequest(data: any, value: any) {
@@ -79,8 +79,6 @@ function traceRequest(data: any, value: any) {
             tableView: false,
             chartView: false,
             isShowTs: false,
-            isBuilder: false,
-            isLogsVolume:false,
             browserOpen: false,
             labels: [],
             values: [],
@@ -107,11 +105,11 @@ function traceRequest(data: any, value: any) {
 }
 
 function fluxTimeFormatter(props: any) {
-    return moment(props.getValue()).format("YYYY-MM-DDTHH:mm:ss.SSZ");
+    return moment(props.value).format("YYYY-MM-DDTHH:mm:ss.SSZ");
 }
 
 export function setColumnsTsValue(
-    columns: ColumnDef<any>[],
+    columns: any,
     type = "logs",
     timeAccessor: any,
     data: any = {}
@@ -127,55 +125,55 @@ export function setColumnsTsValue(
 
     const _themes: any = themes;
     const theme = _themes[storeTheme];
+
     if (columns.length > 0 && type === "traces") {
-       
         return columns?.map((m: any) => {
-            if (m.accessorKey === "durationMs") {
+            if (m.accessor === "durationMs") {
                 return {
-                    header: "Duration Ms",
-                    accessorKey: m.accessorKey,
-                    cell: (props: any) => traceTimeFormatter(props),
-            
+                    Header: "Duration Ms",
+                    accessor: m.accessor,
+                    Cell: (props: any) => traceTimeFormatter(props),
+                    width: 90,
                 };
             }
-            if (m.accessorKey === "startTimeUnixNano") {
+            if (m.accessor === "startTimeUnixNano") {
 
                 return {
-                    header: "Start Time",
-                    accessorKey: m.accessorKey,
-                    cell: (props: any) => traceStartTimeFormatter(props),
-            
+                    Header: "Start Time",
+                    accessor: m.accessor,
+                    Cell: (props: any) => traceStartTimeFormatter(props),
+                    width: 90,
                 };
             }
-            if (m.accessorKey === "traceID" || m.accessorKey === "traceId") {
+            if (m.accessor === "traceID" || m.accessor === "traceId") {
                 return {
-                    header: "Trace Id",
-                    accessorKey: m.accessorKey,
-                    cell: (props: any) => (
+                    Header: "Trace Id",
+                    accessor: m.accessor,
+                    Cell: (props: any) => (
                         <button
-                            onClick={(e) => traceRequest(data, props.getValue())}
+                            onClick={(e) => traceRequest(data, props.value)}
                             className={cx(TraceLink(theme))}
                         >
-                            {props.getValue()}
+                            {props.value}
                         </button>
                     ),
-            
+                    width: 180,
                 };
             }
-            if (m.accessorKey === "rootServiceName") {
+            if (m.accessor === "rootServiceName") {
                 return {
-                    header: "Service Name",
-                    accessorKey: m.accessorKey,
-                    cell: (props: any) => props.getValue()
-            
+                    Header: "Service Name",
+                    accessor: m.accessor,
+                    Cell: (props: any) => props.value,
+                    width: 90,
                 };
             }
-            if (m.accessorKey === "rootTraceName") {
+            if (m.accessor === "rootTraceName") {
                 return {
-                    header: "Trace Name",
-                    accessorKey: m.accessorKey,
-                    cell: (props: any) => props.getValue(),
-            
+                    Header: "Trace Name",
+                    accessor: m.accessor,
+                    Cell: (props: any) => props.value,
+                    width: 90,
                 };
             }
 
@@ -185,12 +183,12 @@ export function setColumnsTsValue(
 
     if (columns.length > 0 && type === "flux") {
         return columns?.map((m: any) => {
-            if (m.accessorKey === timeAccessor || m.accessorKey === "_time") {
+            if (m.accessor === timeAccessor || m.accessor === "_time") {
                 return {
-                    header: "Time",
-                    accessorKey: m.accessorKey,
-                    cell: (props: any) => fluxTimeFormatter(props),
-            
+                    Header: "Time",
+                    accessor: m.accessor,
+                    Cell: (props: any) => fluxTimeFormatter(props),
+                    width: 190,
                 };
             }
             return m;
@@ -200,15 +198,15 @@ export function setColumnsTsValue(
     if (columns.length > 0) {
         return [
             {
-                header: "Time",
-                accessorKey: "time",
-                cell: (props: any) => timeFormatter(props),
-        
+                Header: "Time",
+                accessor: "time",
+                Cell: (props: any) => timeFormatter(props),
+                width: 190,
             },
             ...columns,
             {
-                header: "Value",
-                accessorKey: "value",
+                Header: "Value",
+                accessor: "value",
             },
         ];
     } else return [];

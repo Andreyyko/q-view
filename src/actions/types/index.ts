@@ -14,7 +14,6 @@ export type QueryResult = {
     queryType?: string;
     dispatch: Function;
     type: QueryResultType;
-    dsType: string;
     panel: string;
     id: string;
     ts: number;
@@ -22,7 +21,6 @@ export type QueryResult = {
     hasStats?: boolean;
     statsData?:any;
     raw?:any;
-    isLogsVolume?:boolean
 
 };
 
@@ -38,7 +36,6 @@ export type TracesResult = {
     debugMode?: boolean;
     dispatch: Function;
     type: QueryResultType;
-    dsType:string;
     panel: string;
     id: string;
     ts: number;
@@ -52,7 +49,6 @@ export type Message = {
     text: string;
     tags: object;
     isShowTs: boolean;
-    isBuilder:boolean;
     showLabels: boolean;
     id: string;
 };

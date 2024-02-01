@@ -10,9 +10,9 @@ import labelHelpers from "./helpers";
 
 export default function LabelsSelector(props: any) {
     const { data } = props;
-    const { dataSourceId } = data;
+    const { dataSourceId} = data;
 
-    //const dataSourceURL = useSelector((store)=> store.dataSources.find(f => f.id === dataSourceId))
+    //const dataSourceURL = useSelector((store)=> store.dataSources.find(f => f.id === dataSourceId)) 
 
     const { JSONClone, updateLabel, updateLabelSelected } = labelHelpers;
     const [labelsResponse, setLabelsResponse]: any = useState([]);
@@ -36,9 +36,12 @@ export default function LabelsSelector(props: any) {
     // get response from useLabels hook
 
     useEffect(() => {
-        if (response?.data?.data) {
-            setLabelsResponse(response?.data?.data);
-        }
+        setLabelsResponse(response?.data?.data);
+        // if (response?.data?.data) {
+        // }
+        // if(!data) {
+        //     return ()=> null
+        // }
     }, [response, setLabelsResponse]);
 
     // memoize and format labels response
@@ -55,9 +58,10 @@ export default function LabelsSelector(props: any) {
     // set labels state from memoized and formatted labels
 
     useEffect(() => {
-        if(labels) {
-            setLabelsState(labels);
-        }
+        setLabelsState(labels);
+        // if(!data) {
+        //     return ()=> null
+        // }
     }, [labels]);
 
     const [labelsState, setLabelsState] = useState(labels);
@@ -117,12 +121,13 @@ export default function LabelsSelector(props: any) {
                                 />
                             )}
                         </div>
-
+    
                         <ValuesSelector {...props} labelsSelected={selected} />
                     </div>
                 </ValuesListStyled>
             </ThemeProvider>
         );
     }
-    return null;
+    return null
+
 }

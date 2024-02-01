@@ -6,24 +6,13 @@ function getTimeParsed(time: any) {
     return time.getTime() + "000000";
 }
 
-const getUrlType = (
-    api: string,
-    type: "metrics" | "logs",
-    label: string,
-    start: any,
-    end: any
-) =>
+const getUrlType = (api: string, type: 'metrics' | 'logs', label: string, start: any, end: any) =>
     ({
         metrics: `${api}/api/v1/label/${label}/values`,
         logs: `${api}/loki/api/v1/label/${label}/values?start=${start}&end=${end}`,
     }[type]);
 
-export default function useLabelValues(
-    id: any,
-    label: any,
-    start: any,
-    end: any
-) {
+export default function useLabelValues(id: any, label: any, start: any, end: any) {
     const dataSources = useSelector((store: any) => store.dataSources);
 
     const currentDataSource = useMemo(() => {
@@ -88,7 +77,7 @@ export default function useLabelValues(
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (currentDataSource.type !== "flux" && label !== "") {
+        if (currentDataSource.type !== "flux") {
             const apiRequest = async () => {
                 setLoading(true);
                 if (url && url !== "") {
@@ -105,8 +94,7 @@ export default function useLabelValues(
 
             apiRequest();
         }
-    }, [currentDataSource, url, label]);
-
+    }, [options, url, currentDataSource]);
     return {
         response,
         controller: options.signal,

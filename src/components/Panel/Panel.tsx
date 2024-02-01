@@ -12,7 +12,6 @@ const PanelCont: any = styled.div`
     flex-direction: column;
     flex: 1;
     width: 100%;
-    min-width:50%;
 `;
 // Panel should have injected data
 export default function Panel(props: any) {

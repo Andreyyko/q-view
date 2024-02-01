@@ -17,32 +17,6 @@ export function setPanelData(panel: string, data: any) {
     }
 }
 
-export const resetTraceData = (
-    type: string,
-    dispatch: Function,
-    panel: string,
-    id: string,
-    direction: QueryDirection,
-    queryType: QueryType,
-) => {
-    const { time } = getTimeParams(type);
-    const { debugMode } = store.getState();
-
-    const resultQuery: TracesResult = {
-        result: { resourceSpans: [], result: [], length: 0 },
-        raw: [],
-        time,
-        debugMode,
-        dispatch,
-        type: "traces",
-        dsType: type,
-        panel,
-        id,
-        ts: Date.now(),
-        queryType,
-    };
-    parseResponse(resultQuery);
-};
 export async function processResponse(
     type: string,
     response: any,
@@ -50,8 +24,7 @@ export async function processResponse(
     panel: string,
     id: string,
     direction: QueryDirection,
-    queryType: QueryType,
-    isLogsVolume?: boolean
+    queryType: QueryType
 ) {
     const { time } = getTimeParams(type);
     const { debugMode } = store.getState();
@@ -62,11 +35,10 @@ export async function processResponse(
         ) {
             const resultQuery: TracesResult = {
                 result: response.data.traces || [],
-                raw: response.data,
+                raw:response.data,
                 time,
                 debugMode,
                 dispatch,
-                dsType: type,
                 type,
                 panel,
                 id,
@@ -84,7 +56,6 @@ export async function processResponse(
                 debugMode,
                 dispatch,
                 type,
-                dsType: type,
                 panel,
                 id,
                 ts: Date.now(),
@@ -98,12 +69,11 @@ export async function processResponse(
             if (data?.data?.length > 0) {
                 const resultQuery: QueryResult = {
                     result: data.data || [],
-                    raw: data?.data,
+                    raw:data?.data,
                     time,
                     debugMode,
                     queryType,
                     dispatch,
-                    dsType: type,
                     type,
                     panel,
                     id,
@@ -119,18 +89,16 @@ export async function processResponse(
     if (response?.data?.streams?.length === 0) {
         const resultQuery: QueryResult = {
             result: [],
-            raw: "[]",
+            raw: '[]',
             time,
             debugMode,
             queryType,
             dispatch,
             type: "streams",
-            dsType: type,
             panel,
             id,
             ts: Date.now(),
             direction,
-            isLogsVolume,
         };
 
         parseResponse(resultQuery);
@@ -140,7 +108,7 @@ export async function processResponse(
     // empty response would respond as data.data = {streams:[]}
     if (response?.data?.data) {
         const result = response?.data?.data?.result;
-        const rtype = response?.data?.data?.resultType;
+        const type = response?.data?.data?.resultType;
         let statsInfo = { hasStats: false, statsData: {} };
         if (
             response?.data?.data?.stats &&
@@ -170,18 +138,16 @@ export async function processResponse(
 
         const resultQuery: QueryResult = {
             result,
-            raw: response?.data?.data,
+            raw:response?.data?.data,
             time,
             debugMode,
             queryType,
             dispatch,
-            type: rtype,
-            dsType: type,
+            type,
             panel,
             id,
             ts: Date.now(),
             direction,
-            isLogsVolume,
         };
         parseResponse(resultQuery);
     } else {

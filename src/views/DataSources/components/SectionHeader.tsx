@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import setIsDatasourceSaved from "../store/setIsDataSourceSaved";
 import { useTheme } from "../../../components/DataViews/components/QueryBuilder/hooks";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const confirmSaveLoaderIcon = css`
     height: 12px !important;
@@ -15,8 +14,7 @@ const confirmSaveLoaderIcon = css`
     color: white;
     margin: 0px 4px;
 `;
-
-const confirmSaveLoaderCont = (theme: any) => css`
+const confirmSaveLoaderCont = (theme:any) => css`
     display: flex;
     align-items: center;
     background: ${theme.primaryDark};
@@ -31,23 +29,6 @@ const confirmSaveLoaderCont = (theme: any) => css`
         font-weight: bold;
     }
 `;
-
-const inputErrorCont = css`
-    display: flex;
-    align-items: center;
-    background: #b62c14;
-    color: white;
-    font-size: 12px;
-    padding: 4px;
-    border-radius: 3px;
-    margin-right: 10px;
-    cursor: pointer;
-    span {
-        margin-right: 4px;
-        font-weight: bold;
-    }
-`;
-
 const SavingLoader = css`
     display: flex;
     align-items: center;
@@ -58,8 +39,9 @@ const SavingLoader = css`
     }
 `;
 
-const ConfirmSave = ({ setIsSaved }: { setIsSaved: any }) => {
-    const theme = useTheme();
+const ConfirmSave = ({setIsSaved}:{setIsSaved:any}) => {
+    
+    const theme = useTheme()
     return (
         <div
             className={cx(confirmSaveLoaderCont(theme))}
@@ -71,17 +53,8 @@ const ConfirmSave = ({ setIsSaved }: { setIsSaved: any }) => {
     );
 };
 
-const InputErrorWarning = ({ errorText }: { errorText: string }) => {
-    return (
-        <div className={cx(inputErrorCont)}>
-            <ErrorOutlineIcon className={cx(confirmSaveLoaderIcon)} />{" "}
-            <span>{errorText}</span>
-        </div>
-    );
-};
-
-export function SectionHeader(props: any) {
-    const { onClickAdd, isAdd, title, isEditing, fieldErrors } = props;
+export function SectionHeader(props:any) {
+    const { onClickAdd, isAdd, title, isEditing } = props;
     const dispatch = useDispatch();
     const [isSaved, setIsSaved] = useState(false);
 
@@ -114,17 +87,7 @@ export function SectionHeader(props: any) {
                         Saving ...
                     </div>
                 )}
-                {fieldErrors?.protocol && (
-                    <InputErrorWarning
-                        errorText={
-                            "Insecure Mixed Content. Mixing HTTP and HTTPS is insecure and is not supported."
-                        }
-                    />
-                )}
-                {fieldErrors?.url && (
-                    <InputErrorWarning errorText={"Please complete API URL"} />
-                )}
-                {isSaved && <ConfirmSave setIsSaved={setIsSaved} />}
+                {isSaved && <ConfirmSave setIsSaved={setIsSaved}/>}
 
                 {isAdd && (
                     <>

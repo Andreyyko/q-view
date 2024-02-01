@@ -1,15 +1,16 @@
 import { setLabels } from "../actions";
 import loadLabelValues from "../actions/loadLabelValues";
 import store from "../store/store";
-// update current labels from query string
+
 export function decodeQuery(
-    query: any,
-    apiUrl: string,
-    labels: any[] = [],
-    datasourceId: string = ""
+    query: any, 
+    apiUrl: string, 
+    labels: any[] = [], 
+    datasourceId: string = ''
 ) {
-    if (typeof query !== "string") {
-        return;
+
+    if(typeof query !== 'string'){
+        return
     }
     const queryArr = query
         .match(/[^{\}]+(?=})/g)
@@ -94,7 +95,7 @@ export function decodeQuery(
             }
 
             await store.dispatch(
-                loadLabelValues(datasourceId, cleanLabel, newLabels, apiUrl)
+                loadLabelValues(datasourceId,cleanLabel, newLabels, apiUrl)
             );
 
             const labelsWithValues = labels;
@@ -116,79 +117,84 @@ export function decodeQuery(
             labelWithValues.selected = true;
         });
 
+        /// here we should update the labels from actual query
+
         store.dispatch(setLabels(labelsWithValues));
     }
 }
 
 /// key label separator group
+
 // it returns the labels to update at query state
 export function decodeExpr(expr: string) {
+
     let labelsFromQuery: any[] = [];
 
     if (expr.length > 7) {
-        const exprArr = expr
-            ?.match(/[^{\}]+(?=})/g)
-            ?.map((m) => m.split(","))
+            const exprArr = expr
+        ?.match(/[^{\}]+(?=})/g)
+        ?.map((m) => m.split(","))
             ?.flat();
+        
+    exprArr?.forEach((label) => {
+        const regexQuery = label.match(/([^{}=,~!]+)/gm);
 
-        exprArr?.forEach((label) => {
-            const regexQuery = label.match(/([^{}=,~!]+)/gm);
+        if (!regexQuery) {
+            return;
+        }
 
-            if (!regexQuery) {
-                return;
-            }
+        if (label.includes("!=")) {
+            const labelObj: any = {
+                name: regexQuery[0].trim(),
+                selected: false,
+                values: [],
+            };
 
-            if (label.includes("!=")) {
-                const labelObj: any = {
-                    name: regexQuery[0].trim(),
-                    selected: false,
-                    values: [],
-                };
+            const valueObj: any = {
+                name: regexQuery[1]?.replaceAll('"', ""),
+                selected: true,
+                inverted: true,
+            };
 
+            labelObj.values.push(valueObj);
+            labelsFromQuery.push(labelObj);
+        } else if (label.includes("=~")) {
+            const values = regexQuery[1]?.trim().split("|");
+            const labelObj: any = {
+                name: regexQuery[0].trim(),
+                selected: true,
+                values: [],
+            };
+
+            values.forEach((value) => {
                 const valueObj: any = {
-                    name: regexQuery[1]?.replaceAll('"', ""),
-                    selected: true,
-                    inverted: true,
-                };
-
-                labelObj.values.push(valueObj);
-                labelsFromQuery.push(labelObj);
-            } else if (label.includes("=~")) {
-                const values = regexQuery[1]?.trim().split("|");
-                const labelObj: any = {
-                    name: regexQuery[0].trim(),
-                    selected: true,
-                    values: [],
-                };
-
-                values.forEach((value) => {
-                    const valueObj: any = {
-                        name: value?.replaceAll('"', ""),
-                        selected: true,
-                        inverted: false,
-                    };
-
-                    labelObj.values.push(valueObj);
-                });
-
-                labelsFromQuery.push(labelObj);
-            } else {
-                const labelObj: any = {
-                    name: regexQuery[0].trim(),
-                    selected: true,
-                    values: [],
-                };
-
-                const valueObj: any = {
-                    name: regexQuery[1]?.replaceAll('"', ""),
+                    name: value?.replaceAll('"', ""),
                     selected: true,
                     inverted: false,
                 };
+
                 labelObj.values.push(valueObj);
-                labelsFromQuery.push(labelObj);
-            }
-        });
+            });
+
+            labelsFromQuery.push(labelObj);
+        } else {
+            const labelObj: any = {
+                name: regexQuery[0].trim(),
+                selected: true,
+                values: [],
+            };
+
+            const valueObj: any = {
+                name: regexQuery[1]?.replaceAll('"', ""),
+                selected: true,
+                inverted: false,
+            };
+            labelObj.values.push(valueObj);
+            labelsFromQuery.push(labelObj);
+        }
+    });
     }
+
 
     return labelsFromQuery;
 }

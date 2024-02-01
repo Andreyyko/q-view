@@ -3,14 +3,9 @@ import store from "../store/store";
 import { errorHandler } from "./errorHandler";
 import { setApiError } from "./setApiError";
 
-export default function loadLabelValues(
-    id: any,
-    label: any,
-    labelList: string = "",
-    url: any
-) {
+export default function loadLabelValues(id: any, label: any, labelList: string = '', url: any) {
     if (!label || (label?.length <= 0 && label.lsList.length <= 0)) {
-        return () => {};
+        return () => { };
     }
 
     const { dataSources } = store.getState();
@@ -21,9 +16,10 @@ export default function loadLabelValues(
 
     let auth: any = {};
 
-    let labelHeaders: any = {};
+    let labelHeaders: any = {}
 
     if (basicAuth) {
+
         const authfields = actDataSource?.auth?.fields?.basicAuth;
 
         for (let field of authfields) {
@@ -35,8 +31,9 @@ export default function loadLabelValues(
             }
         }
 
-        labelHeaders.auth = auth;
+        labelHeaders.auth = auth
     }
+
 
     const headers = {
         "Content-Type": "application/json",
@@ -47,24 +44,20 @@ export default function loadLabelValues(
         headers: headers,
     };
 
-    labelHeaders.options = options;
+    labelHeaders.options = options
     if (url) {
+
         return async (dispatch: Function) => {
             await axios
-                .get(
-                    `${url}/loki/api/v1/label/${label.name}/values`,
-                    labelHeaders
-                )
+                .get(`${url}/loki/api/v1/label/${label.name}/values`, labelHeaders)
                 ?.then((response) => {
                     if (response?.data?.data) {
-                        const values = response?.data?.data?.map?.(
-                            (value: any) => ({
-                                label: label.name,
-                                name: value,
-                                selected: false,
-                                inverted: false,
-                            })
-                        );
+                        const values = response?.data?.data?.map?.((value: any) => ({
+                            label: label.name,
+                            name: value,
+                            selected: false,
+                            inverted: false,
+                        }));
 
                         return values;
                     } else if (!response) {
@@ -84,5 +77,6 @@ export default function loadLabelValues(
                 });
         };
     }
-    return [];
+    return []
+
 }

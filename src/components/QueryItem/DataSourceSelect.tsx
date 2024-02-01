@@ -1,45 +1,34 @@
 import { useMemo, useRef, useEffect } from "react";
 import { IconSelect } from "./components/DataSourceSelectOption";
-
-
-interface Props {
-    value:any; 
-    onChange: (e:any) => void;
-    opts:any;
-    extValue:any;
-    label:any;
-}
-
-export const DataSourceSelect = (props: Props) => {
+export const DataSourceSelect = (props: any) => {
     const { value, onChange, opts, extValue } = props;
-
 
     const selectRef: any = useRef(null);
     /// add the initial data source name
     useEffect(() => {
-        if (value?.value !== extValue && extValue !== "" ) {
+        if (value.value !== extValue && extValue !== "") {
             selectRef.current.value = extValue;
         }
     }, []);
 
     useEffect(() => {
-        if (value?.value !== extValue && extValue !== "" && selectRef?.current) {
+        if (value.value !== extValue && extValue !== "") {
             selectRef.current.setValue(extValue);
         }
     }, [extValue]);
     const customSelectChange = (e: any) => {
-        onChange({ target: { value: e?.value } });
+        onChange({ target: { value: e.value } });
     };
 
     const customFormattedSelect = useMemo(() => {
         return opts.map((k: any) => ({
-            value: k?.value,
-            label: k?.name,
-            icon: k?.icon,
+            value: k.value,
+            label: k.name,
+            icon: k.icon,
         }));
     }, [opts]);
 
-    if (opts ) {
+    if (opts && value) {
         return (
             <IconSelect
                 ref={selectRef}

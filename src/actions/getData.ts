@@ -4,8 +4,9 @@ import setIsEmptyView from "./setIsEmptyView";
 import { getEndpoint } from "./helpers/getEP";
 import { getQueryOptions } from "./helpers/getQueryOptions";
 import { getEndpointParams } from "./helpers/getEndpointParams";
+import { resetParams } from "./helpers/resetParams";
 import { resetNoData } from "./helpers/resetNoData";
-import { processResponse, resetTraceData } from "./helpers/processResponse";
+import { processResponse } from "./helpers/processResponse";
 import { QueryType, QueryDirection } from "./types";
 import { getTimeSpan } from "./helpers/getTimeSpan";
 import { boscoSend } from "./helpers/boscoRequest";
@@ -37,11 +38,7 @@ function panelDispatch(panel: string, dispatch: Function, data: any) {
         return dispatch(setRightPanel(data));
     }
 }
-export function dataViewDispatch(
-    panel: string,
-    dataViews: DataViews,
-    dispatch: Function
-) {
+export function dataViewDispatch(panel: string, dataViews: DataViews, dispatch: Function) {
     if (panel === "left") {
         return dispatch(setLeftDataView(dataViews));
     }
@@ -66,8 +63,7 @@ export default function getData(
     direction: QueryDirection = "forward",
     dataSourceId = "",
     url = "",
-    customStep = 0,
-    isLogsVolume = false
+    customStep = 0
 ) {
     let dsSettings = {
         url: "",
@@ -142,7 +138,6 @@ export default function getData(
     }
     const loadingState = (dispatch: any, state: boolean) => {
         const pData = store.getState()[panel];
-
         panelDispatch(panel, dispatch, changeLoadingState(pData, id, state));
     };
 
@@ -169,24 +164,14 @@ export default function getData(
             dataView.loading = state;
         }
         dataViewDispatch(panel, dataViews, dispatch);
-    };
+    }
     return async function (dispatch: Function) {
+        await resetParams(dispatch, panel);
         setLoading(true, dispatch);
         loadingState(dispatch, true);
         let cancelToken: any;
 
         if (url === "") {
-            if (queryType === "trace-search") {
-                resetTraceData(type, dispatch, panel, id, direction, queryType);
-            }
-            loadingState(dispatch, false);
-            return;
-        }
-
-        if (queryInput === "" && queryType !== "trace-search") {
-            if (type === "traces") {
-                resetTraceData(type, dispatch, panel, id, direction, queryType);
-            }
             loadingState(dispatch, false);
             return;
         }
@@ -216,13 +201,13 @@ export default function getData(
                     .catch((error) => {
                         resetNoData(dispatch);
                         dispatch(setIsEmptyView(true));
-                        setLoading(false, dispatch);
+                        setLoading(false, dispatch)
                         if (debugMode) {
                             console.log("Error loading flux data", error);
                         }
                     })
                     .finally(() => {
-                        setLoading(false, dispatch);
+                        setLoading(false, dispatch)
                         loadingState(dispatch, false);
                     });
             } else if (options?.method === "GET") {
@@ -239,8 +224,7 @@ export default function getData(
                             panel,
                             id,
                             direction,
-                            queryType,
-                            isLogsVolume
+                            queryType
                         );
 
                         if (debugMode) {
@@ -254,7 +238,7 @@ export default function getData(
                     .catch((error) => {
                         resetNoData(dispatch);
                         dispatch(setIsEmptyView(true));
-                        setLoading(false, dispatch);
+                        setLoading(false, dispatch)
                         loadingState(dispatch, false);
                         if (debugMode) {
                             boscoSend(
@@ -270,7 +254,7 @@ export default function getData(
                     })
                     .finally(() => {
                         loadingState(dispatch, false);
-                        setLoading(false, dispatch);
+                        setLoading(false, dispatch)
                     });
             }
         } catch (e) {

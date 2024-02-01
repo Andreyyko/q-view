@@ -43,15 +43,24 @@ export default function QueryItem(props: any) {
         dataSourceType,
         dataSourceId,
         direction,
-        isLogsVolume,
-        logsVolumeQuery,
         dataSourceURL,
     } = props.data;
-    const dispatch = useDispatch();
-    const theme = useSelector((store: any) => store.theme);
-    const dataView = useSelector((store: any) => store[`${name}DataView`]);
-    const panelSelected = useSelector((store: any) => store[name]);
-    const isQueryOpen = useState(true);
+
+    useEffect(() => {
+        dispatch(
+            getData(
+                dataSourceType,
+                expr,
+                queryType,
+                limit,
+                panel,
+                id,
+                direction,
+                dataSourceId,
+                dataSourceURL
+            )
+        );
+    }, []);
 
     const idRefs = useMemo(() => {
         const alpha = Array.from(Array(26)).map((e, i) => i + 65);
@@ -62,28 +71,11 @@ export default function QueryItem(props: any) {
         return alphabet;
     }, []);
 
-        useEffect(() => {
-
-        if(dataView?.length < 1) {
-            dispatch(
-                getData(
-                    dataSourceType,
-                    expr,
-                    queryType,
-                    limit,
-                    panel,
-                    id,
-                    direction,
-                    dataSourceId,
-                    dataSourceURL
-                )
-            );
-        }
-
-
-    }, []);
-
- 
+    const dispatch = useDispatch();
+    const theme = useSelector((store: any) => store.theme);
+    const dataView = useSelector((store: any) => store[`${name}DataView`]);
+    const panelSelected = useSelector((store: any) => store[name]);
+    const isQueryOpen = useState(true);
     
     function filterPanel(panel: any) {
         if (panel?.length > 1) {
@@ -198,7 +190,7 @@ export default function QueryItem(props: any) {
                     onDeleteQuery={onDeleteQuery}
                     onAddQuery={onAddQuery}
                 />
-                {isQueryOpen[0] &&  <LabelBrowser {...props} />}
+                {isQueryOpen[0] && <LabelBrowser {...props} />}
             </QueryContainer>
         </ThemeProvider>
     );
