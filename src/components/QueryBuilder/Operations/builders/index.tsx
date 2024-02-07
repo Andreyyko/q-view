@@ -14,17 +14,12 @@ import {
     LineFilterFn,
     LabelFilterFn,
     BinaryOperationFn,
-    TimeFunctionFn,
-    TrigonometricFn,
     AggregationsOp,
     BTKAggregationsOp,
     AggrType,
     LineFilter,
     LabelFilter,
     BinaryOperation,
-    TimeFunction,
-    Trigonometric,
-    RangeFunctionsFn,
 } from "../types";
 
 export const JSONBuilder: JSONBuilderFn = () => ({
@@ -146,7 +141,7 @@ export const PatternFmtBuilder: PatternFmtFn = () => ({
     setText() {
         this.result += " `" + this.expression + "`";
     },
-    build(initial: string) {
+    build(initial: string, expression: string) {
         this.setPattern(initial);
         this.setText();
         return this.result;
@@ -165,7 +160,7 @@ export const LineFmtBuilder: LineFmtFn = () => ({
     setText() {
         this.result += " `" + this.expression + "`";
     },
-    build(initial: string) {
+    build(initial: string, expression: string) {
         this.setLine(initial);
         this.setText();
         return this.result;
@@ -181,9 +176,9 @@ export const RangeBuilder: RangeFn = (rangeType) => ({
     setRate() {
         this.result += ` [${this.range}])`;
     },
-
+  
     setFn(initial: string) {
-        this.result = `${rangeType}(${initial}`;
+            this.result = `${rangeType}(${initial}`;
     },
     build(initial: string) {
         this.setFn(initial);
@@ -191,32 +186,7 @@ export const RangeBuilder: RangeFn = (rangeType) => ({
         return this.result;
     },
 });
-export const RangeFunctionsBuilder: RangeFunctionsFn = (rangeType) => ({
-    result: "",
-    range: "",
-    quantile: 0.5, 
-    labels:[],
-    labelsString:"",
-    setQuantile(quantile: number | string) {
-    this.quantile = quantile;
-    },
-    
-    setRange(range: string) {
-        this.range = range;
-    },
-    setRate() {
-        this.result += ` [${this.range}])`;
-    },
 
-    setFn(initial: string) {
-        this.result = `${rangeType}(${initial}`;
-    },
-    build(initial: string) {
-        this.setFn(initial);
-        this.setRate();
-        return this.result;
-    },
-});
 export const LabelRangeBuilder: LabelRangeFn = (rangeType) => ({
     result: "",
     range: "",
@@ -468,28 +438,6 @@ export const BinaryOperationBuilder: BinaryOperationFn = (
     },
 });
 
-export const TimeFunctionOperationBuilder: TimeFunctionFn = (timeFunction) => ({
-    result: "",
-    setFn(initial) {
-        this.result = `${timeFunction}(${initial})`;
-    },
-    build(initial) {
-        this.setFn(initial);
-        return this.result;
-    },
-});
-export const TrigonometricFunctionOperationBuilder: TrigonometricFn = (
-    trigonometric
-) => ({
-    result: "",
-    setFn(initial) {
-        this.result = `${trigonometric}(${initial})`;
-    },
-    build(initial) {
-        this.setFn(initial);
-        return this.result;
-    },
-});
 export const FormatOperators: any = {
     json: JSONBuilder,
     logfmt: LogFmtBuilder,
@@ -503,10 +451,6 @@ export const FormatOperators: any = {
 export const RangeOperators: any = (rangeType: any) => ({
     range: RangeBuilder(rangeType),
     label_range: LabelRangeBuilder(rangeType),
-});
-
-export const RangeFunctionsOperators: any = (rangeType: any) => ({
-    range_function: RangeFunctionsBuilder(rangeType),
 });
 
 export const AggregationOperators: any = (
@@ -527,16 +471,3 @@ export const LabelFilterOperators: any = (labelfilter: LabelFilter) => ({
 export const BinaryOperations: any = (binaryOperation: BinaryOperation) => ({
     binary_operation: BinaryOperationBuilder(binaryOperation),
 });
-
-export const TimeFunctionOperators: any = (timeFunction: TimeFunction) => ({
-    time_function: TimeFunctionOperationBuilder(timeFunction),
-});
-
-export const TrigonometricOperators: any = (
-    trigonometricOperation: Trigonometric
-) => ({
-    trigonometric: TrigonometricFunctionOperationBuilder(
-        trigonometricOperation
-    ),
-});
-

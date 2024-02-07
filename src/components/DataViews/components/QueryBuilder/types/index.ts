@@ -139,10 +139,3 @@ export interface LogsFormBuilderProps {
     labelValueChange(labelValue: string): void;
     handleLogsVolumeChange(logsVolumeQuery: string): void;
 }
-
-export interface MetricsFormBuilderProps {
-    dataSourceId: string;
-    labelValueChange(labelValue:string):void 
-    handleMetricsChange(metric:string):void
-
-}
