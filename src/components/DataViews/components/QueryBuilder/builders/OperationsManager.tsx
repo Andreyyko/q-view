@@ -1,10 +1,13 @@
 import {
     FormatOperators,
     RangeOperators,
+    RangeFunctionsOperators,
     AggregationOperators,
     LineFilterOperators,
     LabelFilterOperators,
     BinaryOperations,
+    TimeFunctionOperators,
+    TrigonometricOperators,
 } from "../../../../QueryBuilder/Operations/builders";
 import { logsToString } from "../helpers";
 
@@ -25,6 +28,7 @@ const formats = [
 ];
 const conversionFn = ["duration", "duration_seconds", "bytes", ""];
 const ranges = [
+    // logs range
     "rate",
     "rate_counter",
     "count_over_time",
@@ -32,7 +36,30 @@ const ranges = [
     "bytes_rate",
     "bytes_over_time",
     "absent_over_time",
-    
+];
+
+const range_functions = [
+    // metrics range
+    "changes",
+    "rate",
+    "irate",
+    "increase",
+    "idelta",
+    "delta",
+    "holt winters",
+    "predict linear",
+    "quantile over time",
+    "deriv",
+    "resets",
+    "sum_over_time",
+    "avg_over_time",
+    "min_over_time",
+    "max_over_time",
+    "count_over_time",
+    "last_over_time",
+    "present_over_time",
+    "absent_over_time",
+    "stddev_over_time",
 ];
 
 // unwrapped expressions
@@ -46,7 +73,7 @@ const label_ranges = [
     "last_over_time",
     "stdvar_over_time",
     "stddev_over_time",
-    "quantile_over_time"
+    "quantile_over_time",
 ];
 
 const line_filters = [
@@ -79,13 +106,39 @@ const binary_operations = [
 // filter with expression
 
 const label_filters = [
-    "no_pipeline_errors",
+    "no_pipeline_errors", // this one has no input, only filters.
     "ip_label_filter_expression",
     "label_filter_expression",
 ];
 
-const aggregations = ["sum", "min", "max", "avg", "stddev", "stdvar", "count"];
+const trigonometric_functions = [
+    "acos",
+    "acosh",
+    "asin",
+    "asinh",
+    "atan",
+    "atanh",
+    "cos",
+    "cosh",
+    "sin",
+    "sinh",
+    "tan",
+    "tanh",
+];
+
+const aggregations = [
+    "sum",
+    "min",
+    "max",
+    "avg",
+    "stddev",
+    "stdvar",
+    "count",
+    "count_values",
+];
 const aggregations_k = ["topk", "bottomk"];
+
+const time_functions = ["day_of_month", "day_of_week", "days_in_month"];
 
 const isSingleExpression = (expr: string) =>
     ["line_format", "regexp", "pattern"].includes(expr);
@@ -174,7 +227,26 @@ export const OperationsManager: OperationsManagerType = (
                     // initialize with operation type
                     result = RangeOperators(operation.name)["range"];
                     result.setRange(operation.range || "$__interval");
-              
+
+                    result = result.build(resultType);
+                }
+
+                if (range_functions.includes(operation.name)) {
+                    const resultType = setResultType(result, logString);
+                    // initialize with operation type
+                    result = RangeFunctionsOperators(operation.name)[
+                        "range_function"
+                    ];
+                    result.setRange(operation.range || "$__interval");
+
+                    result = result.build(resultType);
+                }
+
+                if (trigonometric_functions.includes(operation.name)) {
+                    const resultType = setResultType(result, logString);
+                    result = TrigonometricOperators(operation.name)[
+                        "trigonometric"
+                    ];
                     result = result.build(resultType);
                 }
 
@@ -183,8 +255,8 @@ export const OperationsManager: OperationsManagerType = (
                     result = RangeOperators(operation.name)["label_range"];
                     setRangeLabels(result, operation.labels);
                     result.updRange(operation.range || "$__interval");
-                    if(operation.name === 'quantile_over_time'){
-                        result.setQuantile(operation.quantile)
+                    if (operation.name === "quantile_over_time") {
+                        result.setQuantile(operation.quantile);
                     }
                     result = result.build(resultType);
                 }
@@ -225,6 +297,15 @@ export const OperationsManager: OperationsManagerType = (
                         operation?.labelFilter?.operator || "equals"
                     );
                     result.setValue(operation?.labelFilter?.value || "");
+
+                    result = result.build(resultType);
+                }
+
+                if (time_functions.includes(operation.name)) {
+                    const resultType = setResultType(result, logString);
+                    result = TimeFunctionOperators["time_function"](
+                        operation.name
+                    );
 
                     result = result.build(resultType);
                 }
