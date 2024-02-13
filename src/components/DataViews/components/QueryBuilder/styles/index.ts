@@ -122,15 +122,3 @@ display:flex;
 flex-direction: column;
 flex:1;
 `
-export const MetricsContStyle = css`
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    `
-
-export const MetricsButtonsContStyle = css`
-     display: flex;
-     margin: 10px 0px;
-     `
-
-
