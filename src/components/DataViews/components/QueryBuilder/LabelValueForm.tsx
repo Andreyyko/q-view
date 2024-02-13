@@ -18,7 +18,6 @@ export const LabelValueForm = (props: any) => {
         onChange,
         labelValuesLength,
         id,
-        metric,
     } = props;
 
 
@@ -28,6 +27,7 @@ export const LabelValueForm = (props: any) => {
 
     const mainTheme = useTheme()
 
+   
     const [localKeyVal, setLocalKeyVal] = useState(keyVal);
 
     const [labelValue, setLabelValue] = useState(
@@ -43,33 +43,33 @@ export const LabelValueForm = (props: any) => {
     const onLabelChange = (e: any) => {
         const { value, id } = e;
 
-        setLabelValue(() => ({
+        setLabelValue((_: any) => ({
             value: value?.value,
             label: value?.value,
         }));
         const prevKeyVal = JSON.parse(JSON.stringify(localKeyVal));
         const newKeyVal = {
             ...prevKeyVal,
-            metric,
             label: value?.label,
             value: value.value,
             id,
         };
         onChange(newKeyVal);
         setLocalKeyVal((prev: any) => {
-            return { ...prev, label: value?.value, metric };
+            return { ...prev, label: value?.value };
         });
     };
 
     const onValueChange = (e: any) => {
-        const { value, id} = e;
+        const { value, id } = e;
         let values: any = [];
-        let next = value !== null ? value : { label: "", value: "",metric };
+        let next = value !== null ? value : { label: "", value: "" };
         if (isMulti && Array.isArray(next)) {
             values = next?.map((e: any) => e.value);
         } else {
             values = [next.value];
         }
+
         const prevKeyVal = JSON.parse(JSON.stringify(localKeyVal));
         const newKeyVal = { ...prevKeyVal, values, id };
         onChange(newKeyVal);
@@ -81,7 +81,7 @@ export const LabelValueForm = (props: any) => {
         const prevKeyVal = JSON.parse(JSON.stringify(localKeyVal));
         const newKeyVal = { ...prevKeyVal, operator: value?.value, id };
         onChange(newKeyVal);
-        setOperatorValue(() => {
+        setOperatorValue((_: any) => {
             return { ...value };
         });
         setLocalKeyVal((prev: any) => ({ ...prev, operator: value?.value }));

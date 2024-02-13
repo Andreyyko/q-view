@@ -45,7 +45,7 @@ export const LogLabelValueForm = (props: any) => {
     const onLabelChange = (e: any) => {
         const { value, id } = e;
 
-        setLabelValue(() => ({
+        setLabelValue((_: any) => ({
             value: value?.value,
             label: value?.value,
         }));
@@ -83,13 +83,13 @@ export const LogLabelValueForm = (props: any) => {
         const prevKeyVal = JSON.parse(JSON.stringify(localKeyVal));
         const newKeyVal = { ...prevKeyVal, operator: value?.value, id };
         onChange(newKeyVal);
-        setOperatorValue(() => {
+        setOperatorValue((_: any) => {
             return { ...value };
         });
         setLocalKeyVal((prev: any) => ({ ...prev, operator: value?.value }));
     };
 
-    const cleanAndRemove = () => {
+    const cleanAndRemove = (e: any) => {
         if (optRef?.current && operatorRef?.current && valueRef?.current) {
             labelRemove(keyVal.id);
         }

@@ -6,7 +6,7 @@ import setDataSources from "../store/setDataSources";
 import { Button, Field } from "../ui";
 import { themes } from "../../../components/DataViews/components/Traces/Jaeger-ui/src/theme/themes";
 
-const InlineFlex = (theme: any) => css`
+const InlineFlex = (theme:any) => css`
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -64,30 +64,29 @@ export const DataSourcesFiller = (props: any) => {
     const dispatch = useDispatch();
     const submitMessage = "Save";
 
-    const storeTheme = useSelector(
-        (store: { theme: "light" | "dark" }) => store.theme
-    );
+    const storeTheme = useSelector((store:{theme:'light'|'dark'})=> store.theme)
 
-    const theme = useMemo(() => {
-        return themes[storeTheme];
-    }, [storeTheme]);
+    const theme = useMemo (()=>{
+        return themes[storeTheme]
+
+    },[storeTheme])
 
     const urlChange = (e: any) => {
-        setUrl(() => e.target.value);
+        setUrl((_) => e.target.value);
     };
     const userChange = (e: any) => {
-        setUser(() => e.target.value);
+        setUser((_) => e.target.value);
     };
     const passwordChange = (e: any) => {
-        setPassword(() => e.target.value);
+        setPassword((_) => e.target.value);
     };
 
     const onSwitchChange = (e: any) => {
-        setOneForAll(() => e.target.checked);
+        setOneForAll((_) => e.target.checked);
     };
 
     const onBasicAuthChange = (e: any) => {
-        setBasicAuth(() => e.target.checked);
+        setBasicAuth((_) => e.target.checked);
     };
 
     const onUseForAll = (e: any) => {

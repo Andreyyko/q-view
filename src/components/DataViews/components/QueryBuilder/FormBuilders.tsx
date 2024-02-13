@@ -1,18 +1,15 @@
 /// it renders the label value selector and the operation functions
 import { Builder, FormBuilderProps } from "./types";
-import { FlexColumn, MetricsContStyle } from "./styles";
+import { FlexColumn} from "./styles";
 import { cx } from "@emotion/css";
 import { LabelValuesSelectors, OperationFunctions } from "./renderers";
 import { useTheme } from "./hooks";
-import { useMemo, useCallback, useState, useEffect } from "react";
-
-import { labelsToString, logsToString } from "./helpers";
-import { binaryOperatorOpts, binaryVectorOpt } from "./consts";
-import { InputSelect } from "./InputSelect";
-import { useValuesFromMetrics } from "../Metrics/useValuesFromMetrics";
-import { MetricsLabelValueSelectors } from "./MetricsLabelValueSelector";
-import { BinaryOperatorsSelector } from "../../../QueryBuilder/Operations/Components/selectors";
-import { OperationBodyStyles } from "../../../QueryBuilder/Operations/OperationStyles";
+import { useMemo, useCallback, useState } from "react";
+import {
+    BinaryOperatorsSelector,
+    OperationBodyStyles,
+} from "../../../QueryBuilder/Operations/OperationContainer";
+import { logsToString } from "./helpers";
 
 // get the initial state from props
 export const FormBuilders = (props: FormBuilderProps) => {
@@ -41,6 +38,25 @@ export const FormBuilders = (props: FormBuilderProps) => {
 
 // return an array of builders
 
+const binaryOperatorOpts = {
+    minus: "-",
+    plus: "+",
+    by: "*",
+    divide: "/",
+    exp: "^",
+    equals: "==",
+    not_equals: "!=",
+    modulo: "%",
+    more: "<",
+    less: ">",
+    less_equals: "<=",
+    more_equals: ">=",
+};
+
+const binaryVectorOpt = {
+    on: "on",
+    ignoring: "ignoring",
+};
 export const BinaryOperationBar = (props: any) => {
     const { onBinaryClose, theme, onBinaryOptChange, binaryValue } = props;
     const [valueMatch, setValueMatch] = useState(binaryValue.vectValue || "");
@@ -50,7 +66,7 @@ export const BinaryOperationBar = (props: any) => {
             setValueMatch(e.target.value);
             onBinaryOptChange(e, name);
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+          // eslint-disable-next-line react-hooks/exhaustive-deps
         [valueMatch]
     );
     /// operator
@@ -59,7 +75,7 @@ export const BinaryOperationBar = (props: any) => {
             value: key,
             name: val,
         }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [binaryOperatorOpts]);
 
     const binaryVectorOpts = useMemo(() => {
@@ -67,13 +83,29 @@ export const BinaryOperationBar = (props: any) => {
             value: key,
             name: val,
         }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [binaryOperatorOpts]);
+
     return (
         <div>
             <div className={cx(OperationBodyStyles(theme))}>
-                <div className="binary-operation-bar">
-                    <div className="binary-operation-cont">
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        background: theme.widgetContainer,
+                        borderRadius: "3px",
+                        padding: "6px",
+                    }}
+                >
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                        }}
+                    >
                         <label>Operator</label>{" "}
                         <BinaryOperatorsSelector
                             initial={binaryValue.binaryOpt || "divide"}
@@ -108,32 +140,21 @@ export const FormBuilder = (props: any) => {
     const { builder, theme, idx, setBuilders, logsResponse, dataSourceId } =
         props;
 
+    // send up a logsVolume
+
     // const [logsVolumeQuery, setLogsVolumeQuery] = useState(builder.logsVolumeQuery)
 
     const [labelsString, setLabelsString] = useState(
         logsToString(builder.labelValuesState) || ""
     );
-    const labelValueMemo = useMemo(() => {
-        if (builder?.labelValuesState) {
-            let labelString = labelsToString(builder?.labelValuesState);
-            return "{" + labelString + "}" || "{}";
-        }
-        return {};
-    }, [builder.labelValuesState]);
-    console.log(labelValueMemo);
-    const metricsOpts = useValuesFromMetrics(dataSourceId);
-    const [metricValue, setMetricValue] = useState(
-        metricsOpts[0] || { label: "", value: "" }
-    );
 
     const [finalQuery, setFinalQuery] = useState(builder.builderResult || "");
+
+    /// here we should set the initial labelValueString
 
     const [labelValueString, setLabelValueString] = useState(
         JSON.stringify(builder.labelValuesState) || ""
     );
-    useEffect(() => {
-        setLabelValueString(JSON.stringify(builder.labelValuesState));
-    }, [builder]);
     const onFinalQueryChange = useCallback((query: string) => {
         setBuilders((prev: any) => {
             const next = [...prev];
@@ -146,7 +167,7 @@ export const FormBuilder = (props: any) => {
         });
 
         setFinalQuery(query);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onClose = () => {
@@ -155,29 +176,7 @@ export const FormBuilder = (props: any) => {
             return next.filter((f, i) => i !== idx);
         });
     };
-    const onMetricChange = (e: any) => {
-        const { value } = e;
 
-        setMetricValue((prev: any) => {
-            return { value: value?.value, label: value?.value };
-        });
-    };
-    const handleMetricChange = (e: any) => {
-        console.log(e);
-    };
-
-    const handleMetricType = (
-        builder: any,
-        logLabels: any,
-        metricLabels: any
-    ) => {
-        if (builder.isMetrics) {
-            return metricLabels;
-        }
-        return logLabels;
-    };
-
-    const onLabelValueChange = (e: any) => {};
     const onBinaryOptionChange = (e: any, name: string) => {
         setBuilders((prev: any) => {
             const next = [...prev];
@@ -196,6 +195,8 @@ export const FormBuilder = (props: any) => {
         });
     };
 
+    // here we should add a handler instead of the state manager
+
     return (
         <div className={cx(FlexColumn)} key={idx}>
             {builder.isBinary && (
@@ -206,84 +207,31 @@ export const FormBuilder = (props: any) => {
                     onBinaryClose={onClose}
                 />
             )}
-            <div className={cx(MetricsContStyle)}>
-                {builder.isMetrics === true ? (
-                    <>
-                        <MetricsSelector
-                            // metrics selector for Metrics
-                            theme={theme}
-                            onMetricChange={onMetricChange}
-                            dataSourceId={dataSourceId}
-                        />
-                        <MetricsLabelValueSelectors
-                            // label value selectors for metrics
-                            index={idx}
-                            onChange={onLabelValueChange} // this will be set
-                            dataSourceId={dataSourceId}
-                            value={metricValue.value}
-                            setBuilders={setBuilders}
-                            finalQuery={finalQuery}
-                            builder={builder}
-                            setFinalQuery={onFinalQueryChange}
-                            labelValueString={labelValueString}
-                            setLabelValueString={setLabelValueString}
-                            metricValueChange={handleMetricChange}
-                        />
-                    </>
-                ) : (
-                    <LabelValuesSelectors
-                        //  Label value selector for logs
-                        {...builder}
-                        dataSourceId={dataSourceId}
-                        logsResponse={logsResponse}
-                        setLabelsString={setLabelsString}
-                        finalQuery={finalQuery}
-                        setFinalQuery={onFinalQueryChange}
-                        labelValueString={labelValueString}
-                        setLabelValueString={setLabelValueString}
-                        setBuilders={setBuilders}
-                        index={idx}
-                        theme={theme}
-                    />
-                )}
-            </div>
+            <LabelValuesSelectors
+                {...builder}
+                dataSourceId={dataSourceId}
+                logsResponse={logsResponse}
+                setLabelsString={setLabelsString}
+                finalQuery={finalQuery}
+                setFinalQuery={onFinalQueryChange}
+                labelValueString={labelValueString}
+                setLabelValueString={setLabelValueString}
+                setBuilders={setBuilders}
+                index={idx}
+                theme={theme}
+            />
+
             <OperationFunctions
-                // Operations functions for metrics and logs
                 {...props}
                 {...builder}
                 setBuilders={setBuilders}
                 dataSourceId={dataSourceId}
-                labelsString={handleMetricType(
-                    builder,
-                    labelsString,
-                    labelValueMemo
-                )}
+                labelsString={labelsString}
                 labelValueString={labelValueString}
                 setFinalQuery={onFinalQueryChange}
                 finalQuery={finalQuery}
                 index={idx}
             />
         </div>
-    );
-};
-export interface MetricSelectorProps {
-    theme: any;
-    dataSourceId: string;
-    onMetricChange(e: any): void;
-}
-export const MetricsSelector = (props: MetricSelectorProps) => {
-    const { dataSourceId, theme, onMetricChange } = props;
-    const metricsOpts = useValuesFromMetrics(dataSourceId);
-    return (
-        <InputSelect
-            isMulti={false}
-            type={"metric"}
-            defaultValue={"Select Metric..."}
-            selectOpts={metricsOpts}
-            mainTheme={theme}
-            onChange={onMetricChange}
-            minWidth={250}
-            labelValuesLength={0}
-        />
     );
 };

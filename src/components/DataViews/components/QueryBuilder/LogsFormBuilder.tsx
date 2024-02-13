@@ -14,18 +14,8 @@ const initialBuilder: Builder = {
     labelsState: [],
     binaryValue: { binaryOpt: "divide", vectOpt: "on", vectValue: "" },
     builderResult: "",
-    logsVolumeQuery: "",
+    logsVolumeQuery:"",
     isBinary: false,
-};
-
-export const initialMetricsBuilder: Builder = {
-    operations: [],
-    labelsState: [],
-    binaryValue: { binaryOpt: "divide", vectOpt: "on", vectValue: "" },
-    builderResult: "",
-    logsVolumeQuery: "",
-    isBinary: false,
-    isMetrics:true,
 };
 
 const binaryOperatorOpts: any = {
@@ -44,43 +34,41 @@ const binaryOperatorOpts: any = {
 };
 
 export function LogsFormBuilder(props: LogsFormBuilderProps) {
-    const { dataSourceId, labelValueChange, handleLogsVolumeChange } = props;
+    const { dataSourceId, labelValueChange,  handleLogsVolumeChange } = props;
 
     const dataSources = useSelector((store: any) => store.dataSources);
 
     const { start, stop } = useSelector((store: any) => store);
 
-    const { logsResponse } = useLogLabels(
-        dataSourceId,
-        start,
-        stop,
-        dataSources
-    ); 
+
+    const { logsResponse } = useLogLabels(dataSourceId, start, stop, dataSources); // pass here all data needed
 
     const [finalQuery, setFinalQuery] = useState("");
     const mainTheme = useTheme();
-    // set here if its metrics or logs
+
     const [builders, setBuilders] = useState<Builder[]>([initialBuilder]);
+
 
     const addBinaryOperation = useCallback(
         (idx: number) => {
             setBuilders((prev) => [...prev, { ...prev[idx], isBinary: true }]);
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         [builders]
     );
 
-    useEffect(() => {
-        if (builders[0].logsVolumeQuery !== "") {
-            handleLogsVolumeChange(builders[0].logsVolumeQuery);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [builders]);
 
-    useEffect(() => {
-        labelValueChange(finalQuery);
+    useEffect(()=>{
+    if(builders[0].logsVolumeQuery !== '') {
+        handleLogsVolumeChange(builders[0].logsVolumeQuery)
+    }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [finalQuery]);
+    },[builders])
+
+    useEffect(()=>{
+        labelValueChange(finalQuery)
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[finalQuery])
 
     useEffect(() => {
         setBuilders((prev) => {
@@ -88,6 +76,7 @@ export function LogsFormBuilder(props: LogsFormBuilderProps) {
             return next.map((builder: Builder) => ({
                 ...builder,
                 logsResponse,
+
             }));
         });
     }, [logsResponse]);
@@ -121,14 +110,13 @@ export function LogsFormBuilder(props: LogsFormBuilderProps) {
 
     useEffect(() => {
         setFinalQuery(finalQueryOperator(builders));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [builders]);
 
     return (
         <ThemeProvider theme={mainTheme}>
             <div className={cx(FlexColumn)}>
                 <FormBuilders
-                    type={"logs_search"}
                     addBinary={addBinaryOperation}
                     dataSourceId={dataSourceId}
                     logsResponse={logsResponse}
