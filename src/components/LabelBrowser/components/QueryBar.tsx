@@ -364,7 +364,6 @@ export const QueryBar = (props: any) => {
         }
     };
 
-    // events
     const onMetricChange = (e: any) => {
         const query = [{ children: [{ text: e }] }];
         handleQueryChange(query);
@@ -1040,7 +1039,7 @@ export const QueryBarCont = (props: any) => {
             {buttonsHidden() && dataSourceType === "logs" && !isBuilder && (
                 <ShowLabelsButton {...props} />
             )}
-            {(dataSourceType !== "logs" || !isBuilder) && (
+            {(dataSourceType !== "logs" ||  !isBuilder ) && dataSourceType !== "metrics" && (
                 <QueryEditor
                     onQueryChange={handleQueryChange}
                     defaultValue={expr || ""}
