@@ -1,10 +1,9 @@
 import { environment } from "../environment/env.dev";
 import setDebug from "./setDebug";
-import moment from "moment";
+import * as moment from "moment";
 import { nanoid } from "nanoid";
-import DOMPurify from 'isomorphic-dompurify';
-const BOOLEAN_VALUES = ["isSubmit", "isSplit", "autoTheme", "isEmbed"];
 
+const BOOLEAN_VALUES = ["isSubmit", "isSplit", "autoTheme", "isEmbed"];
 export const initialUrlState = {
     query: "",
     queryType: "range",
@@ -35,18 +34,6 @@ export const initialUrlState = {
             labels: [], // name: selected:
             values: [], // label name selected
             response: {}, // the target should be just the last one
-            open:true,
-            start: new Date(
-                moment(Date.now())
-                    .subtract(5, "minutes")
-                    .format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-            ),
-            time: "", // for instant queries
-            stop: new Date(
-                moment(Date.now()).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-            ),
-            label:"",
-            pickerOpen:false, // time picker
         },
     ],
 
@@ -72,18 +59,6 @@ export const initialUrlState = {
             labels: [], // name: selected:
             values: [], // label name selected
             response: {}, // the target should be just the last one
-            open:false,
-            start: new Date(
-                moment(Date.now())
-                    .subtract(5, "minutes")
-                    .format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-            ),
-            time: "", // for instant queries
-            stop: new Date(
-                moment(Date.now()).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-            ),
-            label:"",
-            pickerOpen:false, // time picker
         },
     ],
 
@@ -116,29 +91,29 @@ export default function stateFromQueryParams() {
         for (let [key, value] of urlFromHash.entries()) {
             if (debug) console.log("🚧 LOGIC/startParams/", key, value);
             if (key === "stop" || key === "start") {
-                const croppedTime = parseInt(DOMPurify.sanitize(value)) / 1000000;
+                const croppedTime = parseInt(value) / 1000000;
                 startParams[key] = new Date(
                     (moment as any)(croppedTime).format("YYYY-MM-DDTHH:mm:ss.SSSZ")
                 );
             } else if (key === "left" || key === "right") {
-                let panel = decodeURIComponent(DOMPurify.sanitize(value))
+                let panel = decodeURIComponent(value)
                 if(typeof panel === 'string') {
-                    const parsedQuery = JSON.parse(decodeURIComponent(DOMPurify.sanitize(value)||"[]"));
+                    const parsedQuery = JSON.parse(decodeURIComponent(value)||"[]");
                     startParams[key] = parsedQuery;
                 }
            
             }  else if (BOOLEAN_VALUES.includes(key)) {
                 try {
-                    startParams[key] = JSON.parse(DOMPurify.sanitize(value || 'false'));
+                    startParams[key] = JSON.parse(value || 'false');
                 } catch(e) {
                     console.error(key);
                     startParams[key] = false;
                 }
             } else {
-                startParams[key] = DOMPurify.sanitize(value);
+                startParams[key] = value;
             }
             if (startParams.theme) {
-                localStorage.setItem("theme", DOMPurify.sanitize(JSON.stringify({ theme: startParams.theme, auto: !!startParams.autoTheme })));
+                localStorage.setItem("theme", JSON.stringify({ theme: startParams.theme, auto: !!startParams.autoTheme }));
             }
         }
 

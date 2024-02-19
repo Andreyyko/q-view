@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { themes } from "../../theme/themes";
-import DOMPurify from "isomorphic-dompurify";
+
 export function QueryId(props: any) {
     const [isEditing, setIsEditing] = useState(false);
     const [idText, setIdText] = useState(props.data.idRef);
@@ -38,8 +38,7 @@ export function QueryId(props: any) {
                         outline: "none",
                         color: theme.textColor,
                     }}
-                
-                    value={DOMPurify.sanitize(idText)}
+                    value={idText}
                     placeholder={idText}
                     onChange={onIdTextChange}
                     onKeyDown={handleKeydown}
@@ -50,7 +49,7 @@ export function QueryId(props: any) {
     } else {
         return (
             <>
-                <p className={"query-id"} onClick={(e) => setIsEditing(true)}>
+                <p className="query-id" onClick={(e) => setIsEditing(true)}>
                     {idText}
                 </p>
             </>

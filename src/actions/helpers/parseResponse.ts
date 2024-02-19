@@ -10,6 +10,7 @@ import { parseTracesResponse } from "./parseTracesResponse";
 import { parseFluxResponse } from "./parseFluxResponse";
 const { debugMode } = store.getState();
 
+
 /**
  *
  * @param cb
@@ -32,15 +33,15 @@ export function sortMessagesByTimestamp(
     messages: Message[],
     direction: QueryDirection
 ) {
-    if (direction === "forward") {
-        return sortMessagesByTimestampAsc(messages);
-    }
-    return sortMessagesByTimestampDesc(messages);
+    return {
+        forward: sortMessagesByTimestampAsc(messages),
+        backwards: sortMessagesByTimestampDesc(messages),
+    }[direction];
 }
 
 export function sortMessagesByTimestampAsc(messages: Message[]) {
     const startTime = performance.now();
-    const mess = messages?.sort((a, b) => a.timestamp - b.timestamp);
+    const mess = messages?.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
     const duration = performance.now() - startTime;
     if (debugMode)
         console.log("🚧 getData / sorting logs took: ", duration, " ms");
@@ -49,7 +50,7 @@ export function sortMessagesByTimestampAsc(messages: Message[]) {
 
 export function sortMessagesByTimestampDesc(messages: Message[]) {
     const startTime = performance.now();
-    const mess = messages?.sort((a, b) => b.timestamp - a.timestamp);
+    const mess = messages?.sort((a, b) => (a.timestamp < b.timestamp ? -1 : 1));
     const duration = performance.now() - startTime;
     if (debugMode)
         console.log("🚧 getData / sorting logs took: ", duration, " ms");
@@ -64,7 +65,7 @@ export function sortMessagesByTimestampDesc(messages: Message[]) {
 
 export function mapStreams(
     streams: any[],
-    direction: QueryDirection = "backwards"
+    direction: QueryDirection = "forward"
 ) {
     const startTime = performance.now();
     let messages: Message[] = [];
@@ -77,7 +78,7 @@ export function mapStreams(
                 text,
                 tags: stream.stream || {},
                 isShowTs: true,
-                isBuilder: false,
+                isBuilder:false,
                 showLabels: false,
                 id: nanoid(),
             });
@@ -114,6 +115,8 @@ export async function parseResponse(responseProps: any) {
             break;
         case "flux":
             await parseFluxResponse(responseProps);
+            // await parseVectorResponse(responseProps);
+            // await parseStreamResponse(responseProps);
             break;
         case "traces":
             await parseTracesResponse(responseProps);

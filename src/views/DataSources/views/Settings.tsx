@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import DOMPurify from 'isomorphic-dompurify'
 import {
     DataSourceHeaders,
     LinkedFields,
@@ -46,7 +45,7 @@ export const Settings = (props: any) => {
     };
 
     const onChange = (e: any, name: any) => {
-        setIsEditing(() => true);
+        setIsEditing((_) => true);
         const value = e.target.value;
         // check here if name === url
         if (name === "url") {
@@ -70,7 +69,7 @@ export const Settings = (props: any) => {
                 localStorage.setItem("dataSources", JSON.stringify(newVal));
                 dispatch(setDataSources(newVal));
                 setTimeout(() => {
-                    setIsEditing(() => false);
+                    setIsEditing((_) => false);
                 }, 800);
             }
         }
@@ -79,7 +78,7 @@ export const Settings = (props: any) => {
         localStorage.setItem("dataSources", JSON.stringify(newVal));
         dispatch(setDataSources(newVal));
         setTimeout(() => {
-            setIsEditing(() => false);
+            setIsEditing((_) => false);
         }, 800);
     };
 
@@ -96,13 +95,13 @@ export const Settings = (props: any) => {
             <InputCont>
                 <InputCol>
                     <Field
-                        value={DOMPurify.sanitize(name)}
+                        value={name}
                         label={"Name"}
                         onChange={(e: any) => onChange(e, "name")}
                     />
 
                     <Field
-                        value={DOMPurify.sanitize(url)}
+                        value={url}
                         label={"URL"}
                         error={fieldErrors.url || fieldErrors.protocol}
                         onChange={(e: any) => onChange(e, "url")}

@@ -28,8 +28,6 @@ export type operator =
 
 export interface Operation {
     id: number;
-    after_args:string;
-    prev_args:string;
     name: string;
     header: any;
     range: string;
@@ -55,16 +53,13 @@ export interface BinaryValue {
 export interface Builder {
     operations: any[];
     labelsState: any[];
-    labelValuesState?: Label[]; 
     binaryValue: BinaryValue;
     logsVolumeQuery: string;
     builderResult: string;
     isBinary: boolean;
-    isMetrics?:boolean;
 }
 
 export interface FormBuilderProps {
-    type: 'metrics_search' | 'logs_search';
     builders: Builder[];
     finalQuery: string;
     setBuilders: Function;
@@ -75,7 +70,6 @@ export interface FormBuilderProps {
 
 export interface Label {
     id: string;
-    metric?:string;
     label: string;
     operator: operator;
     values: string[];
@@ -144,11 +138,4 @@ export interface LogsFormBuilderProps {
     dataSourceId: string;
     labelValueChange(labelValue: string): void;
     handleLogsVolumeChange(logsVolumeQuery: string): void;
-}
-
-export interface MetricsFormBuilderProps {
-    dataSourceId: string;
-    labelValueChange(labelValue:string):void 
-    handleMetricsChange(metric:string):void
-
 }

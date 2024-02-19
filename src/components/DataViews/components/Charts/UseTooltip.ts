@@ -1,5 +1,4 @@
 import moment from "moment";
-import DOMPurify from 'isomorphic-dompurify'
 import {
     getItemsLength,
     highlightItems,
@@ -7,8 +6,6 @@ import {
     isLAbelSelected,
     makeTolltipItems,
 } from "./helpers";
-
-
 
 const $q: any = (window as any).jQuery;
 
@@ -69,7 +66,9 @@ export default function UseTooltip(this: void, plot: any) {
             const labelsFormatted = makeTolltipItems(labelsList);
             if (previousPoint !== item.datapoint) {
                 previousPoint = item.datapoint;
-                let p_ToltipTemplate = DOMPurify.sanitize(`<div style="${"display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #666;padding:6px;flex:1"}">
+                $q("#tooltip").remove();
+                const tooltipTemplate = `
+                <div style="${"display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #666;padding:6px;flex:1"}">
                 <p>${moment(item.datapoint[0]).format(
                     "YYYY-MM-DDTHH:mm:ss.SSSZ"
                 )}</p>
@@ -79,9 +78,8 @@ export default function UseTooltip(this: void, plot: any) {
                 </div>
                <div style="padding:3px">
                 ${labelsFormatted}
-                </div>`)
-                $q("#tooltip").remove();
-                const tooltipTemplate = p_ToltipTemplate
+                </div>
+                `;
                 if (labelsList?.length > 0) {
                     const labelLength = getItemsLength(labelsList);
                     showTooltip(
@@ -111,8 +109,7 @@ function showTooltip(x: any, y: any, contents: any, length: any) {
     if (clientX > halfScreen) {
         posX -= length < 125 ? length * 6 + 15 : 505;
     }
-
-    $q(DOMPurify.sanitize(`<div id="tooltip">${contents}</div>`))
+    $q(`<div id="tooltip">` + contents + `</div>`)
         .css({
             position: "absolute",
             display: "none",
@@ -129,5 +126,3 @@ function showTooltip(x: any, y: any, contents: any, length: any) {
         .appendTo("body")
         .fadeIn(125);
 }
-
-

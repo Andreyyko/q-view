@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect} from "react";
 
 import {
     addMonths,
@@ -27,6 +27,13 @@ import {
 } from "./utils";
 import { DATE_TIME_RANGE, MARKERS } from "./consts";
 import { ThemeProvider } from "@emotion/react";
+import {
+    setRangeOpen,
+    setStartTime,
+    setTimeRangeLabel,
+    setStopTime,
+} from "../../../../actions";
+import { useSelector, useDispatch } from "react-redux";
 import useOutsideRef from "./hooks/useOutsideRef";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -61,7 +68,7 @@ export const CustomMenu = (props: any) => {
             elevation={0}
             anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left",
+                horizontal: "right",
             }}
             PaperProps={{
                 sx: {
@@ -70,8 +77,8 @@ export const CustomMenu = (props: any) => {
                 },
             }}
             transformOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
+                vertical: "top",
+                horizontal: "right",
             }}
             {...props}
         />
@@ -89,36 +96,12 @@ const timeAdjustmentOptions = [
     "12h",
     "24h",
 ];
-
-export type DateRangePickerProps = {
-    id: string;
-    startTs?: any;
-    stopTs?: any;
-    pickerOpen: boolean;
-    label?: string;
-    onStartChange(e: any): void;
-    onStopChange(e: any): void;
-    onLabelChange(e: any): void;
-    onPickerOpen(e: any): void;
-    minDate?: any;
-    maxDate?: any;
-};
-
-export function DateRangePickerMain(props: DateRangePickerProps) {
+export function DateRangePickerMain(props: any) {
     const today = Date.now();
-    const {
-        id,
-        minDate,
-        maxDate,
-        startTs,
-        stopTs,
-        label,
-        onLabelChange,
-        onStartChange,
-        onStopChange,
-        pickerOpen,
-        onPickerOpen,
-    } = props;
+    const { isOpen, minDate, maxDate } = props;
+
+    const startTs = useSelector((store: any) => store.start);
+    const stopTs = useSelector((store: any) => store.stop);
 
     const theme = useTheme();
     const initialDateRange = () => {
@@ -156,15 +139,19 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
     const [secondMonth, setSecondMonth] = useState(
         initialSecondMonth || addMonths(firstMonth, 1)
     );
+    const [timeLabel, setTimeLabel] = useState("");
+    const dispatch = useDispatch();
 
-    const range = useMemo(() => {
-        return { dateStart: startTs, dateEnd: stopTs, label: label };
-    }, [startTs, stopTs, label]);
+    const rangeOpen = useSelector((store: any) => store.rangeOpen);
+    const range = useSelector((store: any) => ({
+        dateStart: store.start,
+        dateEnd: store.stop,
+        label: store.label,
+    }));
 
     useEffect(() => {
-        onLabelChange(range.label);
-        //eslint-disable-next-line
-    }, [range.label]);
+        setTimeLabel(range.label);
+    }, [range]);
 
     const { dateStart, dateEnd } = dateRange;
 
@@ -206,8 +193,7 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
             onChange(newRange);
             saveDateRange(newRange);
             setDateRange(newRange);
-
-            onLabelChange("");
+            dispatch(setTimeRangeLabel(""));
             onClose();
         } else {
             setDateRange({ dateStart: day, dateEnd: undefined });
@@ -234,7 +220,8 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
     };
     const onClose = (e: any = null) => {
         e?.preventDefault();
-        onPickerOpen(false);
+        dispatch(setRangeOpen(false));
+        isOpen(e);
     };
 
     const inHoverRange = (day: any) => {
@@ -265,17 +252,17 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
         const isStart = isDate(dateStart);
         const isEnd = isDate(dateEnd);
         const isLabel = typeof label !== "undefined";
-        if (isStart) onStartChange(dateStart); //dispatch(setStartTime(dateStart));
-        if (isEnd) onStopChange(dateEnd); //dispatch(setStopTime(dateEnd));
-        if (isLabel) onLabelChange(label); //dispatch(setTimeRangeLabel(label));
+        if (isStart) dispatch(setStartTime(dateStart));
+        if (isEnd) dispatch(setStopTime(dateEnd));
+        if (isLabel) dispatch(setTimeRangeLabel(label));
     }
 
     const openButtonHandler = (e: any) => {
         e.preventDefault();
-        if (pickerOpen === true) {
+        if (rangeOpen === true) {
             onClose(e);
         } else {
-            onPickerOpen(true); // dispatch(setRangeOpen(true));
+            dispatch(setRangeOpen(true));
         }
     };
     const adjustTimeRange = (direction: any, adjustment: any = "range") => {
@@ -372,7 +359,9 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
                     </MenuItem>
                 ))}
             </CustomMenu>
-            <Tooltip title={label ? <TimeLabel dateRange={dateRange} /> : ""}>
+            <Tooltip
+                title={timeLabel ? <TimeLabel dateRange={dateRange} /> : ""}
+            >
                 <DatePickerButton
                     onClick={openButtonHandler}
                     className={"date-time-selector"}
@@ -381,8 +370,8 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
                     <AccessTimeOutlinedIcon />
 
                     <span>
-                        {label
-                            ? label
+                        {timeLabel
+                            ? timeLabel
                             : (isValid(dateRange.dateStart)
                                   ? format(
                                         dateRange.dateStart,
@@ -403,10 +392,10 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
             </Tooltip>
             <DatePickerButton
                 onClick={handleClickRight}
-                id={`forward-button-${id}`}
+                attachedside={"both"}
                 size={"small"}
                 className={"date-time-selector"}
-                aria-controls={openRight ? `forward-menu${id}` : undefined}
+                aria-controls={openRight ? "forward-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openRight ? "true" : undefined}
             >
@@ -414,7 +403,7 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
             </DatePickerButton>
 
             <CustomMenu
-                id={`forward-menu-${id}`}
+                id="forward-menu"
                 anchorEl={anchorElRight}
                 open={openRight}
                 onClose={handleClose}
@@ -439,7 +428,7 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
             >
                 <KeyboardArrowRight />
             </DatePickerButton>
-            {pickerOpen ? (
+            {rangeOpen ? (
                 <div tabIndex={0} ref={ref}>
                     <ThemeProvider theme={theme}>
                         <PickerNav
@@ -463,3 +452,5 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
     );
 }
 export const DateRangePicker = DateRangePickerMain;
+
+//shouldnt be at same div!!

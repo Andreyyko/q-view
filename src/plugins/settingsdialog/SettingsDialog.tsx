@@ -1,6 +1,5 @@
 import { Dialog, Switch, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import DOMPurify from 'isomorphic-dompurify';
 import {
     setTheme,
     setAutoTheme
@@ -136,7 +135,7 @@ export default function SettingsDialog({ open, onClose }: any) {
                         <SettingLabel>Embed View</SettingLabel>
                         <EmbedArea
                             rows="8"
-                            value={DOMPurify.sanitize(embedEdited)}
+                            value={embedEdited}
                             onChange={handleEmbedChange}
                         ></EmbedArea>
                     </InputGroup>

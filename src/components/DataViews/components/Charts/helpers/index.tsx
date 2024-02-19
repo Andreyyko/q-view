@@ -1,6 +1,3 @@
-import DOMPurify from "isomorphic-dompurify";
-
-
 import {
     CHART_BAR_SERIES,
     CHART_LINE_SERIES,
@@ -41,7 +38,7 @@ export function getLabelTemplate(sortedList: any) {
     return (
         sortedList
             ?.map((template: any) => {
-                return DOMPurify.sanitize(` <div style="display:flex;justify-content:space-between">
+                return ` <div style="display:flex;justify-content:space-between">
                            <div style="display:flex;margin-right:10px;">
                                <span style="background:${template.color};
                                height:6px;width:24px;pading:3px;
@@ -52,7 +49,7 @@ export function getLabelTemplate(sortedList: any) {
                         <div>
                     </div>
                 </div>
-    `);
+    `;
             })
 
             .join("") || []

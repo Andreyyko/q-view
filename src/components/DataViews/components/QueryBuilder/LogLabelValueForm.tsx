@@ -7,7 +7,7 @@ import { cx } from "@emotion/css";
 import { useTheme } from "./hooks";
 import { InputSelect } from "./InputSelect";
 import useLogLabelValues from "./hooks/useLogLabelValues";
-import DOMPurify from 'isomorphic-dompurify'
+
 
 export const LogLabelValueForm = (props: any) => {
     const {
@@ -45,7 +45,7 @@ export const LogLabelValueForm = (props: any) => {
     const onLabelChange = (e: any) => {
         const { value, id } = e;
 
-        setLabelValue(() => ({
+        setLabelValue((_: any) => ({
             value: value?.value,
             label: value?.value,
         }));
@@ -83,13 +83,13 @@ export const LogLabelValueForm = (props: any) => {
         const prevKeyVal = JSON.parse(JSON.stringify(localKeyVal));
         const newKeyVal = { ...prevKeyVal, operator: value?.value, id };
         onChange(newKeyVal);
-        setOperatorValue(() => {
+        setOperatorValue((_: any) => {
             return { ...value };
         });
         setLocalKeyVal((prev: any) => ({ ...prev, operator: value?.value }));
     };
 
-    const cleanAndRemove = () => {
+    const cleanAndRemove = (e: any) => {
         if (optRef?.current && operatorRef?.current && valueRef?.current) {
             labelRemove(keyVal.id);
         }
@@ -113,7 +113,7 @@ export const LogLabelValueForm = (props: any) => {
                     ref={optRef}
                     type={"label"}
                     isMulti={false}
-                    defaultValue={DOMPurify.sanitize(keyVal.label)}
+                    defaultValue={keyVal.label}
                     selectOpts={labelOpts}
                     mainTheme={mainTheme}
                     onChange={onLabelChange}
@@ -127,7 +127,7 @@ export const LogLabelValueForm = (props: any) => {
                     ref={operatorRef}
                     type={"operator"}
                     isMulti={false}
-                    defaultValue={DOMPurify.sanitize(keyVal.operator)}
+                    defaultValue={keyVal.operator}
                     selectOpts={OPERATOR_OPTIONS}
                     keyVal={keyVal}
                     mainTheme={mainTheme}
@@ -141,7 +141,7 @@ export const LogLabelValueForm = (props: any) => {
                         ref={valueRef}
                         type={"value"}
                         isMulti={isMulti}
-                        defaultValue={DOMPurify.sanitize(keyVal.values)}
+                        defaultValue={keyVal.values}
                         selectOpts={valueSelectOpts}
                         keyVal={keyVal}
                         mainTheme={mainTheme}

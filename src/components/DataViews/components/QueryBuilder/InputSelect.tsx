@@ -32,7 +32,7 @@ export const InputSelect = forwardRef((props: any, ref: any) => {
     }, [labelsLength]);
 
     const onsSelectValueChange = (e: any) => {
-        setSelectedOption(() => e);
+        setSelectedOption((prev: any) => e);
         onChange({ value: e, id: objId });
     };
 

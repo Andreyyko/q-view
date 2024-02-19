@@ -11,15 +11,13 @@ export function getEndpointParams(
     settingUrl = "",
     queryType: QueryType,
     customUrl: string,
-    customStep: number,
-    id: string,
-    panel: string
+    customStep: number
 ): QueryParams {
     const localStore = store.getState();
     const { isSplit } = localStore;
     const splitVal = isSplit ? 2 : 1;
     const wWidth = window.innerWidth;
-    const { parsedTime, time } = getTimeParams(type, id, panel);
+    const { parsedTime, time } = getTimeParams(type);
     const url = settingUrl;
     let stepCalc = 0;
 
@@ -73,4 +71,4 @@ export function getEndpointParams(
     };
 }
 
-
+// export as function~

@@ -4,7 +4,6 @@ import { themes } from "../../../../../theme/themes";
 import { BtnSmall } from "../../../../../theme/styles/Button";
 import { ThemeProvider } from '@emotion/react';
 import { useSelector } from 'react-redux';
-import DOMPurify from "isomorphic-dompurify";
 const SelectorsContainer: any = styled.div`
     display: ${(props: any) => props.isDisplay ? "flex" : "none"};
     flex-direction: column;
@@ -117,7 +116,7 @@ export default function AbsoluteSelector({
                 <div className="input-group">
                     <input
                         className={"date-time-ranged"}
-                        value={DOMPurify.sanitize(getEditedStartDate())}
+                        value={getEditedStartDate()}
                         onChange={(e) => handleStart(e, false)}
                         onBlur={(e) => handleStart(e, true)}
                     />
@@ -132,7 +131,7 @@ export default function AbsoluteSelector({
                 <div className="input-group">
                     <input
                         className={"date-time-ranged"}
-                        value={DOMPurify.sanitize(getEditedEndDate())}
+                        value={getEditedEndDate()}
                         onChange={(e) => handleStop(e, false)}
                         onBlur={(e) => handleStop(e, true)}
                     />

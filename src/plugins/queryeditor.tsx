@@ -182,7 +182,10 @@ export default function QueryEditor({
     return (
         <ThemeProvider theme={_themes[theme]}>
             <QueryBar ref={ref}>
- 
+                {/* <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+            <option value={"sql"}>{"SQL"}</option>
+            <option value={"promql"}>{"promQL"}</option>
+        </select> */}
                 <Slate
                     editor={editor}
                     value={editorValue}

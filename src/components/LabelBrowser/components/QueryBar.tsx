@@ -7,7 +7,7 @@ import { css, cx } from "@emotion/css";
 import { ThemeProvider } from "@emotion/react";
 
 import { useMediaQuery } from "react-responsive";
-import DOMPurify from "isomorphic-dompurify";
+
 /**Actions */
 import getData from "../../../actions/getData";
 import setQueryHistory from "../../../actions/setQueryHistory";
@@ -81,7 +81,6 @@ export const QueryBar = (props: any) => {
         dataSourceType,
         direction,
         dataSourceId,
-        splitted
         //  dataSourceURL,
     } = data;
     const {
@@ -94,7 +93,6 @@ export const QueryBar = (props: any) => {
             logsVolumeQuery,
         },
     } = props;
-
     const { hash } = useLocation();
     const dispatch = useDispatch();
     const saveUrl = localUrl();
@@ -169,7 +167,7 @@ export const QueryBar = (props: any) => {
 
     useEffect(() => {
         setQueryInput(actLocalQuery.expr);
-        setQueryValue([{ children: [{ text: DOMPurify.sanitize(actLocalQuery.expr) }] }]);
+        setQueryValue([{ children: [{ text: actLocalQuery.expr }] }]);
 
         setLogsLevel(actLocalQuery.expr, isLogsVolume);
 
@@ -238,7 +236,7 @@ export const QueryBar = (props: any) => {
 
     useEffect(() => {
         setQueryInput(actLocalQuery.expr);
-        setQueryValue([{ children: [{ text: DOMPurify.sanitize(actLocalQuery.expr) }] }]);
+        setQueryValue([{ children: [{ text: actLocalQuery.expr }] }]);
         if (isLogsVolume && logsVolumeQuery) {
             setLogsLevel(actLocalQuery.expr, isLogsVolume);
         }
@@ -280,22 +278,20 @@ export const QueryBar = (props: any) => {
         }
 
         let { isMatrix } = getIntvalData(actLocalQuery?.expr);
-        if(actLocalQuery.expr !== "" && actLocalQuery.expr?.length > 6) {
-            dispatch(
-                getData(
-                    dataSourceType,
-                    actLocalQuery?.expr,
-                    queryType,
-                    limit,
-                    name,
-                    id,
-                    direction,
-                    dataSourceId,
-                    currentDataSource?.url
-                )
-            );
-        }
 
+        dispatch(
+            getData(
+                dataSourceType,
+                actLocalQuery?.expr,
+                queryType,
+                limit,
+                name,
+                id,
+                direction,
+                dataSourceId,
+                currentDataSource?.url
+            )
+        );
 
         // setLogsLevel(queryInput, isLogsVolume);
         if (
@@ -329,7 +325,7 @@ export const QueryBar = (props: any) => {
     useEffect(() => {
         if (typeof expr === "string") {
             setQueryInput(expr);
-            setQueryValue([{ children: [{ text: DOMPurify.sanitize(expr) }] }]);
+            setQueryValue([{ children: [{ text: expr }] }]);
             saveQuery();
             if (isLogsVolume) {
                 setLogsLevel(expr, true);
@@ -350,7 +346,7 @@ export const QueryBar = (props: any) => {
               // eslint-disable-next-line
             let pureLabels = queryInput.match(/[^{\}]+(?=})/g);
             if (Array.isArray(pureLabels) && pureLabels?.length > 0) {
-                let pureLabelsString = `{${pureLabels?.join(",")}}`;
+                let pureLabelsString = "{" + pureLabels?.join(",") + "}";
                 let logsVolumeQuery = `sum by(level) (count_over_time(${pureLabelsString}[$__interval]))`;
                 onLogVolumeChange(logsVolumeQuery);
             }
@@ -368,13 +364,14 @@ export const QueryBar = (props: any) => {
         }
     };
 
+    // events
     const onMetricChange = (e: any) => {
-        const query = [{ children: [{ text: DOMPurify.sanitize(e) }] }];
+        const query = [{ children: [{ text: e }] }];
         handleQueryChange(query);
     };
 
     const onLogChange = (e: any) => {
-        const query = [{ children: [{ text: DOMPurify.sanitize(e) }] }];
+        const query = [{ children: [{ text: e }] }];
 
         // at this scope we should do the query change from the
         //  'use query' button
@@ -540,7 +537,7 @@ export const QueryBar = (props: any) => {
         const isEmptyQuery = queryInput.length === 0;
         let query = "";
         if (!isEmptyQuery) {
-            const isRate = queryInput.startsWith("rate(");
+            const isRate = queryInput.startsWith(`rate(`);
 
             if (dataSourceType === "metrics") {
                 if (isRate) {
@@ -556,7 +553,7 @@ export const QueryBar = (props: any) => {
                 if (!isRate) {
                     query = `rate(${queryInput}[$__interval])`;
                 } else {
-                    query = queryInput.replace(/\[\d+ms\]/, "[$__interval]");
+                    query = queryInput.replace(/\[\d+ms\]/, `[$__interval]`);
                 }
             }
         }
@@ -570,7 +567,7 @@ export const QueryBar = (props: any) => {
         if (!isEmptyQuery) {
             query = addQueryInterval(queryInput);
             setQueryInput(query);
-            setQueryValue([{ children: [{ text: DOMPurify.sanitize(query) }] }]);
+            setQueryValue([{ children: [{ text: query }] }]);
             setQueryValid(onQueryValid(query));
         }
 
@@ -638,7 +635,7 @@ export const QueryBar = (props: any) => {
 
         let { querySubmit, customStep, isMatrix } = getIntvalData(queryExpr);
 
-        if (isSearch && querySubmit !== "" && querySubmit?.length > 6) {
+        if (isSearch && querySubmit !== "") {
             dispatch(
                 getData(
                     dataSourceType,
@@ -694,7 +691,7 @@ export const QueryBar = (props: any) => {
             isMatrix = true;
         }
 
-        if (queryExpr.includes("$__interval")) {
+        if (queryExpr.includes(`$__interval`)) {
             isMatrix = true;
             const timeDiff = (stop.getTime() - start.getTime()) / 1000;
             const timeProportion = timeDiff / 30;
@@ -749,12 +746,12 @@ export const QueryBar = (props: any) => {
     }
 
     function onTraceSearchChange(e: any) {
-        setTraceSearch(() => e);
+        setTraceSearch((_: any) => e);
     }
 
     function handleStatsOpen(e: any) {
         const value = e.target.checked;
-        setShowStatsOpen(() => value);
+        setShowStatsOpen((_: any) => value);
 
         const prevPanel = JSON.parse(JSON.stringify(panelData));
 
@@ -769,7 +766,7 @@ export const QueryBar = (props: any) => {
     }
 
     const switchTraceQueryType = (e: any) => {
-        setTraceQueryType(() => e);
+        setTraceQueryType((_: any) => e);
     };
 
     // renderers
@@ -875,7 +872,7 @@ export const QueryBar = (props: any) => {
                     dataSourceType !== "traces" && (
                         <MobileTopQueryMenuCont
                             {...props}
-                            isSplit={splitted}
+                            isSplit={isSplit}
                             dataSourceType={dataSourceType}
                             showQuerySettings={showQuerySettings}
                             queryHistory={queryHistory}
@@ -899,7 +896,7 @@ export const QueryBar = (props: any) => {
                     />,
                     <QueryBarCont
                         {...props}
-                        isSplit={splitted}
+                        isSplit={isSplit}
                         isBuilder={isBuilder}
                         dataSourceType={dataSourceType}
                         handleQueryChange={handleQueryChange}
@@ -992,14 +989,14 @@ export const QueryBar = (props: any) => {
 
                 {inlineQueryOptionsRenderer(
                     dataSourceType,
-                    splitted,
+                    isSplit,
                     isTabletOrMobile,
                     <QueryTypeBar {...props} />
                 )}
 
                 {querySettingRenderer(
                     isTabletOrMobile,
-                    splitted,
+                    isSplit,
                     dataSourceType,
                     <QuerySetting
                         {...props}
@@ -1043,10 +1040,10 @@ export const QueryBarCont = (props: any) => {
             {buttonsHidden() && dataSourceType === "logs" && !isBuilder && (
                 <ShowLabelsButton {...props} />
             )}
-            {(dataSourceType !== "logs" ||  !isBuilder ) && dataSourceType !== "metrics" && (
+            {(dataSourceType !== "logs" || !isBuilder) && (
                 <QueryEditor
                     onQueryChange={handleQueryChange}
-                    defaultValue={DOMPurify.sanitize(expr || "")}
+                    defaultValue={expr || ""}
                     value={queryValue} // queryValue should change and or update on datasource change
                     onKeyDown={handleInputKeyDown}
                 />

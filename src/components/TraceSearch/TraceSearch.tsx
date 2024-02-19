@@ -13,7 +13,7 @@ import Select, { components } from "react-select";
 import { useTheme } from "../DataViews/components/QueryBuilder/hooks";
 import { cStyles } from "../DataViews/components/QueryBuilder/styles";
 import { selectTheme } from "../DataViews/components/QueryBuilder/helpers";
-import DOMPurify from 'isomorphic-dompurify';
+
 const SearchColumn = css`
     display: flex;
     flex-direction: column;
@@ -209,7 +209,7 @@ export default function TracesSearch(props: any) {
             id,
             direction: "forward",
             dataSourceId,
-            url: `${dataSourceURL}/api/${urlString}`,
+            url: dataSourceURL + "/api/" + urlString,
         };
     };
 
@@ -245,7 +245,7 @@ export default function TracesSearch(props: any) {
                     id,
                     "forward",
                     dataSourceId,
-                    `${dataSourceURL}/api/${urlString}`
+                    dataSourceURL + "/api/" + urlString
                 )
             );
         }
@@ -271,19 +271,38 @@ export default function TracesSearch(props: any) {
                     onSelectChange={onSpanChange}
                     labelWidth={TRACE_SEARCH_LABEL_WIDTH}
                 />
+                {/* <Select
+                    fullWidth={true}
+                    label={"Service Name"}
+                    placeHolder={"Select a Service"}
+                    onChange={onServiceChange}
+                    value={searchValue}
+                    opts={serviceNameOpts}
+                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                />
+
+                <Select
+                    fullWidth={true}
+                    label={"Span Name"}
+                    placeHolder={"select a span"}
+                    onChange={onSpanChange}
+                    value={spanValue}
+                    opts={traceNameOpts}
+                    labelWidth={TRACE_SEARCH_LABEL_WIDTH}
+                /> */}
 
                 <Field
                     label={"Tags"}
                     placeholder={"http.status_code=200 error=true"}
                     onChange={(e: any) => onChange(e, "tags")}
-                    value={DOMPurify.sanitize(urlState.tags)}
+                    value={urlState.tags}
                     labelWidth={TRACE_SEARCH_LABEL_WIDTH}
                 />
                 <Field
                     label={"Limit"}
                     placeholder={"Set limit, default 20"}
                     onChange={(e: any) => onChange(e, "limit")}
-                    value={DOMPurify.sanitize(String(urlState.limit))}
+                    value={urlState.limit}
                     labelWidth={TRACE_SEARCH_LABEL_WIDTH}
                 />
 
@@ -291,14 +310,14 @@ export default function TracesSearch(props: any) {
                     label={"Min Duration"}
                     placeholder={"e.g. 1.2s, 100ms"}
                     onChange={(e: any) => onChange(e, "minDuration")}
-                    value={DOMPurify.sanitize(urlState.minDuration)}
+                    value={urlState.minDuration}
                     labelWidth={TRACE_SEARCH_LABEL_WIDTH}
                 />
                 <Field
                     label={"Max Duration"}
                     placeholder={"e.g. 1.2s, 100ms"}
                     onChange={(e: any) => onChange(e, "maxDuration")}
-                    value={DOMPurify.sanitize(urlState.maxDuration)}
+                    value={urlState.maxDuration}
                     labelWidth={TRACE_SEARCH_LABEL_WIDTH}
                 />
 

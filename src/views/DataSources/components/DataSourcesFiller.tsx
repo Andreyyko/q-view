@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import setDataSources from "../store/setDataSources";
 import { Button, Field } from "../ui";
 import { themes } from "../../../components/DataViews/components/Traces/Jaeger-ui/src/theme/themes";
-import DOMPurify from 'isomorphic-dompurify'
-const InlineFlex = (theme: any) => css`
+
+const InlineFlex = (theme:any) => css`
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -64,30 +64,29 @@ export const DataSourcesFiller = (props: any) => {
     const dispatch = useDispatch();
     const submitMessage = "Save";
 
-    const storeTheme = useSelector(
-        (store: { theme: "light" | "dark" }) => store.theme
-    );
+    const storeTheme = useSelector((store:{theme:'light'|'dark'})=> store.theme)
 
-    const theme = useMemo(() => {
-        return themes[storeTheme];
-    }, [storeTheme]);
+    const theme = useMemo (()=>{
+        return themes[storeTheme]
+
+    },[storeTheme])
 
     const urlChange = (e: any) => {
-        setUrl(() => e.target.value);
+        setUrl((_) => e.target.value);
     };
     const userChange = (e: any) => {
-        setUser(() => e.target.value);
+        setUser((_) => e.target.value);
     };
     const passwordChange = (e: any) => {
-        setPassword(() => e.target.value);
+        setPassword((_) => e.target.value);
     };
 
     const onSwitchChange = (e: any) => {
-        setOneForAll(() => e.target.checked);
+        setOneForAll((_) => e.target.checked);
     };
 
     const onBasicAuthChange = (e: any) => {
-        setBasicAuth(() => e.target.checked);
+        setBasicAuth((_) => e.target.checked);
     };
 
     const onUseForAll = (e: any) => {
@@ -129,7 +128,7 @@ export const DataSourcesFiller = (props: any) => {
             {oneForAll && (
                 <div className={cx(FieldsCont)}>
                     <Field
-                        value={DOMPurify.sanitize(url)}
+                        value={url}
                         label={"url"}
                         onChange={urlChange}
                         placeholder={"http://qryn.dev"}
@@ -137,13 +136,13 @@ export const DataSourcesFiller = (props: any) => {
                     {basicAuth && (
                         <>
                             <Field
-                                value={DOMPurify.sanitize(user)}
+                                value={user}
                                 label={"user"}
                                 onChange={userChange}
                                 placeholder={"default"}
                             />
                             <Field
-                                value={DOMPurify.sanitize(password)}
+                                value={password}
                                 label={"password"}
                                 onChange={passwordChange}
                                 type={"password"}
@@ -162,7 +161,7 @@ export const DataSourcesFiller = (props: any) => {
                             />{" "}
                         </div>
                         <Button
-                            value={DOMPurify.sanitize(submitMessage)}
+                            value={submitMessage}
                             onClick={onUseForAll}
                             editing={false}
                             primary={true}

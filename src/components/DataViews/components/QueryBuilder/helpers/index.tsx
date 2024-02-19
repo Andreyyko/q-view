@@ -45,12 +45,12 @@ export function metricsToString(metric: string, labels: Label[]): string {
 
     return metricString;
 }
-// get here the 'metrics type'
+
 export function logsToString(labels: Label[]): string {
     let labelsBody = "";
-    if(Array.isArray(labels)&&labels?.length > 0) {
-      labelsBody+= labels[0].metric
-        labelsBody += `{${labelsToString(labels)}}`;
+
+    if (labels?.length > 0) {
+        labelsBody = `{${labelsToString(labels)}}`;
     }
 
     return labelsBody;
@@ -219,6 +219,7 @@ export const apiRequest = async (
             ...options,
             auth: basicAuth,
         };
+      //  console.log(config, "CONFIG")
         const req: LogsResponse | any[] = await axios.get(url, config);
         if (req) {
             setResponse(req || []);
@@ -255,15 +256,13 @@ export const setInitialOperation: InitialOperationFn = (
     name: name?.toLowerCase()?.split(" ")?.join("_"),
     id: operations?.length + 1,
     expressions: [],
-    prev_args:"",
-    after_args:"",
     conversion_function: "",
     labelValue: "",
     filterText: "",
     labelFilter: { label: "", operator: "=", value: "" },
     binaryOperation: { value: "", bool: false },
     lineFilter: "",
-    quantile: 0.99,
+    quantile: 0.95,
     kValue: 5,
     labels: [],
     labelOpts: labelSeries || [], // here we should have the labels from the .. initial operation
