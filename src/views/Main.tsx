@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import DOMPurify from 'isomorphic-dompurify';
 import { themes } from "../theme/themes";
 import { UpdateStateFromQueryParams } from "../helpers/UpdateStateFromQueryParams";
 import { useMediaQuery } from "react-responsive";
@@ -23,7 +24,7 @@ export default function Main() {
     }, [hash]);
     //
     UpdateStateFromQueryParams();
-    
+  
     const { cookiesAvailable, cookieAuth } = useCookiesAvailable(paramsMemo);
     const { urlAvailable, url } = useUrlAvailable(paramsMemo);
     useEffect(() => {
@@ -53,7 +54,7 @@ export default function Main() {
 
     useEffect(() => {
         const urlSetting = {
-            url: window.location.hash,
+            url: DOMPurify.sanitize(window.location.hash),
             cookiesAvailable,
         };
 
