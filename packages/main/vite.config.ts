@@ -1,15 +1,13 @@
-/// <reference types="vitest" />
-/// <reference types="vite/client" />
-import { defineConfig, loadEnv } from "vite";
+ /// <reference types="vitest" />
+ /// <reference types="vite/client" />
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import basicSsl from "@vitejs/plugin-basic-ssl";
 import path from "path";
 // https://vitejs.dev/config/
-
-let configOpts = {
-    server: {},
+export default defineConfig({
     plugins: [
-        //basicSsl(),
+        basicSsl(),
         react({
             jsxImportSource: "@emotion/react",
             babel: {
@@ -19,8 +17,8 @@ let configOpts = {
     ],
     test: {
         globals: true,
-        environment: "happy-dom",
-    },
+        environment: 'happy-dom'
+      },
     build: {
         sourcemap: false,
         rollupOptions: {
@@ -57,7 +55,7 @@ let configOpts = {
                         "deep-freeze",
                         "immutability-helper",
                     ],
-
+           
                     reactSelect: ["react-select"],
                 },
             },
@@ -77,29 +75,4 @@ let configOpts = {
             "@ui/environment": path.resolve(__dirname, "environment"),
         },
     },
-};
-
-export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, process.cwd(), "");
-    const isProxy = env.VITE_API_BASE_URL && env.VITE_API_BASE_URL !== "";
-    const proxyApi = isProxy ? env.VITE_API_BASE_URL : "";
-
-    const configProxy = {
-        server: {
-            proxy: {
-                "/ch": {
-                    target: proxyApi,
-                    changeOrigin: env.VITE_API_BASE_URL,
-                    //secure:false,
-                    rewrite: (path) => path.replace(/^\/ch/, ""),
-                },
-            },
-        },
-    };
-
-    if (isProxy) {
-        configOpts.server = configProxy.server;
-    }
-
-    return configOpts;
 });
