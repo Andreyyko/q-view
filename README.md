@@ -52,10 +52,9 @@ Clone Repo
 ```bash 
 git clone https://github.com/metrico/qryn-view
 ```
-
 Install packages
 ```bash 
-pnpm install 
+npm install 
 ```
 ---
 
@@ -63,7 +62,7 @@ pnpm install
 
 Build local clone
 ```bash
-pnpm run build 
+npm run build 
 ```
 Install Serve (npm serve)
 ```bash
