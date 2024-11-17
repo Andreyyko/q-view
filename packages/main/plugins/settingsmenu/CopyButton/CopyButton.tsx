@@ -5,13 +5,11 @@ import localUrl from "../../../services/localUrl";
 import setLinksHistory from "@ui/store/actions/setLinksHistory";
 import { MenuItem } from "@mui/material";
 import { notificationTypes } from "@ui/qrynui/notifications/consts";
-import { useLocation } from "react-router-dom";
 
 export default function CopyButton(props:any) {
     const{c} = props
     const dispatch: any = useDispatch();
     const saveUrl = localUrl();
-    const {hash} = useLocation()
     const LINK_COPIED = "Link Copied To Clipboard";
     function shareLink() {
         dispatch(setIsSubmit(true));
@@ -20,8 +18,8 @@ export default function CopyButton(props:any) {
                 navigator?.clipboard?.writeText(window.location.href).then(
                     function () {
                       
-                            const storedUrl = saveUrl.add(hash, {
-                                data: {href:window.location.href},
+                            const storedUrl = saveUrl.add({
+                                data: window.location.href,
                                 description: "From Shared URL",
                             }, 10);
                             dispatch(setLinksHistory(storedUrl));
@@ -51,7 +49,7 @@ export default function CopyButton(props:any) {
               
                 return new Promise((res:any, rej:any) => {
                
-                        const storedUrl = saveUrl.add(hash,{
+                        const storedUrl = saveUrl.add({
                             data: window.location.href,
                             description: "From Shared URL",
                         }, 10);
