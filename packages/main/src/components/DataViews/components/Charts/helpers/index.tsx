@@ -94,7 +94,6 @@ export interface TimeSpan {
 export function getTimeSpan(data: any): TimeSpan {
     const tsArray = data
         .map((tsItem: any) =>
-            //eslint-disable-next-line
             tsItem?.data?.map(([t, v]: [t: any, v: any]) => t)
         )
         .flat()
@@ -220,7 +219,7 @@ export function formatLabel(labels: any, isLogsVolume = false, length:number) {
     }
 
     if (isLogsVolume && labelResult) {
-        //eslint-disable-next-line
+
         return Object.entries(labelResult)?.map(([_, value]) => value);
         
     } else if (!isLogsVolume && labelResult) {

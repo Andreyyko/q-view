@@ -31,7 +31,7 @@ type Props = {
 };
 
 export default function NewWindowIcon(props: Props) {
-  const { ...rest } = props;
+  const { isLarge, className, ...rest } = props;
 //   const styles = useStyles2(getStyles);
 //   const cls = cx({ [styles.NewWindowIconLarge]: isLarge }, className);
   return <IoAndroidOpen /* className={cls} */ {...rest} />;

@@ -208,6 +208,7 @@ export function DateRangePickerMain(props: DateRangePickerProps) {
 
     useEffect(() => {
         onLabelChange(range.label);
+        //eslint-disable-next-line
     }, [range.label]);
 
     const { dateStart, dateEnd } = dateRange;

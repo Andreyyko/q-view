@@ -77,7 +77,7 @@ export default function AccordianLogs(props: AccordianLogsProps) {
     } = props;
     let arrow: React.ReactNode | null = null;
     let HeaderComponent: "span" | "a" = "span";
-    let headerProps: any | null = null;
+    let headerProps: {} | null = null;
     if (interactive) {
         arrow = isOpen ? (
             <IoIosArrowDown

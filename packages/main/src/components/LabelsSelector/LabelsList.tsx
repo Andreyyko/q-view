@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import styled from "@emotion/styled";
 
 
-export const EmptyLabels = () => {
+export const EmptyLabels = (props: any) => {
 
     const EmptyCont = styled.div`
         color: ${({ theme }: any) => theme.contrast};
@@ -33,7 +33,7 @@ function LabelItem(props: any) {
         <small
             className={type}
             style={selectedStyle}
-            onClick={() => props.onClick(label)}
+            onClick={(e) => props.onClick(label)}
         >
             {label}
         </small>
@@ -76,7 +76,7 @@ export default function LabelsList(props: any) {
                 </>
             )}
 
-            {!lsList && <EmptyLabels/>}
+            {!lsList && <EmptyLabels {...props} />}
         </div>
     );
 }

@@ -150,7 +150,7 @@ export function ViewHeader(props: any) {
                             idRef={idRef}
                             open={open}
                             total={total}
-                            onClose={() => setOpen(false)}
+                            onClose={(e: any) => setOpen(false)}
                         />
                     )}
                 </ViewHeaderStyled>

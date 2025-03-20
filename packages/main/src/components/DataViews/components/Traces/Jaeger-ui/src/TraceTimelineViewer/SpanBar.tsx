@@ -15,7 +15,8 @@
 import { css } from "@emotion/css";
 import { ThemeProvider } from "@emotion/react";
 import cx from "classnames";
-import React, {useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import useTheme from '@ui/theme/useTheme'
 
 // import { Popover } from '../common/Popover';
@@ -74,7 +75,9 @@ type Props = {
 function toPercent(value: number) {
     return `${(value * 100).toFixed(1)}%`;
 }
-
+type themeProps = {
+    theme: "light" | "dark";
+};
 function SpanBar({
     viewEnd,
     viewStart,

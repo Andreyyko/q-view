@@ -83,7 +83,7 @@ export function TraceView(props: any) {
         detailTagsToggle,
         detailWarningsToggle,
         detailStackTracesToggle,
-    } = useDetailState();
+    } = useDetailState(spanFieldsMapped);
 
     const [slim, setSlim] = useState(false);
     const [spanNameColumnWidth, setSpanNameColumnWidth] = useState(0.25);
