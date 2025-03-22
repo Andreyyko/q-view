@@ -327,7 +327,8 @@ export function queryBuilderWithLabels(
     keyVal: any, // key / value
     isInverted = false,
     dataSourceType = "logs",
- 
+    hasPipe = false,
+    pipeLabels = []
 ) {
     const [key, val] = keyVal;
     const dispatch: any = store.dispatch;

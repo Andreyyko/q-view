@@ -24,16 +24,16 @@ export const cStyles = {
         ...base,
         fontSize: "12px",
     }),
-    indicatorSeparator: () => ({
+    indicatorSeparator: (base: any) => ({
         display: "none",
     }),
-    dropdownIndicator: () => ({
+    dropdownIndicator: (base: any) => ({
         padding: 0,
         svg: {
             height: 12,
         },
     }),
-    clearIndicator: () => ({
+    clearIndicator: (base: any) => ({
         padding: 0,
         svg: {
             height: 12,
@@ -87,15 +87,16 @@ export function LabelSelect(props: any) {
 
     useEffect(() => {
         props.onChange(label);
+        //eslint-disable-next-line
     }, [label]);
 
     const onChange = (e: any) => {
-        setLabel(() => e.target.value);
+        setLabel((_) => e.target.value);
     };
 
     useEffect(() => {
         if (response?.data?.data) {
-            setLabel(() => response?.data?.data[0]);
+            setLabel((_) => response?.data?.data[0]);
         }
     }, [response]);
 
@@ -194,11 +195,11 @@ export default function LabelSelectorItem(props: any) {
         props.onSelectorChange({ ...labelGroup, ...newOperator });
     };
 
-    const onRemoveLabel = () => {
+    const onRemoveLabel = (e: any) => {
         props.onSelectorRemove(labelGroup);
     };
 
-    const onAddLabel = () => {
+    const onAddLabel = (e: any) => {
         props.onSelectorAdd(labelGroup);
     };
 

@@ -100,8 +100,8 @@ export const apiRequest = async (
     url: string,
     options: any,
     basicAuth: any,
-    setLoading,
-    setResponse
+    setLoading: Function,
+    setResponse: Function
 ) => {
     setLoading(true);
     try {
@@ -123,8 +123,8 @@ export const apiRequest = async (
 export async function getApiRequest(
     dataSource: { type: string; url: string },
     url: string,
-    setLoading,
-    setResponse
+    setLoading: Function,
+    setResponse: Function
 ) {
     if (dataSource.url && dataSource.url !== "") {
         const { basicAuth, options } = getAuthAndOptions(dataSource);
