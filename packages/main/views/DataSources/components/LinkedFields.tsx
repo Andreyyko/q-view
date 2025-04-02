@@ -1,25 +1,17 @@
 import { useState } from "react";
-//import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LinkedFieldItem } from "../classes/LinkedFieldItem";
-//import setDataSources from "../store/setDataSources";
+import setDataSources from "../store/setDataSources";
 import { InputCont } from "../styles";
 import { LinkedField } from "./LinkedField";
 import { SectionHeader } from "./SectionHeader";
 
-export type LinkedFieldsProps = {
-    id: string;
-    name: string;
-    linkedFields: any;
-    dataSources: any;
-    onDsChange: (prev:any) => void
-}
+export const LinkedFields = (props: any) => {
+    const { linkedFields, name, id } = props;
 
-export const LinkedFields = (props: LinkedFieldsProps) => {
-    const { linkedFields, name, id, dataSources, onDsChange } = props;
+    const dataSources = useSelector((store: any) => store.dataSources);
 
-    //const dataSources = useSelector((store: any) => store.dataSources);
-
-  //  const dispatch: any = useDispatch();
+    const dispatch: any = useDispatch();
     const [isEditing, setIsEditing] = useState(false);
 
     const onAddLinkedField = () => {
@@ -43,10 +35,8 @@ export const LinkedFields = (props: LinkedFieldsProps) => {
             return m;
         });
 
-        onDsChange( () => newDataSources)
-
-       // localStorage.setItem("dataSources", JSON.stringify(newDataSources));
-       // dispatch(setDataSources(newDataSources));
+        localStorage.setItem("dataSources", JSON.stringify(newDataSources));
+        dispatch(setDataSources(newDataSources));
     };
 
     const fieldEditing = () => {
@@ -75,8 +65,6 @@ export const LinkedFields = (props: LinkedFieldsProps) => {
                             dataSourceId={id}
                             locked={false}
                             fieldEditing={fieldEditing}
-                            dsChange={onDsChange}
-                            dataSources={dataSources}
                         />
                     ))}
                 </InputCont>

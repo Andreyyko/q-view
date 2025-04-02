@@ -1,50 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import setDataSources from "../store/setDataSources";
 import { InputCol, InputCont } from "../styles";
 import { QrynSwitch, Select, Field } from "../ui";
 import { TextAreaField } from "../ui/TextArea";
 import { SectionHeader } from "./SectionHeader";
 import DOMPurify from "isomorphic-dompurify";
 
-export type AuthFieldsProps = {
-    auth?: any;
-    id?: string;
-    dataSources?: any;
-    onDsChange?: (prev: any) => void;
-    fieldErrors?: any;
-};
+export function AuthFields(props: any) {
+    const { auth, id } = props;
+    const dispatch: any = useDispatch();
 
-export function AuthFields(props: AuthFieldsProps) {
-    // console.log(props)
-   
-    const { auth, id, dataSources, onDsChange } = props;
-    // const dispatch: any = useDispatch();
-    // console.log(auth)
-    // const dataSources = useSelector((store: any) => store.dataSources);
+    const dataSources = useSelector((store: any) => store.dataSources);
 
     const [activeFields, setActiveFields] = useState<any>([]);
     const [isEditing, setIsEditing] = useState(false);
     const fields = useMemo(() => {
-        if(auth) {    return Object.entries(auth)
+        return Object.entries(auth)
             ?.map(([name, field]: [name: any, field: any]) => ({
                 name,
                 ...field,
             }))
             .filter((f) => f.name !== "fields");
-        }
-        
-    
     }, [auth]);
 
     const certFields = useMemo(() => {
-        if(auth) {
-            return Object.entries(auth)
+        return Object.entries(auth)
             ?.map(([name, field]: [name: any, field: any]) => ({
                 name,
                 ...field,
             }))
             .find((f) => f.name === "fields");
-        }
-     
     }, [auth]);
 
     const onValueChange = (value: any, name: any) => {
@@ -59,25 +45,21 @@ export function AuthFields(props: AuthFieldsProps) {
             return dataSource;
         });
 
-        onDsChange(() => newDataSources);
+        localStorage.setItem("dataSources", JSON.stringify(newDataSources));
 
-        //localStorage.setItem("dataSources", JSON.stringify(newDataSources));
-
-        //dispatch(setDataSources(newDataSources));
+        dispatch(setDataSources(newDataSources));
 
         return newDataSources;
-
     };
 
     useEffect(() => {
         const certFields = fields
-            ?.filter((f) => f.form_type === "switch" && !!f?.value)
+            .filter((f) => f.form_type === "switch" && !!f?.value)
             ?.filter((f) => !!f.withFields)
             ?.map((m) => m.name);
         setActiveFields(certFields);
     }, [fields, setActiveFields]);
 
-    console.log(certFields)
     const onSelectChange = (e: any, name: any) => {
         setIsEditing(() => true);
         const value = e.target.value;
@@ -117,9 +99,6 @@ export function AuthFields(props: AuthFieldsProps) {
         };
 
         const prevDataSources = JSON.parse(JSON.stringify([...dataSources]));
-
-        console.log(prevDataSources)
-
         const newDataSources = prevDataSources?.map((ds: any) => {
             if (ds.id === id) {
                 ds.auth = newAuth;
@@ -128,19 +107,13 @@ export function AuthFields(props: AuthFieldsProps) {
             return ds;
         });
 
-        console.log(newDataSources)
-
-        //localStorage.setItem("dataSources", JSON.stringify(newDataSources));
-        //dispatch(setDataSources(newDataSources));
-        onDsChange(() => newDataSources);
+        localStorage.setItem("dataSources", JSON.stringify(newDataSources));
+        dispatch(setDataSources(newDataSources));
 
         setTimeout(() => {
             setIsEditing(() => false);
         }, 600);
     };
-
-    console.log(activeFields)
-    console.log(fields)
 
     return (
         <>
@@ -185,17 +158,17 @@ export function AuthFields(props: AuthFieldsProps) {
                         return null;
                     })}
                 <InputCol>
-                    {activeFields?.length > 0 && certFields &&
-                        activeFields?.map((val: any, key: any) => {
+                    {activeFields &&
+                        activeFields.map((val: any, key: any) => {
                             return (
                                 <InputCol key={key}>
                                     {certFields[val] &&
                                         certFields[val]?.map(
                                             (cert: any, y: any) => {
                                                 if (
-                                                    cert?.form_type ===
+                                                    cert.form_type ===
                                                         "input" ||
-                                                    cert?.form_type ===
+                                                    cert.form_type ===
                                                         "password"
                                                 ) {
                                                     return (
@@ -225,7 +198,7 @@ export function AuthFields(props: AuthFieldsProps) {
                                                 }
 
                                                 if (
-                                                    cert?.form_type ===
+                                                    cert.form_type ===
                                                     "textarea"
                                                 ) {
                                                     return (
