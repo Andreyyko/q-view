@@ -56,7 +56,6 @@ export function DataSourceSetting(props: any) {
         "qryn-dev-cookie",
         "qryn-settings",
     ]); // for testing cookies feature
-
     const dispatch: any = useDispatch();
     const dataSources = useSelector((store: any) => store.dataSources);
     const useForAll = () => {
@@ -194,9 +193,7 @@ export const DataSourceSettingHeader = (props: any) => {
 export function DataSource() {
     let { id } = useParams();
     const theme = useTheme();
-
     const dataSources = useSelector((store: any) => store.dataSources);
-
     const datasource = useMemo(() => {
         if (!dataSources || dataSources.length === 0) {
             return {};

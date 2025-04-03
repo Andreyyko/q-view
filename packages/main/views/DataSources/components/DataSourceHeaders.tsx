@@ -1,32 +1,21 @@
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { nanoid } from "nanoid";
 import { useState } from "react";
-//import setDataSources from "../store/setDataSources";
+import { useDispatch, useSelector } from "react-redux";
+import setDataSources from "../store/setDataSources";
 import { InputCol, InputGroup, Label } from "../styles";
 import { Field } from "../ui";
 import { SectionHeader } from "./SectionHeader";
 import DOMPurify from "isomorphic-dompurify";
 import { Switch } from "@mui/material";
 
-type HeaderEntry = {
-    id: string
-    header: string
-    value: string  
-}
-type DataSourceHadersProps = {
-    id: string;
-    cors?: boolean 
-    headers: HeaderEntry[]
-    dataSources: any
-    onDsChange: (prev:any) => void 
-}
+export const DataSourceHeaders = (props: any) => {
+    const dispatch: any = useDispatch();
 
-export const DataSourceHeaders = (props: DataSourceHadersProps) => {
-
-   // const dataSources = useSelector((store: any) => store.dataSources);
+    const dataSources = useSelector((store: any) => store.dataSources);
     const [editing, setEditing] = useState(false);
 
-    const { headers, id, onDsChange, dataSources } = props;
+    const { headers, id } = props;
     const [cors, setCors] = useState(props?.cors || false);
 
     const onCorsChange = (e: any) => {
@@ -38,11 +27,9 @@ export const DataSourceHeaders = (props: DataSourceHadersProps) => {
             }
             return ds;
         });
-
         setCors(() => value);
-        onDsChange(()=>newDataSources)
-        // localStorage.setItem("dataSources", JSON.stringify(newDataSources));
-       // dispatch(setDataSources(newDataSources));
+        localStorage.setItem("dataSources", JSON.stringify(newDataSources));
+        dispatch(setDataSources(newDataSources));
     };
 
     const onChange = (e: any, headerId: any, name: any) => {
@@ -66,10 +53,8 @@ export const DataSourceHeaders = (props: DataSourceHadersProps) => {
             return ds;
         });
 
-      //  localStorage.setItem("dataSources", JSON.stringify(newDataSources));
-      //  dispatch(setDataSources(newDataSources));
-
-      onDsChange(()=>newDataSources)
+        localStorage.setItem("dataSources", JSON.stringify(newDataSources));
+        dispatch(setDataSources(newDataSources));
         setTimeout(() => {
             setEditing(() => false);
         }, 800);
@@ -99,9 +84,9 @@ export const DataSourceHeaders = (props: DataSourceHadersProps) => {
                 }
                 return ds;
             });
-            onDsChange(()=> newDataSources)
-           // localStorage.setItem("dataSources", JSON.stringify(newDataSources));
-           // dispatch(setDataSources(newDataSources));
+
+            localStorage.setItem("dataSources", JSON.stringify(newDataSources));
+            dispatch(setDataSources(newDataSources));
         }
     };
 
@@ -117,10 +102,8 @@ export const DataSourceHeaders = (props: DataSourceHadersProps) => {
             return ds;
         });
 
-        onDsChange(()=> newDataSources)
-
-       // localStorage.setItem("dataSources", JSON.stringify(newDataSources));
-       // dispatch(setDataSources(newDataSources));
+        localStorage.setItem("dataSources", JSON.stringify(newDataSources));
+        dispatch(setDataSources(newDataSources));
     };
 
     return (

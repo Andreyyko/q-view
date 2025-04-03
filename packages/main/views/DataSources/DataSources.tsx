@@ -42,7 +42,8 @@ export default function DataSources() {
         <ThemeProvider theme={theme}>
             <PageContainer>
                 <div className="cont">
-          <List />
+                    <List />
+
                     <div style={{ display: "flex", flex: 1 }}>
                         <div
                             style={{
