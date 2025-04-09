@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+
 import DOMPurify from "isomorphic-dompurify";
 import {
     DataSourceHeaders,
@@ -7,27 +7,28 @@ import {
     SectionHeader,
     AuthFields,
 } from "../components";
-import setDataSources from "../store/setDataSources";
+//import setDataSources from "../store/setDataSources";
 
 import { DataSourceSettingsCont, InputCont, InputCol } from "../styles";
 import { Field } from "../ui";
+import { useStoreSettings } from "../hooks/useStoreSettings";
+
 
 export const Settings = (props: any) => {
-    const { headers, id, linkedFields, name, url, cors }: any = props;
-
-    const dispatch: any = useDispatch();
-
-    const state = useSelector(({ dataSources }: any) => dataSources);
+ 
+    // sets the initial and editable data
+    const [settingsData, setSettingsData] = useState(props)
+    const { settings, setSettings } = useStoreSettings()
+  
     const [fieldErrors, setFieldErrors] = useState({
         url: false,
         protocol: false,
     });
     const onFieldChange = (prop: any, value: any) => {
         let val = value;
-        const arrayClone = JSON.parse(JSON.stringify(state));
-        
+        const arrayClone = JSON.parse(JSON.stringify(settings));
         arrayClone.forEach((field: any) => {
-            if (field.id === id) {
+            if (field.id === settingsData.id) {
                 field[prop] = val;
             }
         });
@@ -38,6 +39,7 @@ export const Settings = (props: any) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const checkURLProtocol = (value: URL | any) => {
+
         try {
             const current_protocol = window.location.protocol;
             const value_protocol = new URL(value)["protocol"];
@@ -50,6 +52,7 @@ export const Settings = (props: any) => {
     const onChange = (e: any, name: any) => {
         setIsEditing(() => true);
         const value = e.target.value;
+        console.log(value,name)
         // check here if name === url
         if (name === "url") {
             const protocol_match = checkURLProtocol(value);
@@ -69,8 +72,15 @@ export const Settings = (props: any) => {
                     url: false,
                 }));
                 const newVal = onFieldChange(name, value);
-                localStorage.setItem("dataSources", JSON.stringify(newVal));
-                dispatch(setDataSources(newVal));
+                console.log(newVal)
+               setSettings( ()=> newVal)
+
+                //setSettingsData( (prev) => ({...prev, ...newVal}))
+
+                // localStorage.setItem("dataSources", JSON.stringify(newVal));
+                // dispatch(setDataSources(newVal));
+             //   saveSettings(newVal)
+
                 setTimeout(() => {
                     setIsEditing(() => false);
                 }, 800);
@@ -78,12 +88,25 @@ export const Settings = (props: any) => {
         }
 
         const newVal = onFieldChange(name, value);
-        localStorage.setItem("dataSources", JSON.stringify(newVal));
-        dispatch(setDataSources(newVal));
+        console.log(newVal)
+        setSettingsData(()=> newVal)
+       // setInitialDs(newVal)
+        //setSettingsData( () => newVal)
+       // localStorage.setItem("dataSources", JSON.stringify(newVal));
+       // dispatch(setDataSources(newVal));
+      // saveSettings(newVal)
+      setSettings(()=> newVal)
         setTimeout(() => {
             setIsEditing(() => false);
         }, 800);
     };
+
+
+
+    useEffect(()=>{
+        setSettingsData((prev) => ({ ...prev, ...settings?.find(f => f.id === prev.id)}))
+
+    },[settings])
 
     return (
         <DataSourceSettingsCont>
@@ -93,18 +116,19 @@ export const Settings = (props: any) => {
                 isAdd={false}
                 title={"DataSource Settings"}
                 fieldErrors={fieldErrors}
+              
             />
 
             <InputCont>
                 <InputCol>
                     <Field
-                        value={DOMPurify.sanitize(name)}
+                        value={DOMPurify.sanitize(settingsData.name)}
                         label={"Name"}
                         onChange={(e: any) => onChange(e, "name")}
                     />
 
                     <Field
-                        value={DOMPurify.sanitize(url)}
+                        value={DOMPurify.sanitize(settingsData.url)}
                         label={"URL"}
                         error={fieldErrors.url || fieldErrors.protocol}
                         onChange={(e: any) => onChange(e, "url")}
@@ -112,11 +136,31 @@ export const Settings = (props: any) => {
                 </InputCol>
             </InputCont>
 
-            <AuthFields {...props} />
+            <AuthFields
+                id={settingsData.id}
+                auth={settingsData.auth}
+                dataSources={settings}
+                onDsChange={setSettings}
 
-            <DataSourceHeaders cors={cors} headers={headers} id={id} />
+             //{...props} 
+             />
 
-            <LinkedFields {...props} linkedFields={linkedFields} />
+            <DataSourceHeaders
+             id={settingsData.id}
+             cors={settingsData.cors} 
+             headers={settingsData.headers} 
+             dataSources={settings}
+             onDsChange={setSettings}
+              />
+
+            <LinkedFields
+            // {...props} 
+            id={settingsData.id}
+            name={settingsData.name}
+            onDsChange={setSettings}
+            dataSources={settings}
+            linkedFields={settingsData.linkedFields} />
+            
         </DataSourceSettingsCont>
     );
 };
