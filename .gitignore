@@ -4,5 +4,3 @@ server
 .env
 *.cookie
 packages/main/.env
-codeql-results
-codeqldb

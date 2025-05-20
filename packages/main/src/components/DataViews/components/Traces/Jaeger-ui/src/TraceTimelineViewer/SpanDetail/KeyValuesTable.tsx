@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import jsonMarkup from "../../utils/jsonMarkup";
+import jsonMarkup from "json-markup";
 import React from 'react';
 
 
