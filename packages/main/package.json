@@ -21,7 +21,7 @@
     "@mui/material": "^6.2.0",
     "@mui/styles": "^5.16.11",
     "@mui/x-charts": "7.7.1",
-    "@szhsin/react-menu": "^4.2.3",
+    "@szhsin/react-menu": "^4.3.0",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.20.6",
     "axios": "^1.7.9",
@@ -89,7 +89,7 @@
     "prettier": "^3.4.2",
     "sass": "^1.83.0",
     "scss": "^0.2.4",
-    "typescript": "^5.7.3",
+    "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vitest": "^1.6.0"
   }
