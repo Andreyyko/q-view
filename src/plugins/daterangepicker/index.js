@@ -24,7 +24,7 @@ import { ThemeProvider } from "@emotion/react";
 import { setRangeOpen, setStartTime, setTimeRangeLabel, setStopTime } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
 import useOutsideRef from "./hooks/useOutsideRef";
-
+import store from '../../store/store'
 import loadLogs from "../../actions/loadLogs"
 import { setLabelsBrowserOpen } from "../../actions/setLabelsBrowserOpen";
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
@@ -100,6 +100,7 @@ export function DateRangePickerMain(props) {
             onChange(newRange);
             saveDateRange(newRange);
             setDateRange(newRange);
+            dispatch(setTimeRangeLabel(''))
             onClose();
         } else {
             setDateRange({ dateStart: day, dateEnd: undefined });
@@ -124,12 +125,12 @@ export function DateRangePickerMain(props) {
             }
         }
     };
-    const {query, start, stop, limit, step, apiUrl} = useSelector((store) => store)
     const onClose = (e = null) => {
+        const {query} = store.getState();
         e?.preventDefault();        
         if (onQueryValid(query)) {
             dispatch(setLabelsBrowserOpen(false))
-            dispatch(loadLogs(query, [start, stop], limit, step, apiUrl))
+            dispatch(loadLogs())
         } else {
             console.log("Please make a log query", query);
         }
@@ -212,7 +213,7 @@ export function DateRangePickerMain(props) {
             </button> 
 
             { isComponentVisible ? (
-                <div tabIndex="0" ref={ref}>
+                <div tabIndex={"0"} ref={ref}>
                     <ThemeProvider theme={theme}>
                         <Nav
                             dateRange={dateRange}

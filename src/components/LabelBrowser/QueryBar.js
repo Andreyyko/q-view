@@ -19,28 +19,29 @@ export const QueryBar = () => {
     const isSubmit = useSelector(store => store.isSubmit)
     const [queryInput, setQueryInput] = useState(query)
     const [queryValid, setQueryValid] = useState(false)
-
+    const SHOW_LOGS = "Show Logs"
+    const LOG_BROWSER = "Log Browser"
     const onQueryValid = (query) => {
         return query !== '{' && query !== '}' && query !== '{}' && query !== '' // TODO: make a proper query validation
     }
 
  
     useEffect(()=>{
-   // force a query to be run after load of component
-   if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
+    // force a query to be run after load of component
+    if (debug) console.log('🚧 LOGIC/QueryBar/', typeof query, query.length)
 
-   if (onQueryValid(query && isSubmit === "true") ) {
-       if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
-     
-       dispatch(loadLogs(query, [start, stop], limit, step, apiUrl))
-    
-       setTimeout(()=>{
+    if (onQueryValid(query && isSubmit === "true") ) {
+        if (debug) console.log('🚧 LOGIC/QueryBar/ dispatch ', query !== "{}", query.length > 0, query !== "{}" || query.length > 1)
+        // here
+        dispatch(loadLogs())
+
+        setTimeout(()=>{
+            dispatch(setIsSubmit(false))
+        },200)
+
+    } else if( !onQueryValid(query) && isSubmit === "true") {
         dispatch(setIsSubmit(false))
-       },200)
-    
-   } else if( !onQueryValid(query) && isSubmit === "true") {
-    dispatch(setIsSubmit(false))
-   }
+    }
 
     },[])
 
@@ -93,16 +94,16 @@ export const QueryBar = () => {
 
 
     return (
-        <div className="query-bar-container">
+        <div className={"query-bar-container"}>
             <span
                 style={onBrowserActive()}
                 className={"show-log-browser"} onClick={onValueDisplay}>
-                log browser
+                {LOG_BROWSER}
             </span>
 
             <input
-                className="query-bar-input"
-                placeholder="Enter a cLoki Query"
+                className={"query-bar-input"}
+                placeholder={"Enter a cLoki Query"}
                 onChange={handleChange}
                 value={queryInput}
                 tabIndex='0'
@@ -115,7 +116,7 @@ export const QueryBar = () => {
                 onClick={onSubmit}
                 className="show-logs"
             >
-                Show Logs
+                {SHOW_LOGS}
             </button>
         </div>
     );

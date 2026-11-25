@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Logo from "./assets/cloki-logo.png";
 import LinkIcon from '@mui/icons-material/Link';
@@ -7,22 +7,21 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { setIsSubmit, setQueryLimit, setQueryStep, setStartTime, setStopTime, setTimeRangeLabel } from "../../actions";
 import isDate from "date-fns/isDate";
 import { setApiUrl } from "../../actions/setApiUrl";
-import { setApiError } from "../../actions/setApiError";
 import { DateRangePicker } from "../../plugins/daterangepicker";
 import { DATE_TIME_RANGE } from '../../plugins/daterangepicker/consts';
 import {  findRangeByLabel } from "../../plugins/daterangepicker/utils";
-
+import { UpdateStateFromQueryParams } from "../UpdateStateFromQueryParams";
 
 export default function StatusBar() {
 
     return (
         <div className="status-bar">
             <div className="logo-section">
-                <img src={Logo} height="28px" className="logo" />
+                <img src={Logo} alt={"cLoki View"} height={"28px"} className={"logo"} />
                 <ApiSelector />
             </div>
 
-            <div className="date-selector">
+            <div className={"date-selector"}>
                 <StatusBarSelectors />
             </div>
         </div>
@@ -57,7 +56,7 @@ export function ApiSelector() {
     const [apiSelectorOpen, setApiSelectorOpen] = useState(false)
     const dispatch = useDispatch()
     const [isError, setIsError] = useState(true)
-
+    const API_URL = "API URL"
     useEffect(() => {
         setEditedUrl(apiUrl)
     }, [])
@@ -87,8 +86,8 @@ export function ApiSelector() {
 
     }, [apiError])
 
-    const handleApiUrlOpen = (e) => {
-        e.preventDefault()
+    const handleApiUrlOpen = (e = null) => {
+        e?.preventDefault()
         apiSelectorOpen ? setApiSelectorOpen(false) : setApiSelectorOpen(true)
     }
 
@@ -100,31 +99,35 @@ export function ApiSelector() {
         console.log(apiUrl, "API URL CHANGE")
 
         dispatch(setApiUrl(editedUrl))
+        const condition = true;
+        if (condition) {
+            handleApiUrlOpen()
+        }
     }
 
     return (
-        <div className="status-selectors">
-            <div className="api-url-selector">
+        <div className={"status-selectors"}>
+            <div className={"api-url-selector"}>
                 <button
-                    title="Set API URL"
-                    className="api-url-selector-toggle"
+                    title={"Set API URL"}
+                    className={"api-url-selector-toggle"}
                     onClick={handleApiUrlOpen}
                 >
                     <LinkIcon
-                        fontSize="small"
+                        fontSize={"small"}
                     />
                 </button>
                 {apiSelectorOpen ? (
-                    <div className="selector">
-                        <span className="label">API URL</span>
+                    <div className={"selector"}>
+                        <span className={"label"}>{API_URL}</span>
                         <input
-                            className="url"
+                            className={"url"}
                             value={editedUrl}
                             onChange={handleIntputChange} />
                         <button
 
                             onClick={onUrlSubmit}
-                        >save</button>
+                        >{"save"}</button>
                     </div>
 
                 ) : null}
@@ -141,11 +144,10 @@ export function StatusBarSelectors() {
     const stopTs = useSelector((store) => store.stop);
     const queryLimit = useSelector((store) => store.limit);
     const queryStep = useSelector((store) => store.step);
-    const isSubmit = useSelector((store) => store.isSubmit)
     const [copied, setCopied] = useState(false)
     const dispatch = useDispatch();
     const [open, setOpen] = useState()
-
+    const LINK_COPIED = "Link Copied To Clipboard"
     const initialDateRange = () => {
         try {
             const ls = JSON.parse(localStorage.getItem(DATE_TIME_RANGE));
@@ -156,8 +158,9 @@ export function StatusBarSelectors() {
             }else {
                 ls.dateStart = new Date(ls.dateStart);
                 ls.dateEnd = new Date(ls.dateEnd);
-
             }
+            
+            UpdateStateFromQueryParams()
             return ls;
         } catch (e) {
             if (isDate(startTs) && isDate(stopTs)) {
@@ -180,7 +183,7 @@ export function StatusBarSelectors() {
                 dispatch(setIsSubmit(false))
             }, 1500)
         }, function (err) {
-            console.log('error on copy', err)
+            console.err('error on copy', err)
         })
       },200)
             
@@ -189,24 +192,24 @@ export function StatusBarSelectors() {
     }
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <div className="status-options">
+            <div className={"status-options"}>
 
 
-                <div className="status-selectors">
+                <div className={"status-selectors"}>
                     {copied && (
-                        <span className="copied-warning">Link Copied To Clipboard</span>
+                        <span className={"copied-warning"}>{LINK_COPIED}</span>
                     )}
 
                     <button
-                        className="url-copy"
-                        title="Copy Link"
+                        className={"url-copy"}
+                        title={"Copy Link"}
                         onClick={shareLink}
                     >
                         <LinkIcon
-                            fontSize="small"
+                            fontSize={"small"}
                         />
 
-                        <span>Copy Link</span>
+                        <span>{"Copy Link"}</span>
 
                     </button>
 

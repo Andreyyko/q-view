@@ -9,14 +9,15 @@ import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import { withStyles } from '@mui/styles'
-import { format, differenceInCalendarMonths, isValid, isDate, isSameSecond } from "date-fns";
+import { format, differenceInCalendarMonths, isValid, isDate, isSameSecond, isBefore } from "date-fns";
 import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
 import Month from "./Month";
 import Ranges from "./Ranges";
 import CloseIcon from '@mui/icons-material/Close';
 import { DATE_TIME_RANGE, MARKERS } from "../consts";
-import { useDispatch, useSelector } from "react-redux";
-import { setStartTime, setStopTime } from "../../../actions";
+import { useDispatch } from "react-redux";
+import { setStartTime, setStopTime, setTimeRangeLabel } from "../../../actions";
+import { findRangeByLabel } from '../utils';
 
 const styles = (theme) =>
 	createStyles({
@@ -75,19 +76,30 @@ const PickerNav = props => {
 	const dispatch = useDispatch()
 	const [editedStartDate, setEditedStartDate] = useState(dateRange.dateStart)
 	const [editedEndDate, setEditedEndDate] = useState(dateRange.dateEnd)
-
-	const handleStopInputChange = (event) => {
+	const [rangeLabel] = useState(dateRange.label)
+    useEffect(() => {
+        if (rangeLabel) {
+            const newRange = findRangeByLabel(rangeLabel);
+            setEditedStartDate(newRange.dateStart);
+            setEditedEndDate(newRange.dateEnd);
+        } 
+    },[setEditedEndDate, setEditedStartDate, rangeLabel])
+	const handleStopInputChange = (event, isBlur) => {
 		event.preventDefault()
 		const value = new Date(event.target.value);
-        if (isValid(value)) {
+        if (isBlur && isValid(value)) {
 		    setEditedEndDate(value)
+        } else {
+            setEditedEndDate(event.target.value)
         }
     }
-	const handleStartInputChange = (event) => {
+	const handleStartInputChange = (event, isBlur) => {
 		event.preventDefault()
 		const value = new Date(event.target.value);
-        if (isValid(value)) {        
+        if (isBlur && isValid(value)) {        
 		    setEditedStartDate(value);
+        } else {
+            setEditedStartDate(event.target.value)
         }
 	}
 
@@ -96,19 +108,26 @@ const PickerNav = props => {
 		e.preventDefault()
         const startDate = new Date(editedStartDate)
 		const endDate = new Date(editedEndDate)
-        console.log(editedStartDate)
 		if (isDate(startDate) && !isSameSecond(dateRange.dateStart, startDate)) {
 			dispatch(setStartTime(startDate));
-            setEditedStartDate(startDate)
+            setEditedStartDate(startDate);
 		}
 		if (isValid(endDate) && !isSameSecond(dateRange.dateEnd, endDate)) {
 			dispatch(setStopTime(endDate));
-            setEditedEndDate(endDate)
+            setEditedEndDate(endDate);
 		}
-		if (isValid(endDate) && isDate(startDate) && (!isSameSecond(dateRange.dateStart, startDate) || !isSameSecond(dateRange.dateEnd, endDate))) {
+        const isValidDate = isValid(endDate) && isDate(startDate)
+        const isValidInterval = isBefore(startDate, endDate)
+        const isChanged = (!isSameSecond(dateRange.dateStart, startDate) || !isSameSecond(dateRange.dateEnd, endDate))
+		if ( isValidDate && isValidInterval && isChanged) {
+            dispatch(setTimeRangeLabel(''))
             setDateRange({dateStart: startDate, dateEnd: endDate})
             saveDateRange({dateStart: startDate, dateEnd: endDate});
-		}
+            props.onClose(e)
+		} else if (!isValidInterval) {
+            // TODO: Add a warning/error on screen when we get to it
+            console.error('Invalid time range')
+        }
 	}
     
     const saveDateRange = (range) => {
@@ -130,7 +149,7 @@ const PickerNav = props => {
 			<Paper
 				className={classes.container}
 				elevation={5} >
-				<Grid container direction="row" wrap="nowrap">
+				<Grid container direction={"row"} wrap={"nowrap"}>
 					<Grid>
 						<Grid container>
 							<Grid item>
@@ -139,36 +158,37 @@ const PickerNav = props => {
 									onClick={e => {
                                         props.onClose(e)
                                     }}
-									aria-label="close">
+									aria-label={"close"}>
 									<CloseIcon />
 								</IconButton>
 
 
-								<div className='status-selectors'>
-									<div className="selector">
-										<span className='label'>From</span>
+								<div className={'status-selectors'}>
+									<div className={"selector"}>
+										<span className={'label'}>{"From"}</span>
 										<input
-											className='date-time-range'
+											className={'date-time-range'}
 											value={getEditedStartDate()}
-											onChange={handleStartInputChange}
+											onChange={(e) => handleStartInputChange(e, false)}
+											onBlur={(e) => handleStartInputChange(e, true)}
 										/>
 									</div>
 
-									<div className='selector'>
-										<span className='label'>To</span>
-										<input className='date-time-range'
+									<div className={'selector'}>
+										<span className={'label'}>{'To'}</span>
+										<input className={'date-time-range'}
 											value={getEditedEndDate()}
-											onChange={handleStopInputChange}
+											onChange={(e) => handleStopInputChange(e, false)}
+											onBlur={(e) => handleStopInputChange(e, true)}
 										/>
 									</div>
 									<button
 										className={classes.applyButton}
 										onClick={e => {
 											onTimeRangeSet(e)
-											props.onClose(e)
 										}}
 
-									>Apply Time Range</button>
+									>{"Apply Time Range"}</button>
 								</div>
 
 
@@ -181,11 +201,11 @@ const PickerNav = props => {
 						</Grid>
 
 
-						<Grid container className={classes.header} alignItems="center">
+						<Grid container className={classes.header} alignItems={"center"}>
 							<Grid item className={classes.headerItem}>
 								<Typography
 
-									variant="subtitle1">
+									variant={"subtitle1"}>
 									{dateRange?.dateStart && isValid(dateRange?.dateStart) ? format(dateRange?.dateStart, "MMMM dd, yyyy") : "Start Date"}
 								</Typography>
 							</Grid>
@@ -195,13 +215,13 @@ const PickerNav = props => {
 							<Grid item className={classes.headerItem}>
 								<Typography
 
-									variant="subtitle1">
+									variant={"subtitle1"}>
 									{dateRange?.dateEnd && isValid(dateRange?.dateEnd) ? format(dateRange?.dateEnd, "MMMM dd, yyyy") : "End Date"}
 								</Typography>
 							</Grid>
 						</Grid>
 						<Divider />
-						<Grid container direction="row" justifyContent="center" wrap="nowrap">
+						<Grid container direction={"row"} justifyContent={"center"} wrap={"nowrap"}>
 							<Month
 								{...commonProps}
 								value={firstMonth}

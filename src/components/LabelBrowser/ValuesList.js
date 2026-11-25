@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Legend } from "./Legend";
 import { useSelector, useDispatch } from "react-redux";
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -28,18 +28,15 @@ export const LabelsFetchError = () => {
 
 export const ValuesList = (props) => {
     const labels = useSelector(state => state.labels)
-    // const labelValues = useSelector(state => state.labelValues)
     const [labelList, setLabelList] = useState(labels);
-    //  const [filteredValue, setFilteredValue] = useState("");
     const [labelsSelected, setLabelsSelected] = useState([]);
-    const [label, setLabel] = useState("");
     const dispatch = useDispatch()
     const debug = useSelector((store) => store.debug)
     const apiUrl = useSelector((store) => store.apiUrl)
     if(debug) console.log('🚧 LOGIC/LabelBrowser/ValuesList', apiUrl)
     const labelsBrowserOpen = useSelector((store) => store.labelsBrowserOpen)
-    const apiError = useSelector((store) => store.apiErrors)
 
+    const CLOSE = "close"
     /**
      * TODO: FILTER VALUES INSIDE LABELS
      */
@@ -58,31 +55,20 @@ export const ValuesList = (props) => {
 
     useEffect(() => {
         dispatch(loadLabels(apiUrl))
+     //   setLabelList(labels)
 
-    }, [apiUrl])
+    }, [apiUrl]);
 
 
     useEffect(() => {
         setLabelList(labels); // LABELS
 
     }, [labels]);
-
+    
     const handleRefresh = (e) => {
         e.preventDefault()
         dispatch(loadLabels(apiUrl))
     }
-
-
-
-    // onvaluechange
-    const onLabelChange = (value) => {
-        const query = queryBuilder(labelList);
-        dispatch(setQuery(query))
-        //this.setState({ ...this.state, query });
-        dispatch(loadLabelValues(value, labelList, apiUrl));
-        // loads label values into labelList
-    };
-
 
     const onLabelOpen = (e, value) => {
         e.preventDefault();
@@ -128,26 +114,26 @@ export const ValuesList = (props) => {
         } else return {};
     };
     return (labelsBrowserOpen &&
-        <div className="labels-container">
-            <div className="valuesList">
-                <div className="valuelist-title">
+        <div className={"labels-container"}>
+            <div className={"valuesList"}>
+                <div className={"valuelist-title"}>
                     <Legend
-                        title="Select labels to search in"
-                        text="Which labels would you like to consider for your search?" />
+                        title={"Select labels to search in"}
+                        text={"Which labels would you like to consider for your search?"} />
                     <LabelsFetchError />
-                    <div className="valuelist-content">
+                    <div className={"valuelist-content"}>
 
                         <button
-                            className="refresh-button"
+                            className={"refresh-button"}
                             onClick={handleRefresh}
                             title={'Refresh Labels List'}
                         >
                             <RefreshIcon
-                                fontSize="small"
+                                fontSize={"small"}
                             />
                         </button>
                         {labelList &&
-                            labelList.map((value, key) => (
+                            labelList?.map((value, key) => (
                                 <small
                                     title={value.name}
                                     key={key}
@@ -181,26 +167,26 @@ export const ValuesList = (props) => {
                 </div>
 
                 {selectedList() && (
-                    <div className="values-container">
-                        <div className="values-container-column">
+                    <div className={"values-container"}>
+                        <div className={"values-container-column"}>
                             {labelsSelected.map((labelSelected, key) => (
-                                <div className="values-column" key={key}>
-                                    <div className="values-column-title">
+                                <div className={"values-column"} key={key}>
+                                    <div className={"values-column-title"}>
                                         <span>
                                             {labelSelected.name} ({labelSelected.values.length})
                                         </span>
-                                        <span className="close-column"
+                                        <span className={"close-column"}
                                             onClick={(e) =>
                                                 onLabelOpen(e, labelSelected)
                                             }
-                                        >close</span>
+                                        >{CLOSE}</span>
                                     </div>
-                                    <div className="valuelist-content column">
+                                    <div className={"valuelist-content column"}>
                                         {labelSelected?.values?.map(
                                             (value, key) => (
                                                 <small
                                                     key={key}
-                                                    className="label-value"
+                                                    className={"label-value"}
                                                     style={styleValue(value)}
                                                     onClick={(e) => onLabelValueClick(e, value)}
                                                 >
