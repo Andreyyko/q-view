@@ -21,6 +21,10 @@ module.exports = {
             template: "./public/index.html",
         }),
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.IgnorePlugin({
+            resourceRegExp: /^\.\/locale$/,
+            contextRegExp: /moment$/,
+        }),
         new Dotenv({
             prefix:'process.env.',
             expand: true,
@@ -69,7 +73,7 @@ module.exports = {
         static: path.resolve(__dirname, "public"),
         historyApiFallback: true,
         host:  process.env.HOST || "0.0.0.0",
-        port: process.env.PORT ||  4500,
+        port: process.env.PORT ||  8080,
 
         allowedHosts: ["all"],
       
