@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Logo from "../assets/cloki-logo.png";
+import Logo from "./assets/cloki-logo.png";
+import LinkIcon from '@mui/icons-material/Link';
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { setStopTime, setStartTime, setQueryLimit, setQueryStep } from "../actions";
-import { DateRangePicker } from "../plugins/daterangepicker";
+import { setQueryLimit, setQueryStep, setStartTime, setStopTime, setTimeRangeLabel } from "../../actions";
 import isDate from "date-fns/isDate";
-import { setApiUrl } from "../actions/setApiUrl";
-import LinkIcon from '@mui/icons-material/Link';
-import loadLabels from "../actions/LoadLabels";
-export const StatusBar = () => {
+import { setApiUrl } from "../../actions/setApiUrl";
+import { setApiError } from "../../actions/setApiError";
+import { DateRangePicker } from "../../plugins/daterangepicker";
+import { DATE_TIME_RANGE } from '../../plugins/daterangepicker/consts';
+import {  findRangeByLabel } from "../../plugins/daterangepicker/utils";
+
+
+export default function StatusBar() {
 
     return (
         <div className="status-bar">
@@ -26,17 +30,21 @@ export const StatusBar = () => {
 };
 
 export function StatusBarInput(props) {
+
     const { label, value, dispatchAction, type } = props
     const dispatch = useDispatch()
+    const handleStatusInputChange = (e) => {
+        dispatch(dispatchAction(e.target.value))
+    }
+
+
     return (
         <div className="selector">
             <span className="label">{label}</span>
             <input
                 className={type}
                 value={value}
-                onChange={(newValue) => {
-                    dispatch(dispatchAction(newValue.target.value));
-                }}
+                onChange={handleStatusInputChange}
             />
 
         </div>
@@ -45,9 +53,41 @@ export function StatusBarInput(props) {
 
 export function ApiSelector() {
     const apiUrl = useSelector((store) => store.apiUrl)
+    const apiError = useSelector((store) => store.apiErrors)
     const [editedUrl, setEditedUrl] = useState(apiUrl)
     const [apiSelectorOpen, setApiSelectorOpen] = useState(false)
     const dispatch = useDispatch()
+    const [isError, setIsError] = useState(true)
+
+    useEffect(() => {
+        setEditedUrl(apiUrl)
+    }, [])
+
+    useEffect(() => {
+        setEditedUrl(apiUrl)
+
+    }, [apiUrl])
+
+
+    useEffect(() => {
+        if (isError) {
+            setApiSelectorOpen(true)
+        } else {
+            setApiSelectorOpen(false)
+            setIsError(false)
+        }
+
+    }, [isError]);
+
+    useEffect(() => {
+        if (apiError.length > 0) {
+            setIsError(true)
+            setApiSelectorOpen(true)
+
+        }
+
+    }, [apiError])
+
     const handleApiUrlOpen = (e) => {
         e.preventDefault()
         apiSelectorOpen ? setApiSelectorOpen(false) : setApiSelectorOpen(true)
@@ -58,8 +98,9 @@ export function ApiSelector() {
         setEditedUrl(e.target.value)
     }
     const onUrlSubmit = (e) => {
+        console.log(apiUrl, "API URL CHANGE")
+
         dispatch(setApiUrl(editedUrl))
-        dispatch(loadLabels(editedUrl))
     }
 
     return (
@@ -101,25 +142,67 @@ export function StatusBarSelectors() {
     const stopTs = useSelector((store) => store.stop);
     const queryLimit = useSelector((store) => store.limit);
     const queryStep = useSelector((store) => store.step);
+    const [copied, setCopied] = useState(false)
     const dispatch = useDispatch();
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState()
 
     const initialDateRange = () => {
-        if (isDate(startTs) && isDate(stopTs)) {
-            return { dateStart: startTs, dateEnd: stopTs }
+        try {
+            const ls = JSON.parse(localStorage.getItem(DATE_TIME_RANGE));
+            if (ls?.label !== "" && typeof ls.label !== 'undefined') {
+                const range = findRangeByLabel(ls?.label)
+                ls.dateStart = range.dateStart;
+                ls.dateEnd = range.dateEnd;
+            }else {
+                ls.dateStart = new Date(ls.dateStart);
+                ls.dateEnd = new Date(ls.dateEnd);
+
+            }
+            return ls;
+        } catch (e) {
+            if (isDate(startTs) && isDate(stopTs)) {
+                return { dateStart: startTs, dateEnd: stopTs }
+            }
         }
     }
     const isOpen = (e) => {
         e.preventDefault()
         setOpen(!open)
     }
-
+    const shareLink = (e) => {
+        e.preventDefault()
+        navigator.clipboard.writeText(window.location.href).then(function () {
+            setCopied(true)
+            setTimeout(() => {
+                setCopied(false)
+            }, 1500)
+        }, function (err) {
+            console.log('error on copy', err)
+        })
+    }
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <div className="status-options">
 
 
                 <div className="status-selectors">
+                    {copied && (
+                        <span className="copied-warning">Link Copied To Clipboard</span>
+                    )}
+
+                    <button
+                        className="url-copy"
+                        title="Copy Link"
+                        onClick={shareLink}
+                    >
+                        <LinkIcon
+                            fontSize="small"
+                        />
+
+                        <span>Copy Link</span>
+
+                    </button>
+
                     <StatusBarInput
                         label={'Limit'}
                         value={queryLimit}
@@ -138,10 +221,15 @@ export function StatusBarSelectors() {
                     open={open}
                     isOpen={isOpen}
                     initialDateRange={initialDateRange()}
-                    onChange={({ dateStart, dateEnd }) => {
-                        if (isDate(dateStart)) dispatch(setStartTime(dateStart))
-                        if (isDate(dateEnd)) dispatch(setStopTime(dateEnd))
+                    onChange={({ dateStart, dateEnd, label }) => {
+                        const isStart = isDate(dateStart);
+                        const isEnd = isDate(dateEnd)
+                        const isLabel = typeof label !== 'undefined';
+                        if (isStart) dispatch(setStartTime(dateStart))
+                        if (isEnd) dispatch(setStopTime(dateEnd))
+                        if (isLabel) dispatch(setTimeRangeLabel(label))
                     }}
+                    // here
                 />
             </div>
         </LocalizationProvider>
