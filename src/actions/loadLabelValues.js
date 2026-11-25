@@ -6,6 +6,7 @@ import setLoading from "./setLoading";
 export default function loadLaebelValues(label, labelList, apiUrl) {
 
     if (label?.length <= 0 && label.lsList.length <= 0) {
+        console.log('Labels Error')
         return;
     };
 

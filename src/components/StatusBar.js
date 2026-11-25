@@ -45,7 +45,6 @@ export function StatusBarInput(props) {
 
 export function ApiSelector() {
     const apiUrl = useSelector((store) => store.apiUrl)
-    const apiError = useSelector((store) => store.apiErrors)
     const [editedUrl, setEditedUrl] = useState(apiUrl)
     const [apiSelectorOpen, setApiSelectorOpen] = useState(false)
     const dispatch = useDispatch()
@@ -75,7 +74,7 @@ export function ApiSelector() {
                         fontSize="small"
                     />
                 </button>
-                {apiSelectorOpen || apiError !== '' ? (
+                {apiSelectorOpen ? (
                     <div className="selector">
                         <span className="label">API URL</span>
                         <input
